@@ -1,0 +1,29 @@
+{
+  "name": "@monorepo/root",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install",
+    "clean": "turbo run clean && pnpm run clean:root",
+    "clean:root": "find . -type d \\( -name \".turbo\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "start:prd": "turbo run start:prd",
+    "check-types": "turbo run check-types",
+    "check-types:spec": "turbo run check-types:spec",
+    "format": "turbo run format",
+    "format:fix": "turbo run format:fix",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "check-all": "pnpm build && pnpm check-types && pnpm check-types:spec && pnpm format && pnpm lint && pnpm test:coverage"
+  },
+  "devDependencies": {
+    "@monorepo/config-eslint": "workspace:*",
+    "husky": "^9.1.7",
+    "turbo": "^2.5.5"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["NEST_API_BASE"]
+    },
+    "lint": {
+      "env": ["NEST_API_BASE"]
+    }
+  }
+}

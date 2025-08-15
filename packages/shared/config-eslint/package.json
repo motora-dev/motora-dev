@@ -1,0 +1,17 @@
+{
+  "name": "@monorepo/config-eslint",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": "./index.js",
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.31.0",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-turbo": "^2.5.0",
+    "prettier": "^3.6.0"
+  }
+}
