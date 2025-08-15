@@ -1,0 +1,13 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "outputs": ["dist/**"],
+      "env": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
+    },
+    "lint": {
+      "env": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
+    }
+  }
+}

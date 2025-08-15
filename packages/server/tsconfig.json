@@ -1,0 +1,23 @@
+{
+  "extends": "@monorepo/config-typescript",
+  "include": ["src/**/*.ts", "src/**/*.spec.ts"],
+  "exclude": [".trubo", "coverage", "dist", "node_modules"],
+  "compilerOptions": {
+    "module": "CommonJS",
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "strictPropertyInitialization": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@adapters*": ["src/libs/adapters*"],
+      "@decorators/*": ["src/libs/decorators/*"],
+      "@guards/*": ["src/libs/guards/*"],
+      "@libs*": ["src/libs*"],
+      "@modules*": ["src/modules*"],
+      "@prisma*": ["src/libs/adapters/prisma*"]
+    },
+    "types": ["node", "jest"]
+  }
+}

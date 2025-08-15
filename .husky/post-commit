@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# ルートのlint-stagedを実行
+npx lint-staged
+
+# clientパッケージのlint-stagedを実行
+cd packages/client
+if [ -f "package.json" ]; then
+  echo "Running client lint-staged..."
+  npx lint-staged
+fi
+cd ../..
+
+# serverパッケージのlint-stagedを実行
+cd packages/server
+if [ -f "package.json" ]; then
+  echo "Running server lint-staged..."
+  npx lint-staged
+fi
+cd ../..

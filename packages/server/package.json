@@ -1,0 +1,66 @@
+{
+  "name": "@monorepo/server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "prisma generate",
+    "clean": "find . -type d \\( -name \".turbo\" -o -name \"dist\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "build": "nest build",
+    "start": "nest start --debug --watch --path tsconfig.debug.json --debug=0.0.0.0:9230",
+    "start:prd": "node ./dist/main.js",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "check-types:spec": "tsc --noEmit -p tsconfig.spec.json",
+    "format": "prettier --check \"src/**/*.ts\"",
+    "format:fix": "prettier --write \"src/**/*.ts\"",
+    "lint": "pnpm lint:eslint",
+    "lint:eslint": "eslint src --ext .ts --config eslint.config.mjs --max-warnings 0",
+    "test": "jest",
+    "test:coverage": "COLLECT_COVERAGE=true jest"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/cqrs": "^11.0.3",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/throttler": "^6.0.0",
+    "@prisma/client": "^6.14.0",
+    "@supabase/supabase-js": "^2.55.0",
+    "google-auth-library": "^10.2.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@monorepo/config-eslint": "workspace:*",
+    "@monorepo/config-jest": "workspace:*",
+    "@monorepo/config-typescript": "workspace:*",
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.1",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.15.3",
+    "@types/supertest": "^6.0.2",
+    "jest-mock-extended": "^4.0.0",
+    "prisma": "^6.14.0",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.1.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "ulid": "^3.0.1"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed/articles.ts"
+  },
+  "lint-staged": {
+    "src/**/*.spec.ts?(x)": [
+      "tsc --noEmit -p tsconfig.spec.json"
+    ],
+    "src/**/!(*.spec).ts?(x)": [
+      "tsc --noEmit -p tsconfig.json"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix --config eslint.config.js"
+    ]
+  }
+}
