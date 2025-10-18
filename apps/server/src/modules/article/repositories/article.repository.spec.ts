@@ -1,7 +1,8 @@
-import { PrismaAdapter } from '@adapters';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+
+import { PrismaAdapter } from '@adapters';
 
 import { ArticleRepository } from './article.repository';
 

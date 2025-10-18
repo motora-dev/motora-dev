@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import type { Article } from '@prisma/client';
+
 import { GetArticleListResponse } from '../dto';
 import { ArticleListRepository } from '../repositories';
-import type { Article } from '@prisma/client';
 
 @Injectable()
 export class ArticleListService {

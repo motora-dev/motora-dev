@@ -1,11 +1,12 @@
-import { GoogleCloudAuthGuard } from '@guards';
-import { LoggingInterceptor } from '@interceptors';
-import { ArticleModule } from '@modules/article/article.module';
-import { ArticleListModule } from '@modules/article-list/article-list.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
+import { GoogleCloudAuthGuard } from '@guards';
+import { LoggingInterceptor } from '@interceptors';
+import { ArticleModule } from '@modules/article/article.module';
+import { ArticleListModule } from '@modules/article-list/article-list.module';
 
 @Module({
   providers: [

@@ -16,6 +16,13 @@ export const baseConfig = [
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: ['apps/*/tsconfig.json', 'apps/*/tsconfig.spec.json', 'packages/*/tsconfig.json'],
+        },
+      },
+    },
     plugins: {
       turbo: turboPlugin,
       import: importPlugin,
@@ -26,22 +33,15 @@ export const baseConfig = [
       'import/order': [
         'error',
         {
-          groups: [
-            ['builtin', 'external'],
-            ['internal', 'parent', 'sibling', 'index', 'object', 'type'],
+          groups: [['builtin', 'external'], 'internal', ['sibling', 'parent', 'index', 'object'], 'type'],
+          pathGroups: [
+            {
+              pattern: '{@*,@*/**}',
+              group: 'internal',
+            },
           ],
           'newlines-between': 'always',
-          alphabetize: { order: 'asc', caseInsensitive: true },
-        },
-      ],
-      // sort named imports within braces alphabetically; avoid conflict with import/order
-      'sort-imports': [
-        'error',
-        {
-          ignoreDeclarationSort: true,
-          ignoreMemberSort: false,
-          memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-          allowSeparatedGroups: true,
+          alphabetize: { order: 'asc', caseInsensitive: true, orderImportKind: 'asc' },
         },
       ],
     },

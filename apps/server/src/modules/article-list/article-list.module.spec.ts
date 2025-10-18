@@ -1,6 +1,7 @@
-import { PrismaAdapterModule } from '@adapters';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { PrismaAdapterModule } from '@adapters';
 
 import { ArticleListController } from './article-list.controller';
 import { ArticleListModule } from './article-list.module';
