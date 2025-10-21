@@ -18,7 +18,7 @@ cp .env.local.example .env.local
 | 変数名                                | 説明                                     | 例                               | 必須   |
 | ------------------------------------- | ---------------------------------------- | -------------------------------- | ------ |
 | `GOOGLE_APPLICATION_CREDENTIALS_JSON` | Google認証用サービスアカウントキー(JSON) | `{"type":"service_account",...}` | 本番時 |
-| `NEXT_PUBLIC_API_URL`                 | NestJS APIのベースURL                    | `http://localhost:3000`          | はい   |
+| `API_URL`                             | NestJS APIのベースURL                    | `http://localhost:3000`          | はい   |
 
 ### 3. 開発サーバー起動
 
