@@ -7,8 +7,7 @@ export const ArticleResponseSchema = z
     updatedAt: z.union([z.string(), z.date()]).transform((value) => (value instanceof Date ? value : new Date(value))),
     title: z.string().min(1),
     tags: z.array(z.string()).default([]),
-    fileName: z.string(),
-    fileSignedUrl: z.string().url(),
+    fileSignedUrl: z.url(),
   })
   .strict();
 

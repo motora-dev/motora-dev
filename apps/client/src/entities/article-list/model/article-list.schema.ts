@@ -1,37 +1,18 @@
 import { z } from 'zod';
 
-// Client-side schema: dates come as ISO strings and are normalized to Date
 export const ArticleSchema = z
   .object({
     id: z.string(),
-    title: z.string().min(1),
-    excerpt: z.string().default(''),
-    publishedAt: z
-      .union([z.string(), z.date()])
-      .transform((value) => (value instanceof Date ? value : new Date(value))),
-    updatedAt: z
-      .union([z.string(), z.date()])
-      .transform((value) => (value instanceof Date ? value : new Date(value))),
+    title: z.string().nullable(),
     tags: z.array(z.string()).default([]),
+    createdAt: z.union([z.string(), z.date()]).transform((value) => (value instanceof Date ? value : new Date(value))),
   })
   .strict();
 
 export const ArticleArraySchema = z.array(ArticleSchema);
-
-// Server-side validation schema (optional): expects Date instances prior to JSON serialization
-export const ArticleServerSchema = z
-  .object({
-    id: z.string(),
-    title: z.string().min(1),
-    excerpt: z.string(),
-    publishedAt: z.date(),
-    updatedAt: z.date(),
-    tags: z.array(z.string()),
-  })
-  .strict();
-
-export const ArticleServerArraySchema = z.array(ArticleServerSchema);
+export const GetArticleListResponseSchema = z.object({
+  articleList: ArticleArraySchema,
+});
 
 export type Article = z.infer<typeof ArticleSchema>;
-
-
+export type GetArticleListResponse = z.infer<typeof GetArticleListResponseSchema>;
