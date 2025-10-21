@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 
 import { createServerSupabase } from '@adapters';
+import { Public } from '@decorators';
 
 import { CreateUserCommand } from './commands/create-user/create-user.command';
 
@@ -36,6 +37,7 @@ export class AuthController {
     });
   }
 
+  @Public()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: any, @Res() res: any) {
@@ -71,15 +73,16 @@ export class AuthController {
     return res.json({ success: true });
   }
 
+  @Public()
   @Get('login/google')
   async googleLogin(@Req() req: any, @Res() res: any) {
     const supabase = createServerSupabase(req, res);
 
-    const backendUrl = this.configService.get('BACKEND_URL') || '';
+    const backendUrl = this.configService.get('API_URL') || '';
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${backendUrl}/api/auth/callback/google`,
+        redirectTo: `${backendUrl}/auth/callback/google`,
       },
     });
     if (error) throw new InternalServerErrorException(error.message);
@@ -88,6 +91,7 @@ export class AuthController {
     return res.redirect(data.url);
   }
 
+  @Public()
   @Get('callback/google')
   @HttpCode(HttpStatus.OK)
   async callbackGoogle(@Req() req: any, @Res() res: any) {
@@ -127,7 +131,7 @@ export class AuthController {
       new CreateUserCommand(data.user.app_metadata.provider ?? '', data.user.id ?? '', data.user.email ?? ''),
     );
 
-    const frontendUrl = this.configService.get('FRONTEND_URL') || '';
+    const frontendUrl = this.configService.get('APP_URL') || '';
     return req.res.redirect(`${frontendUrl}/auth/callback`);
   }
 }

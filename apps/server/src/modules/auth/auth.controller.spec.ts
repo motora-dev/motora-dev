@@ -55,8 +55,8 @@ describe('AuthController', () => {
 
   const mockConfigService = {
     get: jest.fn().mockImplementation((key) => {
-      if (key === 'FRONTEND_URL') return 'http://localhost:4200';
-      if (key === 'BACKEND_URL') return 'http://localhost:3000';
+      if (key === 'APP_URL') return 'http://localhost:4200';
+      if (key === 'API_URL') return 'http://localhost:3000';
       return undefined;
     }),
   };
@@ -229,13 +229,13 @@ describe('AuthController', () => {
       expect(mockSupabaseAuth.signInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
         options: {
-          redirectTo: 'http://localhost:3000/api/auth/callback/google',
+          redirectTo: 'http://localhost:3000/auth/callback/google',
         },
       });
       expect(mockRes.redirect).toHaveBeenCalledWith('https://accounts.google.com/oauth');
     });
 
-    it('should handle undefined BACKEND_URL', async () => {
+    it('should handle undefined API_URL', async () => {
       // BACKEND_URLが未定義の場合をモック
       jest.spyOn(configService, 'get').mockReturnValueOnce(null);
 
@@ -251,11 +251,11 @@ describe('AuthController', () => {
 
       await controller.googleLogin(mockReq, mockRes);
 
-      // BACKEND_URLが空文字列になるケースをテスト
+      // API_URLが空文字列になるケースをテスト
       expect(mockSupabaseAuth.signInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
         options: {
-          redirectTo: '/api/auth/callback/google', // 空文字列と結合
+          redirectTo: '/auth/callback/google', // 空文字列と結合
         },
       });
       expect(mockRes.redirect).toHaveBeenCalledWith('https://accounts.google.com/oauth');
@@ -321,7 +321,7 @@ describe('AuthController', () => {
       expect(mockReq.res.redirect).toHaveBeenCalledWith(`http://localhost:4200/auth/callback`);
     });
 
-    it('should handle undefined FRONTEND_URL in callbackGoogle', async () => {
+    it('should handle undefined APP_URL in callbackGoogle', async () => {
       // FRONTEND_URLが未定義の場合をモック
       jest.spyOn(configService, 'get').mockReturnValueOnce(null);
 
@@ -351,7 +351,7 @@ describe('AuthController', () => {
 
       await controller.callbackGoogle(mockReq, mockRes);
 
-      // FRONTEND_URLが空文字列の場合をテスト
+      // APP_URLが空文字列の場合をテスト
       expect(mockReq.res.redirect).toHaveBeenCalledWith('/auth/callback');
     });
 

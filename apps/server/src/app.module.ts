@@ -7,6 +7,7 @@ import { GoogleCloudAuthGuard } from '@guards';
 import { LoggingInterceptor } from '@interceptors';
 import { ArticleModule } from '@modules/article/article.module';
 import { ArticleListModule } from '@modules/article-list/article-list.module';
+import { AuthModule } from '@modules/auth/auth.module';
 
 @Module({
   providers: [
@@ -35,6 +36,7 @@ import { ArticleListModule } from '@modules/article-list/article-list.module';
     ]),
     ArticleModule,
     ArticleListModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
