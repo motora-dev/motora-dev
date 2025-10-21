@@ -53,16 +53,6 @@ export function ArticleCard({ article }: ArticleCardProps) {
         >
           {article.title}
         </h2>
-        <p
-          style={{
-            color: '#6B7280',
-            marginBottom: '16px',
-            lineHeight: '1.6',
-          }}
-        >
-          {article.excerpt}
-        </p>
-
         <div
           style={{
             display: 'flex',
@@ -98,7 +88,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
             fontSize: '14px',
           }}
         >
-          <time style={{ color: '#6B7280' }}>{formatDate(article.publishedAt)}</time>
+          <time style={{ color: '#6B7280' }}>{formatDate(article.createdAt)}</time>
           <span
             style={{
               color: '#2563EB',
