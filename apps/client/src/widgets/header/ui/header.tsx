@@ -1,8 +1,22 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { logoutApi } from '@entities/auth/api/logout.api';
+import { useAuthSessionQuery } from '@entities/auth/api/use-auth-session.query';
+import { Button } from '@shared/ui/button';
 
 export function Header() {
+  const router = useRouter();
+  const { data } = useAuthSessionQuery();
+
+  const authenticated = !!data?.authenticated;
+
+  async function onLogout() {
+    await logoutApi();
+    router.refresh();
+  }
   return (
     <header
       style={{
@@ -67,6 +81,19 @@ export function Header() {
                 記事一覧
               </Link>
             </nav>
+            {authenticated ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Button variant="secondary" onClick={onLogout}>
+                  ログアウト
+                </Button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Link href="/login" style={{ textDecoration: 'none' }}>
+                  <Button>ログイン</Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
