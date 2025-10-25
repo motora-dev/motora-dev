@@ -22,5 +22,5 @@ export const ArticleSchema = z
   })
   .strict();
 
-export type ArticleResponse = z.infer<typeof ArticleResponseSchema>;
-export type Article = z.infer<typeof ArticleSchema>;
+export type ArticleResponseDto = z.infer<typeof ArticleResponseSchema>;
+export type ArticleDto = z.infer<typeof ArticleSchema>;

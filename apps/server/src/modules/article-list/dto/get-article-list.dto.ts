@@ -1,10 +1,10 @@
-export class Article {
+export class ArticleDto {
   id: string;
   title: string | null;
   tags: string[];
   createdAt: Date;
 }
 
-export class GetArticleListResponse {
-  articleList: Article[];
+export class ArticleListDto {
+  articleList: ArticleDto[];
 }

@@ -1,9 +1,10 @@
 'use server';
 
-import { authenticatedFetch, ApiResponse } from '@shared/api';
+import { ApiResponse } from '@shared/api';
+import { get } from '@shared/api/api-fetch';
 
-import { Article } from '../model/article-list.schema';
+import { ArticleListDto } from '../model/article-list.schema';
 
-export async function getArticleList(): Promise<ApiResponse<Article[]>> {
-  return await authenticatedFetch('/article-list', { cache: 'no-store' });
+export async function getArticleList(): Promise<ApiResponse<ArticleListDto>> {
+  return await get<ArticleListDto>('article-list');
 }

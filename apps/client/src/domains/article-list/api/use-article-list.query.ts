@@ -2,21 +2,15 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { wrapperApi } from '@shared/api/wrapper-api';
+import { createApiQuery } from '@shared/api/create-api-query';
 
-import { GetArticleListResponseSchema } from '../model/article-list.schema';
+import { ArticleListDto, ArticleListSchema } from '../model/article-list.schema';
 
 import { getArticleList } from './get-article-list.api';
 
-import type { GetArticleListResponse } from '../model/article-list.schema';
-
-async function fetchArticleList(): Promise<GetArticleListResponse> {
-  return wrapperApi(await getArticleList(), GetArticleListResponseSchema);
-}
-
 export function useArticleListQuery() {
-  return useQuery<GetArticleListResponse>({
+  return useQuery<ArticleListDto>({
     queryKey: ['articles'],
-    queryFn: fetchArticleList,
+    queryFn: createApiQuery<ArticleListDto>({ api: getArticleList, schema: ArticleListSchema }),
   });
 }

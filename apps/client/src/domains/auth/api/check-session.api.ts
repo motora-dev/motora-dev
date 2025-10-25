@@ -1,9 +1,8 @@
 'use server';
-
-import { authenticatedFetch } from '@shared/api/authenticated-fetch';
+import { get } from '@shared/api/api-fetch';
 
 type CheckSessionResponse = { authenticated: boolean };
 
 export async function checkSessionApi() {
-  return authenticatedFetch<CheckSessionResponse>('/auth/check-session', { method: 'GET' });
+  return await get<CheckSessionResponse>('auth/check-session');
 }

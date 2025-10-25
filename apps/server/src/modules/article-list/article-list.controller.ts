@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 
-import { GetArticleListResponse } from './dto';
+import { ArticleListDto } from './dto';
 import { GetArticleListQuery } from './queries';
 
 @Controller('article-list')
@@ -10,7 +10,7 @@ export class ArticleListController {
 
   @Get('')
   @HttpCode(HttpStatus.OK)
-  async getArticleList(): Promise<GetArticleListResponse> {
+  async getArticleList(): Promise<ArticleListDto> {
     return await this.queryBus.execute(new GetArticleListQuery());
   }
 }

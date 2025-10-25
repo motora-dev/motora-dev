@@ -9,10 +9,9 @@ export const ArticleSchema = z
   })
   .strict();
 
-export const ArticleArraySchema = z.array(ArticleSchema);
-export const GetArticleListResponseSchema = z.object({
-  articleList: ArticleArraySchema,
+export const ArticleListSchema = z.object({
+  articleList: z.array(ArticleSchema),
 });
 
-export type Article = z.infer<typeof ArticleSchema>;
-export type GetArticleListResponse = z.infer<typeof GetArticleListResponseSchema>;
+export type ArticleDto = z.infer<typeof ArticleSchema>;
+export type ArticleListDto = z.infer<typeof ArticleListSchema>;

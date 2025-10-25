@@ -77,16 +77,11 @@ async function bootstrap() {
   // CSRF保護を適用
   app.use(doubleCsrfProtection);
 
-  // // CSRFトークンをクッキーに設定
-  // app.use((req: any, res: any, next: any) => {
-  //   const token = req.csrfToken(); // トークン生成
-  //   res.cookie('XSRF-TOKEN', token, {
-  //     httpOnly: false,
-  //     sameSite: 'lax',
-  //     secure: isProd,
-  //   });
-  //   next();
-  // });
+  // CSRFトークンをクッキーに設定
+  app.use((req: any, res: any, next: any) => {
+    req.csrfToken(); // トークン生成とクッキー設定をライブラリに任せる
+    next();
+  });
 
   // ロギング機能を有効化
   app.useGlobalInterceptors(app.get(LoggingInterceptor));

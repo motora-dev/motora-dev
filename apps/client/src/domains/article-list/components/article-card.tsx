@@ -1,21 +1,12 @@
 import Link from 'next/link';
 
-import type { Article } from '..';
+import { ArticleDto } from '../model/article-list.schema';
 
 interface ArticleCardProps {
-  article: Article;
+  article: ArticleDto;
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
-  // 日付をフォーマット
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('ja-JP', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date);
-  };
-
   return (
     <article
       style={{
@@ -88,7 +79,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
             fontSize: '14px',
           }}
         >
-          <time style={{ color: '#6B7280' }}>{formatDate(article.createdAt)}</time>
+          <time style={{ color: '#6B7280' }}>{new Date(article.createdAt).toLocaleDateString()}</time>
           <span
             style={{
               color: '#2563EB',

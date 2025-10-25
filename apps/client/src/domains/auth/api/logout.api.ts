@@ -1,10 +1,6 @@
 'use server';
-import { authenticatedFetch } from '@shared/api/authenticated-fetch';
+import { get } from '@shared/api/api-fetch';
 
 export async function logoutApi() {
-  const res = await authenticatedFetch<{ success: boolean }>('/auth/logout', { method: 'GET' });
-  if (res.status !== 200) {
-    return false;
-  }
-  return true;
+  return await get<{ success: boolean }>('auth/logout');
 }
