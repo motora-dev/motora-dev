@@ -1,3 +1,2 @@
 export { getGoogleAuth, resetGoogleAuth } from './google-auth';
-export type { ApiResponse } from './api-response';
-export { createApiResponse } from './api-response';
+export type { ApiResponse, ApiError, SuccessResponse, FailureResponse } from './api-response';

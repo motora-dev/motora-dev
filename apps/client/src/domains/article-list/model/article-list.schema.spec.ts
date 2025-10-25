@@ -1,4 +1,4 @@
-import { ArticleArraySchema } from './article-list.schema';
+import { ArticleListSchema } from './article-list.schema';
 
 const fixture = [
   {
@@ -11,8 +11,8 @@ const fixture = [
 
 describe('ArticleList schema contract', () => {
   it('parses a valid list', () => {
-    expect(() => ArticleArraySchema.parse(fixture)).not.toThrow();
-    const data = ArticleArraySchema.parse(fixture);
-    expect(data[0].title).toBe('Sample');
+    expect(() => ArticleListSchema.parse({ articleList: fixture })).not.toThrow();
+    const data = ArticleListSchema.parse({ articleList: fixture });
+    expect(data.articleList[0].title).toBe('Sample');
   });
 });

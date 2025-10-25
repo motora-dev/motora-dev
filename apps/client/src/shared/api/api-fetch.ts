@@ -1,10 +1,10 @@
 'server-only';
 
 import { parse } from 'cookie';
-import ky, { Input } from 'ky';
+import ky, { HTTPError, Input } from 'ky';
 import { cookies } from 'next/headers';
 
-import { ApiResponse, createApiResponse } from './api-response';
+import { ApiError, ApiResponse, FailureResponse, SuccessResponse } from './api-response';
 import { getGoogleAuth } from './google-auth';
 
 /**
@@ -76,7 +76,33 @@ export const api = ky.create({
   },
 });
 
+async function createSuccessResponse<T>(response: Response): Promise<SuccessResponse<T>> {
+  const data = (await response.json()) as T;
+  return { isSuccess: true, status: response.status, data };
+}
+
+async function createFailureResponse(error: unknown): Promise<FailureResponse> {
+  if (error instanceof HTTPError) {
+    const errorBody = await error.response.json().catch(() => ({ message: error.response.statusText }));
+    const apiError: ApiError = {
+      message: errorBody.message || 'An unknown error occurred',
+      statusCode: error.response.status,
+    };
+    return { isSuccess: false, status: error.response.status, error: apiError };
+  }
+  // その他の予期せぬエラー
+  const apiError: ApiError = {
+    message: error instanceof Error ? error.message : 'An unexpected error occurred',
+    statusCode: 500,
+  };
+  return { isSuccess: false, status: 500, error: apiError };
+}
+
 export async function get<T>(url: Input): Promise<ApiResponse<T>> {
-  const response = await api.get(url);
-  return createApiResponse(response.status, response.statusText, await response.json());
+  try {
+    const response = await api.get(url);
+    return createSuccessResponse(response);
+  } catch (error) {
+    return createFailureResponse(error);
+  }
 }

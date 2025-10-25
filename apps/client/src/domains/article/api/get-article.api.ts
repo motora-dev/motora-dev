@@ -1,12 +1,10 @@
 'use server';
 
-import { authenticatedFetch, type ApiResponse } from '@shared/api';
+import { ApiResponse } from '@shared/api';
+import { get } from '@shared/api/api-fetch';
 
-import type { ArticleResponse } from '../model/article.schema';
+import { ArticleResponseDto } from '../model/article.schema';
 
-export async function getArticle(articleId: string): Promise<ApiResponse<ArticleResponse>> {
-  return await authenticatedFetch(`/article/${encodeURIComponent(articleId)}`, {
-    cache: 'force-cache',
-    next: { revalidate: 3600, tags: [`article-${articleId}`] },
-  });
+export async function getArticle(articleId: string): Promise<ApiResponse<ArticleResponseDto>> {
+  return await get(`article/${encodeURIComponent(articleId)}`);
 }
