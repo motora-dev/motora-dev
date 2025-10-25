@@ -1,6 +1,6 @@
 'use client';
 
-import { googleLogin } from '@entities/auth/api/google-login.api';
+import { googleLogin } from '@domains/auth/api/google-login.api';
 import { Button } from '@shared/ui/button';
 
 export default function LoginPage() {

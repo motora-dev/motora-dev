@@ -4,7 +4,6 @@ import {
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
-  Post,
   Req,
   Res,
   UnauthorizedException,
@@ -24,49 +23,46 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Post('check-session')
+  @Get('check-session')
   @HttpCode(HttpStatus.OK)
   async getSession(@Req() req: any, @Res() res: any) {
+    const accessToken = req.cookies['sb-access-token'];
+
+    if (!accessToken) {
+      return res.json({ authenticated: false });
+    }
+
     const supabase = createServerSupabase(req, res);
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser(accessToken);
 
     return res.json({
-      authenticated: !!session,
+      authenticated: !!user,
     });
   }
 
-  @Public()
-  @Post('logout')
+  @Get('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: any, @Res() res: any) {
-    // 直接Cookie情報を取得
-    const sbCookieName = Object.keys(req.cookies).find(
-      (name) => name.startsWith('sb-') && name.includes('-auth-token'),
-    );
-
-    if (sbCookieName) {
-      // 既存のクッキーを削除
-      res.clearCookie(sbCookieName);
-      res.cookie(sbCookieName, '', {
-        expires: new Date(0),
-        maxAge: 0,
-        httpOnly: true,
-        path: '/',
-      });
+    const supabase = createServerSupabase(req, res);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw new InternalServerErrorException(error.message);
     }
 
+    // callbackGoogleで設定したオプションと完全に同じオプションでCookieをクリア
+    const cookieOptions = {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+      secure: false, // callbackGoogleの実装に合わせる
+    };
     // 一般的なSupabase関連クッキーもクリア
-    const otherPossibleCookies = ['sb-access-token', 'sb-refresh-token'];
-    for (const name of otherPossibleCookies) {
-      res.clearCookie(name);
-      res.cookie(name, '', {
-        expires: new Date(0),
-        maxAge: 0,
-        httpOnly: true,
-        path: '/',
-      });
+    const cookiesToClear = ['sb-access-token', 'sb-refresh-token'];
+    for (const name of cookiesToClear) {
+      // `expires`を過去日に設定するか、`maxAge`を0に設定することで削除
+      res.cookie(name, '', { ...cookieOptions, maxAge: 0 });
     }
 
     // 明示的にレスポンスを返す

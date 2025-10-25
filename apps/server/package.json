@@ -68,5 +68,8 @@
       "prettier --write",
       "eslint --fix --config eslint.config.js"
     ]
+  },
+  "volta": {
+    "extends": "../../package.json"
   }
 }

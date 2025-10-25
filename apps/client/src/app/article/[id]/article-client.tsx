@@ -1,6 +1,6 @@
 'use client';
 
-import { useArticleQuery } from '@entities/article';
+import { useArticleQuery } from '@domains/article';
 import { PrismHighlighter } from '@shared/ui/prism-highlighter';
 
 export function ArticleClient({ id }: { id: string }) {

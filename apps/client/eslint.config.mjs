@@ -36,7 +36,7 @@ const config = [
               position: 'before',
             },
             {
-              pattern: '@{shared,entities,features,widgets,pages,app}/**',
+              pattern: '@{app,domains,layouts,shared}/**',
               group: 'internal',
               position: 'after',
             },

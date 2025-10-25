@@ -1,5 +1,5 @@
-import { ErrorDialog } from '@widgets/error-dialog';
-import { Header } from '@widgets/header';
+import { ErrorDialog } from '@layouts/error-dialog';
+import { Header } from '@layouts/header';
 
 import { Providers } from './providers';
 
