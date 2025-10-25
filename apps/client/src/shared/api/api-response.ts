@@ -1,7 +1,3 @@
-// NOTE:
-// Next.js の Server→Client 間では「プレーンオブジェクト」以外は渡せません。
-// クラスインスタンスはシリアライズ不可のため、型＋ファクトリ関数で表現します。
-
 // 汎用的なAPIエラー情報の型
 export type ApiError = {
   message: string;

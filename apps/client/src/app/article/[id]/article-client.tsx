@@ -1,5 +1,4 @@
 'use client';
-
 import { useArticleQuery } from '@domains/article';
 import { PrismHighlighter } from '@shared/ui/prism-highlighter';
 

@@ -1,5 +1,4 @@
 'use server';
-
 import { ApiResponse } from '@shared/api';
 import { get } from '@shared/api/api-fetch';
 

@@ -1,5 +1,4 @@
 'server-only';
-
 import { parse } from 'cookie';
 import ky, { HTTPError, Input } from 'ky';
 import { cookies } from 'next/headers';

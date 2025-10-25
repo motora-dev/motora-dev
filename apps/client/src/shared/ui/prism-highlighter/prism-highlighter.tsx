@@ -1,5 +1,4 @@
 'use client';
-
 import Prism from 'prismjs';
 import { useEffect, useRef, useState } from 'react';
 

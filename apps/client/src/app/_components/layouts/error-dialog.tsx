@@ -1,5 +1,4 @@
 'use client';
-
 import { useMemo } from 'react';
 
 import { useErrorStore } from '@shared/model/error.store';

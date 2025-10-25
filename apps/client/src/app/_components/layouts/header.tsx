@@ -1,20 +1,18 @@
 'use client';
-
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { logoutApi } from '@domains/auth/api/logout.api';
-import { useAuthSessionQuery } from '@domains/auth/api/use-auth-session.query';
+import { logout, useCheckSessionQuery } from '@domains/auth/api';
 import { Button } from '@shared/ui/button';
 
 export function Header() {
   const router = useRouter();
-  const { data, refetch } = useAuthSessionQuery();
+  const { data, refetch } = useCheckSessionQuery();
 
   const authenticated = !!data?.authenticated;
 
   async function onLogout() {
-    await logoutApi();
+    await logout();
     refetch();
     router.refresh();
   }
