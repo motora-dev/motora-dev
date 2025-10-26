@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 import { ArticleClient } from './article-client';
 
-export default function ArticlePage({ params }: { params: { id: string } }) {
-  const publicId = params.id;
+export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: publicId } = await params;
 
   return (
     <article style={{ maxWidth: '800px', margin: '0 auto' }}>

@@ -1,9 +1,8 @@
 'use client';
-
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
 
-import { useErrorStore } from '@shared/model/error.store';
+import { useErrorStore } from '$shared/model/error.store';
 
 export function Providers({ children }: { children: ReactNode }) {
   const push = useErrorStore((s) => s.push);

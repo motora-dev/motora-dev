@@ -15,7 +15,7 @@
     "format:fix": "prettier --write \"src/**/*.ts\"",
     "lint": "pnpm lint:eslint",
     "lint:fix": "pnpm lint:eslint:fix",
-    "lint:eslint": "eslint src --ext .ts --config eslint.config.mjs --max-warnings 0",
+    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
     "lint:eslint:fix": "pnpm lint:eslint --fix",
     "test": "jest",
     "test:coverage": "COLLECT_COVERAGE=true jest",
@@ -26,10 +26,14 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/cqrs": "^11.0.3",
+    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/throttler": "^6.0.0",
     "@prisma/client": "^6.17.1",
     "@supabase/supabase-js": "^2.75.0",
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^4.0.3",
+    "express-session": "^1.18.2",
     "google-auth-library": "^10.4.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
@@ -41,7 +45,9 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.0.1",
+    "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.2",
     "@types/supertest": "^6.0.2",
     "jest-mock-extended": "^4.0.0",
     "prisma": "^6.17.1",
@@ -62,5 +68,8 @@
       "prettier --write",
       "eslint --fix --config eslint.config.js"
     ]
+  },
+  "volta": {
+    "extends": "../../package.json"
   }
 }

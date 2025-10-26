@@ -11,12 +11,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "@adapters": ["src/shared/adapters"],
-      "@decorators": ["src/shared/decorators"],
-      "@guards": ["src/shared/guards"],
-      "@interceptors": ["src/shared/interceptors"],
-      "@modules/*": ["src/modules/*"],
-      "@shared/*": ["src/shared/*"]
+      "$adapters": ["src/shared/adapters"],
+      "$decorators": ["src/shared/decorators"],
+      "$domains/*": ["./src/domains/*"],
+      "$guards": ["src/shared/guards"],
+      "$interceptors": ["src/shared/interceptors"],
+      "$modules/*": ["src/modules/*"],
+      "$shared/*": ["src/shared/*"]
     },
     "types": ["node", "jest"]
   }

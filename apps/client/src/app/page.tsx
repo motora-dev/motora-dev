@@ -1,7 +1,6 @@
 'use client';
-
-import { useArticleListQuery } from '@entities/article-list';
-import { ArticleCard } from '@features/article-list';
+import { useArticleListQuery } from '$domains/article-list';
+import { ArticleCard } from '$domains/article-list/components/article-card';
 
 export default function HomePage() {
   const { data, isLoading } = useArticleListQuery();
@@ -40,7 +39,7 @@ export default function HomePage() {
         >
           <p style={{ fontSize: '18px', color: '#6B7280' }}>読み込み中...</p>
         </div>
-      ) : !data || data.length === 0 ? (
+      ) : !data || data.articleList.length === 0 ? (
         <div
           style={{
             textAlign: 'center',
@@ -59,7 +58,7 @@ export default function HomePage() {
             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
           }}
         >
-          {data.map((article) => (
+          {data.articleList.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
         </div>

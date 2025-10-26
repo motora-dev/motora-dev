@@ -1,1 +1,1 @@
-export * from './google-cloud-auth.guard';
+export * from './google-cloud-auth/google-cloud-auth.guard';

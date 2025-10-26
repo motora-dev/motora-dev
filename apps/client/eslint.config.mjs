@@ -17,6 +17,7 @@ const compat = new FlatCompat({
 const config = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   ...compat.extends('@feature-sliced'),
+  ...storybook.configs['flat/recommended'],
   // @feature-sliced languageOptions
   {
     languageOptions: { ecmaVersion: 'latest' },
@@ -28,25 +29,17 @@ const config = [
       'import/order': [
         'error',
         {
-          groups: ['builtin', ['external', 'internal'], 'parent', 'sibling', 'index', 'object', 'type'],
+          groups: [['builtin', 'external'], ['internal', 'parent', 'sibling', 'index', 'object'], 'type'],
           pathGroups: [
             {
               pattern: '{server-only,client-only}',
               group: 'builtin',
-              position: 'before',
             },
             {
-              pattern: '@{shared,entities,features,widgets,pages,app}/**',
+              pattern: '${app,domains,layouts,modules,shared}/**/*',
               group: 'internal',
-              position: 'after',
-            },
-            {
-              pattern: '@/**',
-              group: 'internal',
-              position: 'after',
             },
           ],
-          pathGroupsExcludedImportTypes: ['builtin'],
           'newlines-between': 'always',
           alphabetize: {
             order: 'asc',
@@ -79,7 +72,6 @@ const config = [
       },
     },
   },
-  ...storybook.configs['flat/recommended'],
 ];
 
 export default config;
