@@ -1,0 +1,42 @@
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Request } from 'express';
+
+import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
+import { CreateArticleCommand, UpdateArticleCommand } from './commands';
+import {
+  CreateArticleResponseDto,
+  GetArticleResponseDto,
+  UpdateArticleRequestDto,
+  UpdateArticleResponseDto,
+} from './dto';
+import { GetArticleQuery } from './queries';
+
+@Controller('article')
+@UseGuards(SupabaseAuthGuard)
+export class ArticleController {
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  @Post('create')
+  async createArticle(@Req() req: Request): Promise<CreateArticleResponseDto> {
+    return await this.commandBus.execute(new CreateArticleCommand(req.user!.id));
+  }
+
+  @Get('edit/:articleId')
+  async getArticle(@Param('articleId') articleId: string): Promise<GetArticleResponseDto> {
+    return await this.queryBus.execute(new GetArticleQuery(articleId));
+  }
+
+  @Put('update/:articleId')
+  async updateArticle(
+    @Param('articleId') articleId: string,
+    @Body() updateArticleRequestDto: UpdateArticleRequestDto,
+  ): Promise<UpdateArticleResponseDto> {
+    return await this.queryBus.execute(
+      new UpdateArticleCommand(articleId, updateArticleRequestDto.title, updateArticleRequestDto.tags),
+    );
+  }
+}

@@ -23,6 +23,10 @@ import { AuthModule } from '$modules/auth/auth.module';
     },
   ],
   imports: [
+    ArticleModule,
+    ArticleListModule,
+    ArticleModule,
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env'], // 複数ファイル対応（優先順位順）
     }),
@@ -34,9 +38,6 @@ import { AuthModule } from '$modules/auth/auth.module';
         limit: 10, // 同一IPから10リクエストまで
       },
     ]),
-    ArticleModule,
-    ArticleListModule,
-    AuthModule,
   ],
 })
 export class AppModule {}

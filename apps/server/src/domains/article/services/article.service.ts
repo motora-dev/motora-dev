@@ -21,8 +21,8 @@ export class ArticleService {
     }
 
     const signedUrl = await this.supabaseStorageAdapter.getDownloadUrl(
-      article.filePath,
-      article.fileName ?? 'article.md',
+      `${article.userId}/${article.id}/content.md`,
+      'content.md',
     );
 
     return {

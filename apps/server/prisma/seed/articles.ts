@@ -1,9 +1,8 @@
 /// <reference types="node" />
-import { PrismaClient, Article } from '@prisma/client';
+import { PrismaClient, Article, ArticleStatus } from '@prisma/client';
+import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ulid } from 'ulid';
-import { createClient } from '@supabase/supabase-js';
 
 const prisma = new PrismaClient();
 
@@ -78,6 +77,9 @@ async function main() {
   // まずSupabaseストレージのバケットを確保
   await ensureStorageBucket();
 
+  // シードでは既存ユーザーID=1を前提として使用
+  const userId = 1;
+
   // 記事データの定義（実際のファイル名に合わせて修正）
   const articles = [
     {
@@ -119,33 +121,35 @@ async function main() {
       // 1. ローカルファイルからMarkdownコンテンツを読み込み
       const markdownContent = readMarkdownFile(articleData.fileName);
 
-      // 2. Supabaseストレージのパスを生成
-      const fileId = ulid();
-      const storagePath = `articles/${fileId}.md`;
+      // 2. 記事レコードを作成/更新（userId必須、statusはPUBLICで投入）
+      let article = await prisma.article.findUnique({ where: { publicId: articleData.publicId } });
+      if (article) {
+        article = await prisma.article.update({
+          where: { publicId: articleData.publicId },
+          data: {
+            title: articleData.title,
+            tags: articleData.tags,
+            status: ArticleStatus.PUBLIC,
+          },
+        });
+      } else {
+        article = await prisma.article.create({
+          data: {
+            publicId: articleData.publicId,
+            title: articleData.title,
+            tags: articleData.tags,
+            status: ArticleStatus.PUBLIC,
+            userId: userId,
+          },
+        });
+      }
 
-      // 3. Supabaseストレージにファイルをアップロード
+      // 3. ストレージのパスを user.id / article.id 規約で生成し、Markdownをアップロード
+      const storagePath = `${userId}/${article.id}/content.md`;
       await uploadToSupabase(markdownContent, storagePath);
 
-      // 4. データベースに記事レコードを作成
-      const article = await prisma.article.upsert({
-        where: { publicId: articleData.publicId },
-        update: {
-          title: articleData.title,
-          filePath: storagePath,
-          fileName: articleData.fileName,
-          tags: articleData.tags,
-        },
-        create: {
-          publicId: articleData.publicId,
-          title: articleData.title,
-          filePath: storagePath,
-          fileName: articleData.fileName,
-          tags: articleData.tags,
-        },
-      });
-
       createdArticles.push(article);
-      console.log(`記事作成完了: ${article.title} (${storagePath})`);
+      console.log(`記事作成完了: ${article.title} (path: ${storagePath})`);
     } catch (error) {
       console.error(`記事作成中にエラーが発生しました: ${articleData.title}`, error);
       // エラーが発生しても他の記事の処理を続行

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ArticleStatus } from '@prisma/client';
 
 import { ArticleListRepository } from '../repositories';
 import { ArticleListService } from './article-list.service';
@@ -14,10 +15,10 @@ describe('ArticleListService', () => {
     publicId: 'public-id-1',
     title: 'Test Article',
     tags: ['tag1', 'tag2'],
+    status: ArticleStatus.PUBLIC,
+    userId: 1,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
-    filePath: '/test/path',
-    fileName: 'test.md',
   };
 
   beforeEach(async () => {

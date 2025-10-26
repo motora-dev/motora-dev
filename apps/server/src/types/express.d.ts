@@ -1,7 +1,8 @@
 // Augment Express.Request with a user property used by auth guard
 declare namespace Express {
   interface UserPayload {
-    id: string;
+    id: number;
+    publicId: string;
   }
 
   interface Request {

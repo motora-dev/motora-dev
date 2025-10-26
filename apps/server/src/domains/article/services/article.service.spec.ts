@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Article, ArticleStatus, User } from '@prisma/client';
 
 import { SupabaseStorageAdapter } from '$adapters';
 import { ArticleRepository } from '../repositories';
@@ -8,36 +9,28 @@ import { ArticleService } from './article.service';
 describe('ArticleService', () => {
   let service: ArticleService;
   let repository: jest.Mocked<ArticleRepository>;
+  let storageAdapter: jest.Mocked<SupabaseStorageAdapter>;
   let module: TestingModule;
 
-  const mockArticleWithAuthor = {
+  const mockUser: User = {
+    id: 1,
+    publicId: 'test-user-ulid',
+    name: 'Test User',
+    email: 'test@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const mockArticle: Article & { user: User } = {
     id: 1,
     publicId: 'test-article-ulid',
     title: 'Test Article',
-    type: 'PUBLIC' as const,
-    spaceId: 1,
-    authorId: 1,
     tags: ['tag1', 'tag2'],
+    status: ArticleStatus.PUBLIC,
+    userId: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
-    firstPublishedAt: new Date(),
-    lastPublishedAt: new Date(),
-    filePath: '/path/to/article.md',
-    fileName: 'article.md',
-    author: {
-      id: 1,
-      publicId: 'test-user-ulid',
-      name: 'Test User',
-      userNumber: 1,
-      userName: 'testuser',
-      microsoftId: null,
-      microsoftEmail: null,
-      googleId: null,
-      googleEmail: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isDeleted: false,
-    },
+    user: mockUser,
   };
 
   beforeEach(async () => {
@@ -52,7 +45,6 @@ describe('ArticleService', () => {
     };
 
     const mockStorageAdapter = {
-      getArticleContent: jest.fn(),
       getDownloadUrl: jest.fn(),
     };
 
@@ -66,6 +58,7 @@ describe('ArticleService', () => {
 
     service = module.get<ArticleService>(ArticleService);
     repository = module.get(ArticleRepository);
+    storageAdapter = module.get(SupabaseStorageAdapter);
   });
 
   it('should be defined', () => {
@@ -74,19 +67,20 @@ describe('ArticleService', () => {
 
   describe('getArticle', () => {
     it('should return article when found', async () => {
-      repository.getArticle.mockResolvedValue(mockArticleWithAuthor);
+      repository.getArticle.mockResolvedValue(mockArticle);
+      storageAdapter.getDownloadUrl.mockResolvedValue('signed-url-for-download');
 
       const result = await service.getArticle('article-public-id-1');
 
       // 実装差分（fileSignedUrlの有無やspaceIdの省略など）に影響されないよう、必要項目のみ検証
       expect(result).toEqual(
         expect.objectContaining({
-          id: mockArticleWithAuthor.publicId,
-          title: mockArticleWithAuthor.title,
-          fileSignedUrl: undefined,
-          tags: mockArticleWithAuthor.tags,
-          createdAt: mockArticleWithAuthor.createdAt,
-          updatedAt: mockArticleWithAuthor.updatedAt,
+          id: mockArticle.publicId,
+          title: mockArticle.title,
+          fileSignedUrl: 'signed-url-for-download',
+          tags: mockArticle.tags,
+          createdAt: mockArticle.createdAt,
+          updatedAt: mockArticle.updatedAt,
         }),
       );
       expect(repository.getArticle).toHaveBeenCalledWith('article-public-id-1');

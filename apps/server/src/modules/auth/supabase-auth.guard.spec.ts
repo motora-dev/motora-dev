@@ -101,8 +101,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     // JWTペイロードが5分以上有効な場合のトークン
@@ -121,7 +119,7 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-    expect(mockRequest.user).toEqual({ id: 'user-public-id-123' });
+    expect(mockRequest.user).toEqual(mockDbUser);
     expect(mockSupabase.auth.refreshSession).not.toHaveBeenCalled();
     expect(mockAuthRepository.getUserByProvider).toHaveBeenCalledWith('email', '123');
   });
@@ -136,8 +134,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     // JWTペイロードが5分以内に期限切れになるトークン
@@ -170,7 +166,7 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-    expect(mockRequest.user).toEqual({ id: 'user-public-id-123' });
+    expect(mockRequest.user).toEqual(mockDbUser);
     expect(mockSupabase.auth.refreshSession).toHaveBeenCalledWith({
       refresh_token: 'refresh-token',
     });
@@ -195,8 +191,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     // JWTペイロードが5分以内に期限切れになるトークン
@@ -225,7 +219,7 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-    expect(mockRequest.user).toEqual({ id: 'user-public-id-123' });
+    expect(mockRequest.user).toEqual(mockDbUser);
     expect(mockSupabase.auth.refreshSession).toHaveBeenCalledWith({
       refresh_token: 'refresh-token',
     });
@@ -251,8 +245,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     // JWTペイロードが5分以内に期限切れになるトークン
@@ -286,7 +278,7 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-    expect(mockRequest.user).toEqual({ id: 'user-public-id-123' });
+    expect(mockRequest.user).toEqual(mockDbUser);
     expect(mockSupabase.auth.refreshSession).toHaveBeenCalledWith({
       refresh_token: 'refresh-token',
     });
@@ -346,8 +338,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     const validToken =
@@ -365,7 +355,7 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-    expect(mockRequest.user).toEqual({ id: 'user-public-id-123' });
+    expect(mockRequest.user).toEqual(mockDbUser);
     expect(mockAuthRepository.getUserByProvider).toHaveBeenCalledWith('', '123');
 
     expect(consoleLogSpy).toHaveBeenCalled();
@@ -396,7 +386,7 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-    expect(mockRequest.user).toEqual({ id: '' }); // Empty string when user not found
+    expect(mockRequest.user).toEqual({ id: 0, publicId: 'unknown' }); // Empty string when user not found
 
     expect(consoleLogSpy).toHaveBeenCalled();
     const logData = JSON.parse(consoleLogSpy.mock.calls[0][0]);
@@ -413,8 +403,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     const validToken =
@@ -449,8 +437,6 @@ describe('SupabaseAuthGuard', () => {
     const mockDbUser = {
       id: 1,
       publicId: 'user-public-id-123',
-      name: 'Test User',
-      userNumber: 1,
     };
 
     const validToken =

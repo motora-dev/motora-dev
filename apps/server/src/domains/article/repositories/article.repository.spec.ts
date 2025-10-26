@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
+import { Article, ArticleStatus, PrismaClient, User } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { PrismaAdapter } from '$adapters';
@@ -9,34 +9,25 @@ describe('ArticleRepository', () => {
   let repository: ArticleRepository;
   let prisma: DeepMockProxy<PrismaClient>;
 
-  const mockArticleWithAuthor = {
+  const mockUser: User = {
+    id: 1,
+    publicId: 'test-user-ulid',
+    name: 'Test User',
+    email: 'test@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const mockArticle: Article & { user: User } = {
     id: 1,
     publicId: 'test-article-ulid',
     title: 'Test Article',
-    type: 'PUBLIC' as const,
-    spaceId: 1,
-    authorId: 1,
     tags: ['tag1', 'tag2'],
+    status: ArticleStatus.PUBLIC,
+    userId: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
-    firstPublishedAt: new Date(),
-    lastPublishedAt: new Date(),
-    filePath: '/path/to/article.md',
-    fileName: 'article.md',
-    author: {
-      id: 1,
-      publicId: 'test-user-ulid',
-      name: 'Test User',
-      userName: 'testuser',
-      userNumber: 1,
-      microsoftId: null,
-      microsoftEmail: null,
-      googleId: null,
-      googleEmail: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isDeleted: false,
-    },
+    user: mockUser,
   };
 
   beforeEach(async () => {
@@ -56,11 +47,11 @@ describe('ArticleRepository', () => {
 
   describe('getArticle', () => {
     it('should return article when found', async () => {
-      jest.spyOn(prisma.article, 'findUnique').mockResolvedValue(mockArticleWithAuthor);
+      jest.spyOn(prisma.article, 'findUnique').mockResolvedValue(mockArticle);
 
       const result = await repository.getArticle('test-article-ulid');
 
-      expect(result).toEqual(mockArticleWithAuthor);
+      expect(result).toEqual(mockArticle);
       expect(prisma.article.findUnique).toHaveBeenCalledWith({
         where: { publicId: 'test-article-ulid' },
       });

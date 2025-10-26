@@ -22,6 +22,7 @@ model User {
   email             String       @unique
 
   accounts Account[]
+  articles Article[]
 }
 
 model Account {
@@ -41,18 +42,25 @@ model Account {
   @@index([email])
 }
 
+enum ArticleStatus {
+  NEW
+  DRAFT
+  PUBLIC
+}
+
 model Article {
-  id                Int          @id @default(autoincrement())
-  publicId          String       @unique @default(ulid())
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  id                Int           @id @default(autoincrement())
+  publicId          String        @unique @default(ulid())
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @default(now()) @updatedAt
 
-  title             String       @unique
+  title             String
   tags              String[]
+  status            ArticleStatus @default(NEW)
 
-  // file storage
-  filePath          String       @unique
-  fileName          String
+  userId            Int
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([tags])  // タグ検索用のインデックス
+  @@index([tags])
+  @@index([userId])
 }

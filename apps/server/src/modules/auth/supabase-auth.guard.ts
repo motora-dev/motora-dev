@@ -67,7 +67,8 @@ export class SupabaseAuthGuard implements CanActivate {
     );
 
     req.user = {
-      id: user?.publicId ?? '',
+      id: user?.id ?? 0,
+      publicId: user?.publicId ?? 'unknown',
     };
 
     return true;
