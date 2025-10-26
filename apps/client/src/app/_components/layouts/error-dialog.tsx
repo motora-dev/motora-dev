@@ -1,7 +1,7 @@
 'use client';
 import { useMemo } from 'react';
 
-import { useErrorStore } from '@shared/model/error.store';
+import { useErrorStore } from '$shared/model/error.store';
 
 export function ErrorDialog() {
   const { errors, clear } = useErrorStore();

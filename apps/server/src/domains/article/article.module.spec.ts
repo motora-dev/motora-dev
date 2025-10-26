@@ -1,8 +1,7 @@
 import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { PrismaAdapterModule, SupabaseStorageAdapter } from '@adapters';
-
+import { PrismaAdapterModule, SupabaseStorageAdapter } from '$adapters';
 import { ArticleController } from './article.controller';
 import { ArticleModule } from './article.module';
 import { GetArticleHandler } from './queries';

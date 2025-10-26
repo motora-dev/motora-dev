@@ -2,8 +2,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { logout, useCheckSessionQuery } from '@domains/auth/api';
-import { Button } from '@shared/ui/button';
+import { logout, useCheckSessionQuery } from '$modules/auth/api';
+import { Button } from '$shared/ui/button';
 
 export function Header() {
   const router = useRouter();

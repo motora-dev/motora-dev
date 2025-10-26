@@ -1,5 +1,5 @@
 'use server';
-import { get } from '@shared/api/api-fetch';
+import { get } from '$shared/api/api-fetch';
 
 type CheckSessionResponse = { authenticated: boolean };
 

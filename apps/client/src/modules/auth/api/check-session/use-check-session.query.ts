@@ -2,8 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { createApiQuery } from '@shared/api/create-api-query';
-
+import { createApiQuery } from '$shared/api/create-api-query';
 import { getCheckSessionApi } from './get-check-session.api';
 
 export type AuthSession = { authenticated: boolean };

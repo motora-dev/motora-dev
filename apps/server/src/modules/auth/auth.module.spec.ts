@@ -3,8 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { PassportModule } from '@nestjs/passport';
 import { Test } from '@nestjs/testing';
 
-import { PrismaAdapter } from '@adapters';
-
+import { PrismaAdapter } from '$adapters';
 import { AuthController } from './auth.controller';
 import { AuthModule } from './auth.module';
 import { CreateUserFromGoogleHandler } from './commands/create-user/create-user.handler';

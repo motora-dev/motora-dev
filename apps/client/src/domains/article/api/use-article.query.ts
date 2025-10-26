@@ -2,11 +2,9 @@
 import { useQuery } from '@tanstack/react-query';
 import MarkdownIt from 'markdown-it';
 
-import { createApiQuery } from '@shared/api/create-api-query';
-
-import { ArticleDto, ArticleResponseSchema, ArticleSchema } from '../model/article.schema';
-
+import { createApiQuery } from '$shared/api/create-api-query';
 import { getArticle } from './get-article.api';
+import { ArticleDto, ArticleResponseSchema, ArticleSchema } from '../model/article.schema';
 
 export function useArticleQuery(articleId: string) {
   return useQuery<ArticleDto>({

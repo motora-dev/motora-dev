@@ -15,7 +15,7 @@
     "format:fix": "prettier --write \"src/**/*.ts\"",
     "lint": "pnpm lint:eslint",
     "lint:fix": "pnpm lint:eslint:fix",
-    "lint:eslint": "eslint src --ext .ts --config eslint.config.mjs --max-warnings 0",
+    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
     "lint:eslint:fix": "pnpm lint:eslint --fix",
     "test": "jest",
     "test:coverage": "COLLECT_COVERAGE=true jest",

@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthService } from '@modules/auth/services/auth.service';
-
+import { AuthService } from '$modules/auth/services/auth.service';
 import { CreateUserCommand } from './create-user.command';
 import { CreateUserFromGoogleHandler } from './create-user.handler';
 

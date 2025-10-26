@@ -5,8 +5,7 @@ import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import session from 'express-session';
 
-import { LoggingInterceptor } from '@interceptors';
-
+import { LoggingInterceptor } from '$interceptors';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

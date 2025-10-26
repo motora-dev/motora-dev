@@ -3,11 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
-import { GoogleCloudAuthGuard } from '@guards';
-import { LoggingInterceptor } from '@interceptors';
-import { ArticleModule } from '@modules/article/article.module';
-import { ArticleListModule } from '@modules/article-list/article-list.module';
-import { AuthModule } from '@modules/auth/auth.module';
+import { ArticleModule } from '$domains/article/article.module';
+import { ArticleListModule } from '$domains/article-list/article-list.module';
+import { GoogleCloudAuthGuard } from '$guards';
+import { LoggingInterceptor } from '$interceptors';
+import { AuthModule } from '$modules/auth/auth.module';
 
 @Module({
   providers: [

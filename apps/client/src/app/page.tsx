@@ -1,6 +1,6 @@
 'use client';
-import { useArticleListQuery } from '@domains/article-list';
-import { ArticleCard } from '@domains/article-list/components/article-card';
+import { useArticleListQuery } from '$domains/article-list';
+import { ArticleCard } from '$domains/article-list/components/article-card';
 
 export default function HomePage() {
   const { data, isLoading } = useArticleListQuery();

@@ -19,10 +19,11 @@
       }
     ],
     "paths": {
-      "@app/*": ["./src/app/*"],
-      "@domains/*": ["./src/domains/*"],
-      "@layouts/*": ["./src/app/_components/layouts/*"],
-      "@shared/*": ["./src/shared/*"]
+      "$app/*": ["./src/app/*"],
+      "$domains/*": ["./src/domains/*"],
+      "$layouts/*": ["./src/app/_components/layouts/*"],
+      "$modules/*": ["./src/modules/*"],
+      "$shared/*": ["./src/shared/*"]
     }
   }
 }

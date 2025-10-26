@@ -1,14 +1,14 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-// Mock @adapters to avoid redefining properties on the actual module
-jest.mock('@adapters', () => ({
+import * as supabaseFactory from '$adapters';
+import { AuthRepository } from '$modules/auth/repositories/auth.repository';
+import { SupabaseAuthGuard } from './supabase-auth.guard';
+
+// Mock $adapters to avoid redefining properties on the actual module
+jest.mock('$adapters', () => ({
   createServerSupabase: jest.fn(),
 }));
-import * as supabaseFactory from '@adapters';
-import { AuthRepository } from '@modules/auth/repositories/auth.repository';
-
-import { SupabaseAuthGuard } from './supabase-auth.guard';
 
 describe('SupabaseAuthGuard', () => {
   let guard: SupabaseAuthGuard;

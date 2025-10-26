@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { AuthService } from '@modules/auth/services/auth.service';
-
+import { AuthService } from '$modules/auth/services/auth.service';
 import { CreateUserCommand } from './create-user.command';
 
 @CommandHandler(CreateUserCommand)

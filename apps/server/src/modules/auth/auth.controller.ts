@@ -11,9 +11,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 
-import { createServerSupabase } from '@adapters';
-import { Public } from '@decorators';
-
+import { createServerSupabase } from '$adapters';
+import { Public } from '$decorators';
 import { CreateUserCommand } from './commands/create-user/create-user.command';
 
 @Controller('auth')

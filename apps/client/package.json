@@ -16,7 +16,7 @@
     "format:fix": "prettier --write \"src/**/*.tsx\"",
     "lint": "pnpm lint:eslint && pnpm lint:style",
     "lint:fix": "pnpm lint:eslint:fix && pnpm lint:style:fix",
-    "lint:eslint": "eslint src --ext .ts,.tsx --config eslint.config.mjs --max-warnings 0",
+    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
     "lint:eslint:fix": "pnpm lint:eslint --fix",
     "lint:style": "stylelint \"src/**/*.css\"",
     "lint:style:fix": "pnpm lint:style --fix",

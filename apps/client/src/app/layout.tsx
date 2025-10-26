@@ -1,6 +1,5 @@
-import { ErrorDialog } from '@layouts/error-dialog';
-import { Header } from '@layouts/header';
-
+import { ErrorDialog } from '$layouts/error-dialog';
+import { Header } from '$layouts/header';
 import { Providers } from './providers';
 
 import './globals.css';

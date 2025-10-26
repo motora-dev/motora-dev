@@ -1,8 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { createServerSupabase } from '@adapters';
-
+import { createServerSupabase } from '$adapters';
 import { AuthRepository } from './repositories/auth.repository';
 
 @Injectable()
