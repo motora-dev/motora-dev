@@ -1,6 +1,7 @@
 'use client';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useEffect } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -21,6 +22,13 @@ export const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
       onChange(editor.getHTML()); // ここでは一旦HTMLで親に渡します
     },
   });
+
+  // 外からcontentが変わった時にエディタへ反映
+  useEffect(() => {
+    if (!editor) return;
+    if (editor.getHTML() === content) return;
+    editor.commands.setContent(content);
+  }, [editor, content]);
 
   return <EditorContent editor={editor} />;
 };

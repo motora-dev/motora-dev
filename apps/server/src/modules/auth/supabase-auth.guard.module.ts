@@ -1,12 +1,12 @@
-// external
 import { Module } from '@nestjs/common';
 
-import { PrismaAdapter } from '$adapters';
+import { PrismaAdapterModule } from '$adapters';
 import { AuthRepository } from '$modules/auth/repositories/auth.repository';
 import { SupabaseAuthGuard } from './supabase-auth.guard';
 
 @Module({
-  providers: [SupabaseAuthGuard, AuthRepository, PrismaAdapter],
-  exports: [SupabaseAuthGuard],
+  exports: [AuthRepository, SupabaseAuthGuard],
+  imports: [PrismaAdapterModule],
+  providers: [AuthRepository, SupabaseAuthGuard],
 })
-export class SpabaseGuardModule {}
+export class SupabaseAuthGuardModule {}

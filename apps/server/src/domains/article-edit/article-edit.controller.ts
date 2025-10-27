@@ -3,27 +3,17 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Request } from 'express';
 
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
-import { CreateArticleCommand, UpdateArticleCommand } from './commands';
-import {
-  CreateArticleResponseDto,
-  GetArticleResponseDto,
-  UpdateArticleRequestDto,
-  UpdateArticleResponseDto,
-} from './dto';
+import { UpdateArticleCommand } from './commands';
+import { GetArticleResponseDto, UpdateArticleRequestDto, UpdateArticleResponseDto } from './dto';
 import { GetArticleQuery } from './queries';
 
 @Controller('article')
 @UseGuards(SupabaseAuthGuard)
-export class ArticleController {
+export class ArticleEditController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
-
-  @Post('create')
-  async createArticle(@Req() req: Request): Promise<CreateArticleResponseDto> {
-    return await this.commandBus.execute(new CreateArticleCommand(req.user!.id));
-  }
 
   @Get('edit/:articleId')
   async getArticle(@Param('articleId') articleId: string): Promise<GetArticleResponseDto> {

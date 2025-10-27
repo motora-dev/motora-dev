@@ -1,15 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useEditArticleQuery } from '$domains/article-edit/api/use-edit-article.query';
 import { TiptapEditor } from '$shared/ui/tiptap';
 
 export function EditorClient({ id }: { id: string }) {
-  const [content, setContent] = useState<string>('<h1>Hello, Tiptap!</h1><p>This is a sample document.</p>');
+  const { data, isLoading } = useEditArticleQuery(id);
+  const [content, setContent] = useState<string>('');
+
+  // 初回取得時のみエディタに反映
+  useEffect(() => {
+    if (!isLoading && data) {
+      setContent(data.html);
+    }
+  }, [isLoading, data]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
   };
+
+  if (isLoading) {
+    return <div>読み込み中...</div>;
+  }
 
   return (
     <div>

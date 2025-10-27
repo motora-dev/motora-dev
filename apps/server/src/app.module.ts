@@ -4,10 +4,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { ArticleModule } from '$domains/article/article.module';
+import { ArticleEditModule } from '$domains/article-edit/article-edit.module';
 import { ArticleListModule } from '$domains/article-list/article-list.module';
 import { GoogleCloudAuthGuard } from '$guards';
 import { LoggingInterceptor } from '$interceptors';
 import { AuthModule } from '$modules/auth/auth.module';
+import { ArticleCreateModule } from '$domains/article-create/article-create.module';
 
 @Module({
   providers: [
@@ -23,8 +25,10 @@ import { AuthModule } from '$modules/auth/auth.module';
     },
   ],
   imports: [
-    ArticleModule,
+    ArticleCreateModule,
+    ArticleEditModule,
     ArticleListModule,
+    ArticleModule,
     ArticleModule,
     AuthModule,
     ConfigModule.forRoot({
