@@ -6,7 +6,6 @@ import { SupabaseClient, createClient } from '@supabase/supabase-js';
 export class SupabaseStorageAdapter {
   private readonly logger = new Logger(SupabaseStorageAdapter.name);
   private readonly supabase: SupabaseClient;
-  private readonly bucketName = 'articles';
 
   constructor(private readonly configService: ConfigService) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
@@ -26,9 +25,14 @@ export class SupabaseStorageAdapter {
    * @param expiresIn 有効期限（秒）
    * @returns 署名付きURL
    */
-  async getDownloadUrl(filePath: string, fileName: string, expiresIn: number = 3600): Promise<string> {
+  async getDownloadUrl(
+    bucketName: string,
+    filePath: string,
+    fileName: string,
+    expiresIn: number = 3600,
+  ): Promise<string> {
     try {
-      const { data, error } = await this.supabase.storage.from(this.bucketName).createSignedUrl(filePath, expiresIn, {
+      const { data, error } = await this.supabase.storage.from(bucketName).createSignedUrl(filePath, expiresIn, {
         download: fileName,
       });
 

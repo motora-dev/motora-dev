@@ -145,7 +145,7 @@ async function main() {
       }
 
       // 3. ストレージのパスを user.id / article.id 規約で生成し、Markdownをアップロード
-      const storagePath = `${userId}/${article.id}/content.md`;
+      const storagePath = `${userId}/${article.id}`;
       await uploadToSupabase(markdownContent, storagePath);
 
       createdArticles.push(article);

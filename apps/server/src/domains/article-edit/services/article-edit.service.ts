@@ -29,7 +29,8 @@ export class ArticleEditService {
     }
 
     const signedUrl = await this.supabaseStorageAdapter.getDownloadUrl(
-      `${article.userId}/${article.id}/content.md`,
+      'articles',
+      `${article.userId}/${article.id}`,
       'content.md',
     );
 
