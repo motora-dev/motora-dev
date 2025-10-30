@@ -22,6 +22,7 @@ export class ArticleCreateRepository {
       data: {
         userId: userId,
         title: '',
+        content: '',
       },
     });
   }
