@@ -4,9 +4,9 @@ export class GetArticleRequest {
 
 export class GetArticleResponse {
   id: string;
-  title: string;
-  tags: string[];
-  fileSignedUrl: string;
   createdAt: Date;
   updatedAt: Date;
+  title: string;
+  tags: string[];
+  content: string;
 }

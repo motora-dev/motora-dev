@@ -4,6 +4,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { ArticleModule } from '$domains/article/article.module';
+import { ArticleCreateModule } from '$domains/article-create/article-create.module';
+import { ArticleEditModule } from '$domains/article-edit/article-edit.module';
 import { ArticleListModule } from '$domains/article-list/article-list.module';
 import { GoogleCloudAuthGuard } from '$guards';
 import { LoggingInterceptor } from '$interceptors';
@@ -23,6 +25,12 @@ import { AuthModule } from '$modules/auth/auth.module';
     },
   ],
   imports: [
+    ArticleCreateModule,
+    ArticleEditModule,
+    ArticleListModule,
+    ArticleModule,
+    ArticleModule,
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env'], // 複数ファイル対応（優先順位順）
     }),
@@ -34,9 +42,6 @@ import { AuthModule } from '$modules/auth/auth.module';
         limit: 10, // 同一IPから10リクエストまで
       },
     ]),
-    ArticleModule,
-    ArticleListModule,
-    AuthModule,
   ],
 })
 export class AppModule {}
