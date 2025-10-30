@@ -23,6 +23,7 @@ model User {
 
   accounts  Account[]
   articles  Article[]
+  media     Media[]
 }
 
 model Account {
@@ -49,19 +50,56 @@ enum ArticleStatus {
 }
 
 model Article {
-  id        Int           @id @default(autoincrement())
-  publicId  String        @unique @default(ulid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @default(now()) @updatedAt
+  id        Int             @id @default(autoincrement())
+  publicId  String          @unique @default(ulid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
 
   title     String
   tags      String[]
-  status    ArticleStatus @default(NEW)
-  content   String        @db.Text
+  status    ArticleStatus   @default(NEW)
+  content   String          @db.Text
 
   userId    Int
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  media     ArticleMedia[]
 
   @@index([tags])
   @@index([userId])
+}
+
+enum MediaType {
+  IMAGE
+}
+
+model Media {
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique @default(ulid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      MediaType
+  mimeType  String
+  fileName  String
+  extension String
+  filePath  String    @unique
+
+  articles  ArticleMedia[]
+
+  @@index([userId])
+}
+
+model ArticleMedia {
+  articleId Int
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  mediaId   Int
+  media     Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, mediaId])
+  @@index([mediaId])
 }
