@@ -14,9 +14,8 @@ export function useEditArticleQuery(articleId: string) {
         api: getEditArticle,
         schema: EditArticleResponseSchema,
         transform: async (res) => {
-          const markdown = await fetch(res.contentSignedUrl).then((r) => r.text());
           const md = new MarkdownIt();
-          const html = md.render(markdown);
+          const html = md.render(res.content);
           return EditArticleSchema.parse({
             id: res.id,
             title: res.title,

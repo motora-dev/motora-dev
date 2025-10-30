@@ -15,9 +15,8 @@ export function useArticleQuery(articleId: string) {
         schema: ArticleResponseSchema,
         // APIから取得したデータを元に、最終的なArticleオブジェクトを生成する変換ロジック
         transform: async (res) => {
-          const markdown = await fetch(res.fileSignedUrl).then((r) => r.text());
           const md = new MarkdownIt();
-          const html = md.render(markdown);
+          const html = md.render(res.content);
           return ArticleSchema.parse({
             id: res.id,
             createdAt: res.createdAt,

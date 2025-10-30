@@ -1,6 +1,5 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Request } from 'express';
 
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
 import { UpdateArticleCommand } from './commands';
@@ -25,7 +24,7 @@ export class ArticleEditController {
     @Param('articleId') articleId: string,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<UpdateArticleResponseDto> {
-    return await this.queryBus.execute(
+    return await this.commandBus.execute(
       new UpdateArticleCommand(articleId, updateArticleRequestDto.title, updateArticleRequestDto.tags),
     );
   }

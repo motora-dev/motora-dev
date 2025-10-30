@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { SupabaseStorageAdapter } from '$adapters';
 import { GetArticleResponseDto, UpdateArticleResponseDto } from '../dto';
 import { ArticleEditRepository } from '../repositories';
 
@@ -8,10 +7,7 @@ import type { Article } from '@prisma/client';
 
 @Injectable()
 export class ArticleEditService {
-  constructor(
-    private readonly articleEditRepository: ArticleEditRepository,
-    private readonly supabaseStorageAdapter: SupabaseStorageAdapter,
-  ) {}
+  constructor(private readonly articleEditRepository: ArticleEditRepository) {}
 
   async getArticle(articleId: string): Promise<GetArticleResponseDto> {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
@@ -20,17 +16,11 @@ export class ArticleEditService {
       throw new NotFoundException('Article not found');
     }
 
-    const signedUrl = await this.supabaseStorageAdapter.getDownloadUrl(
-      'articles',
-      `${article.userId}/${article.id}`,
-      'content.md',
-    );
-
     return {
       id: article.publicId,
       title: article.title,
       tags: article.tags,
-      contentSignedUrl: signedUrl,
+      content: article.content,
     };
   }
 

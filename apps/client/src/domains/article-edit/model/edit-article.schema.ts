@@ -5,7 +5,7 @@ export const EditArticleResponseSchema = z
     id: z.string(),
     title: z.string(),
     tags: z.array(z.string()).default([]),
-    contentSignedUrl: z.url(),
+    content: z.string(),
   })
   .strict();
 
