@@ -64,6 +64,12 @@ export const api = ky.create({
         if (cookieHeader) {
           request.headers.set('Cookie', cookieHeader);
         }
+
+        // CSRFトークンをCookieから取得してヘッダーに設定
+        const csrfToken = cookieStore.get('XSRF-TOKEN')?.value;
+        if (csrfToken) {
+          request.headers.set('x-xsrf-token', csrfToken);
+        }
       },
     ],
     afterResponse: [
@@ -100,6 +106,15 @@ async function createFailureResponse(error: unknown): Promise<FailureResponse> {
 export async function get<T>(url: Input): Promise<ApiResponse<T>> {
   try {
     const response = await api.get(url);
+    return createSuccessResponse(response);
+  } catch (error) {
+    return createFailureResponse(error);
+  }
+}
+
+export async function post<T>(url: Input, json?: unknown): Promise<ApiResponse<T>> {
+  try {
+    const response = await api.post(url, { json });
     return createSuccessResponse(response);
   } catch (error) {
     return createFailureResponse(error);
