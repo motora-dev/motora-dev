@@ -10,6 +10,7 @@ import { ArticleListModule } from '$domains/article-list/article-list.module';
 import { GoogleCloudAuthGuard } from '$guards';
 import { LoggingInterceptor } from '$interceptors';
 import { AuthModule } from '$modules/auth/auth.module';
+import { MediaModule } from './domains/media/media.module';
 
 @Module({
   providers: [
@@ -34,6 +35,7 @@ import { AuthModule } from '$modules/auth/auth.module';
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env'], // 複数ファイル対応（優先順位順）
     }),
+    MediaModule,
     // レート制限の設定
     ThrottlerModule.forRoot([
       {

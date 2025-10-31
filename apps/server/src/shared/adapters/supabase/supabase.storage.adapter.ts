@@ -47,4 +47,33 @@ export class SupabaseStorageAdapter {
       throw error;
     }
   }
+
+  /**
+   * アップロード用の署名付きURLを生成する
+   * @param bucketName バケット名
+   * @param filePath ファイルパス
+   * @param options オプション（upsert: 既存ファイルを上書きするかどうか）
+   * @returns 署名付きURLとパス
+   */
+  async createSignedUploadUrl(
+    bucketName: string,
+    filePath: string,
+    options?: { upsert: boolean },
+  ): Promise<{ signedUrl: string; path: string }> {
+    const { data, error } = await this.supabase.storage.from(bucketName).createSignedUploadUrl(filePath, options);
+
+    if (error) {
+      this.logger.error('Failed to create signed upload URL', error);
+      throw new Error(`Signed upload URL creation failed: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error('Failed to create signed upload URL: no data returned');
+    }
+
+    return {
+      signedUrl: data.signedUrl,
+      path: data.path,
+    };
+  }
 }
