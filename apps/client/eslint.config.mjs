@@ -1,27 +1,17 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
+import { baseConfig } from '@monorepo/eslint-config';
+import nextConfig from 'eslint-config-next';
 import jest from 'eslint-plugin-jest';
 import jestdom from 'eslint-plugin-jest-dom';
 import storybook from 'eslint-plugin-storybook';
 import testinglibrary from 'eslint-plugin-testing-library';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
 const config = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  ...compat.extends('@feature-sliced'),
+  ...nextConfig,
   ...storybook.configs['flat/recommended'],
-  // @feature-sliced languageOptions
-  {
-    languageOptions: { ecmaVersion: 'latest' },
-  },
+  // // @feature-sliced languageOptions
+  // {
+  //   languageOptions: { ecmaVersion: 'latest' },
+  // },
   // Custom import/order for FSD structure
   {
     files: ['src/**/*.{ts,tsx}'],
@@ -47,13 +37,6 @@ const config = [
           },
         },
       ],
-    },
-  },
-  // Disable strict public API rule, rely on boundaries instead
-  {
-    files: ['src/**/*.{ts,tsx}'],
-    rules: {
-      'import/no-internal-modules': 'off',
     },
   },
   // Use tsconfig.spec.json for test files to enable typed linting on specs

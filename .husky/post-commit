@@ -18,3 +18,11 @@ if [ -f "package.json" ]; then
   npx lint-staged
 fi
 cd ../..
+
+# markdownパッケージのlint-stagedを実行
+cd packages/markdown
+if [ -f "package.json" ]; then
+  echo "Running markdown lint-staged..."
+  npx lint-staged
+fi
+cd ../..

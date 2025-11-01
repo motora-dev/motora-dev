@@ -13,6 +13,9 @@ import tseslint from 'typescript-eslint';
  * @type {import("eslint").Linter.Config}
  */
 export const baseConfig = [
+  {
+    ignores: ['dist/**', 'build/**', '.next/**', 'node_modules/**', 'eslint.config.mjs', 'jest.config.cjs'],
+  },
   js.configs.recommended,
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
@@ -84,8 +87,5 @@ export const baseConfig = [
     plugins: {
       onlyWarn,
     },
-  },
-  {
-    ignores: ['dist/**', 'build/**', '.next/**', 'node_modules/**'],
   },
 ];

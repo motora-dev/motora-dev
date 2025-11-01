@@ -5,25 +5,37 @@
   "private": true,
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "scripts": {
+    "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "check-types": "pnpm check-types:src && pnpm check-types:spec",
+    "check-types:src": "tsc --noEmit -p tsconfig.json",
+    "check-types:spec": "tsc --noEmit -p tsconfig.spec.json",
+    "format": "prettier --check \"src/**/*.ts\"",
+    "format:fix": "prettier --write \"src/**/*.ts\"",
+    "lint": "pnpm lint:eslint",
+    "lint:fix": "pnpm lint:eslint:fix",
+    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
+    "lint:eslint:fix": "pnpm lint:eslint --fix",
+    "test": "jest",
+    "test:coverage": "COLLECT_COVERAGE=true jest"
+  },
+  "devDependencies": {
+    "@monorepo/eslint-config": "workspace:*",
+    "@monorepo/typescript-config": "workspace:*",
+    "@tiptap/pm": "catalog:",
+    "@types/jest": "^30.0.0",
+    "jest": "catalog:"
+  },
   "peerDependencies": {
+    "@types/markdown-it": "^14.0.0",
     "markdown-it": "^14.0.0",
     "prosemirror-markdown": "^1.13.0",
-    "@types/markdown-it": "^14.0.0"
+    "prosemirror-model": "^1.25.4"
   },
   "peerDependenciesMeta": {
     "@types/markdown-it": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "@monorepo/jest-config": "workspace:*",
-    "@tiptap/pm": "catalog:",
-    "@types/jest": "^30.0.0",
-    "prosemirror-model": "^1.25.0"
-  },
-  "scripts": {
-    "test": "jest",
-    "test:coverage": "COLLECT_COVERAGE=true jest"
   },
   "volta": {
     "extends": "../../package.json"

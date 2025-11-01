@@ -1,9 +1,9 @@
-FROM node:22.18-slim AS builder
+FROM node:24.11.0-slim AS builder
 
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm@10.14.0
+RUN npm install -g pnpm@10.19.0
 
 # Install required system dependencies
 RUN apt-get update && \

@@ -1,7 +1,7 @@
 {
   "extends": "@monorepo/typescript-config",
   "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", ".turbo", ".next", "src/**/*.spec.ts", "src/**/*.spec.tsx"],
+  "exclude": [".next", ".turbo", "coverage", "node_modules"],
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -24,6 +24,7 @@
       "$layouts/*": ["./src/app/_components/layouts/*"],
       "$modules/*": ["./src/modules/*"],
       "$shared/*": ["./src/shared/*"]
-    }
+    },
+    "types": ["node", "jest"]
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 import Prism from 'prismjs';
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 // Prism Autoloader（CDNから必要な言語を自動ロード）
 import 'prismjs/plugins/autoloader/prism-autoloader';
@@ -22,18 +22,14 @@ interface PrismHighlighterProps {
 
 export function PrismHighlighter({ html }: PrismHighlighterProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [isHydrated, setIsHydrated] = useState(false);
 
-  // hydration完了を検知
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (isHydrated && contentRef.current) {
+  // useLayoutEffectはブラウザでのみ実行され、DOM更新直後に実行される
+  // useEffectの代わりにuseLayoutEffectを使うことで、isHydrated状態が不要になる
+  useLayoutEffect(() => {
+    if (contentRef.current) {
       Prism.highlightAll();
     }
-  }, [html, isHydrated]);
+  }, [html]);
 
   return (
     <div

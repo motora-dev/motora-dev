@@ -1,7 +1,9 @@
-import type { Schema, Node } from 'prosemirror-model';
-import { MarkdownParser, defaultMarkdownParser } from '@tiptap/pm/markdown';
+import { MarkdownParser } from '@tiptap/pm/markdown';
+
 import { getMarkdownTokenizer } from './tokenizer';
 import { MARKDOWN_TOKENS } from './tokens';
+
+import type { Schema, Node } from 'prosemirror-model';
 
 /**
  * Markdown → ProseMirrorドキュメント変換パーサーを作成
