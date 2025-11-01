@@ -1,9 +1,9 @@
 'use client';
 import Image from '@tiptap/extension-image';
-import { MarkdownSerializer, defaultMarkdownSerializer } from '@tiptap/pm/markdown';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useCallback, useEffect, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { serializeToMarkdown } from '@monorepo/markdown';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
 
@@ -18,33 +18,15 @@ const BUCKET_NAME = 'media';
 /**
  * TiptapEditorコンポーネント
  *
- * @tiptap/pm/markdownを使用してMarkdownとの双方向変換を実現
+ * @monorepo/markdownを使用してMarkdownとの双方向変換を実現
  * - 読み込み時: HTMLを受け取り、エディタに設定（後方互換性）
- * - 保存時: ProseMirrorドキュメント → @tiptap/pm/markdownでserialize → Markdown
+ * - 保存時: ProseMirrorドキュメント → @monorepo/markdownでserialize → Markdown
  *
  * これにより、一貫したMarkdown変換が保証されます。
  */
 export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEditorProps) => {
   const createUploadUrlMutation = useCreateUploadUrlMutation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // カスタムシリアライザーを作成（Tiptap拡張に対応）
-  const markdownSerializer = useMemo(() => {
-    return new MarkdownSerializer(
-      {
-        ...defaultMarkdownSerializer.nodes,
-        // image拡張に対応
-        image: (state, node) => {
-          const src = node.attrs.src || '';
-          const alt = node.attrs.alt || '';
-          if (src) {
-            state.write(`![${alt}](${src})\n`);
-          }
-        },
-      },
-      defaultMarkdownSerializer.marks,
-    );
-  }, []);
 
   const handleImageUpload = useCallback(
     async (file: File, editorInstance: Editor | null) => {
@@ -128,7 +110,7 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
       onChange(html);
       if (onChangeMarkdown) {
         // ProseMirrorドキュメントをMarkdownに変換
-        const markdown = markdownSerializer.serialize(editor.state.doc);
+        const markdown = serializeToMarkdown(editor.state.doc);
         onChangeMarkdown(markdown);
       }
     },
@@ -185,10 +167,10 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     editor.commands.setContent(content);
     // エディタの内容が設定された後にMarkdownも取得
     if (onChangeMarkdown) {
-      const markdown = markdownSerializer.serialize(editor.state.doc);
+      const markdown = serializeToMarkdown(editor.state.doc);
       onChangeMarkdown(markdown);
     }
-  }, [editor, content, onChangeMarkdown, markdownSerializer]);
+  }, [editor, content, onChangeMarkdown]);
 
   return <EditorContent editor={editor} />;
 };
