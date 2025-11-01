@@ -25,7 +25,12 @@ export class ArticleEditController {
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<UpdateArticleResponseDto> {
     return await this.commandBus.execute(
-      new UpdateArticleCommand(articleId, updateArticleRequestDto.title, updateArticleRequestDto.tags),
+      new UpdateArticleCommand(
+        articleId,
+        updateArticleRequestDto.title,
+        updateArticleRequestDto.tags,
+        updateArticleRequestDto.content,
+      ),
     );
   }
 }

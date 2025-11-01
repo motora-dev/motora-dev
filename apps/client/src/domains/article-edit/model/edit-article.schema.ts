@@ -15,6 +15,7 @@ export const EditArticleSchema = z
     title: z.string(),
     tags: z.array(z.string()).default([]),
     html: z.string(),
+    markdown: z.string(),
   })
   .strict();
 

@@ -55,7 +55,7 @@ describe('supabase.factory', () => {
       expect.objectContaining({
         auth: expect.objectContaining({
           flowType: 'pkce',
-          autoRefreshToken: true,
+          autoRefreshToken: false,
           storage: expect.any(Object),
         }),
       }),

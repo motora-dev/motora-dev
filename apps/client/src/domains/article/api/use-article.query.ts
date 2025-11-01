@@ -1,8 +1,8 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import MarkdownIt from 'markdown-it';
 
 import { createApiQuery } from '$shared/api/create-api-query';
+import { markdownToHtml } from '$shared/lib/utils/markdown-to-html';
 import { getArticle } from './get-article.api';
 import { ArticleDto, ArticleResponseSchema, ArticleSchema } from '../model/article.schema';
 
@@ -14,9 +14,9 @@ export function useArticleQuery(articleId: string) {
         api: getArticle,
         schema: ArticleResponseSchema,
         // APIから取得したデータを元に、最終的なArticleオブジェクトを生成する変換ロジック
+        // @tiptap/pm/markdownを使用して一貫した変換を実現
         transform: async (res) => {
-          const md = new MarkdownIt();
-          const html = md.render(res.content);
+          const html = markdownToHtml(res.content);
           return ArticleSchema.parse({
             id: res.id,
             createdAt: res.createdAt,

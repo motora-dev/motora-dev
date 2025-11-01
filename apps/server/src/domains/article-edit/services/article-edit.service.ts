@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { GetArticleResponseDto, UpdateArticleResponseDto } from '../dto';
-import { ArticleEditRepository } from '../repositories';
+import { GetArticleResponseDto, UpdateArticleResponseDto } from '$domains/article-edit/dto';
+import { ArticleEditRepository } from '$domains/article-edit/repositories';
 
 import type { Article } from '@prisma/client';
 
@@ -24,8 +24,13 @@ export class ArticleEditService {
     };
   }
 
-  async updateArticle(articleId: string, title: string, tags: string[]): Promise<UpdateArticleResponseDto> {
-    const article: Article | null = await this.articleEditRepository.updateArticle(articleId, title, tags);
+  async updateArticle(
+    articleId: string,
+    title: string,
+    tags: string[],
+    content: string,
+  ): Promise<UpdateArticleResponseDto> {
+    const article: Article | null = await this.articleEditRepository.updateArticle(articleId, title, tags, content);
 
     if (!article) {
       throw new NotFoundException('Article not found');
@@ -35,6 +40,7 @@ export class ArticleEditService {
       id: article.publicId,
       title: article.title,
       tags: article.tags,
+      content: article.content,
     };
   }
 }

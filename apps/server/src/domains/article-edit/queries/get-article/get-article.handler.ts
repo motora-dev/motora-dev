@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
+import { GetArticleResponseDto } from '$domains/article-edit/dto';
+import { ArticleEditService } from '$domains/article-edit/services';
 import { GetArticleQuery } from './get-article.query';
-import { GetArticleResponseDto } from '../../dto';
-import { ArticleEditService } from '../../services';
 
 @QueryHandler(GetArticleQuery)
 export class GetArticleHandler implements IQueryHandler<GetArticleQuery> {
