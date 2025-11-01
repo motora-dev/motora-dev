@@ -4,6 +4,7 @@ packages:
 
 catalog:
   '@types/node': 22.18.10
+  '@tiptap/pm': 3.10.1
 
 ignoredBuiltDependencies:
   - '@nestjs/core'
