@@ -15,21 +15,35 @@ export const MARKDOWN_TOKENS: Record<string, ParseSpec> = {
   // markdown-itのリストトークンを適切にマッピング
   // これらのトークンはdefaultMarkdownParser.tokensには含まれていないが、必要
   bullet_list_open: {
-    block: 'bullet_list',
+    block: 'bulletList',
   },
   bullet_list_close: {
     ignore: true,
   },
   ordered_list_open: {
-    block: 'ordered_list',
+    block: 'orderedList',
   },
   ordered_list_close: {
     ignore: true,
   },
   list_item_open: {
-    block: 'list_item',
+    block: 'listItem',
   },
   list_item_close: {
     ignore: true,
+  },
+  code_block: {
+    block: 'codeBlock', // キャメルケース
+  },
+  fence: {
+    block: 'codeBlock', // キャメルケース
+    getAttrs: (tok) => ({ params: tok.info || '' }),
+    noCloseToken: true,
+  },
+  em: {
+    mark: 'italic', // em → italic にマッピング
+  },
+  strong: {
+    mark: 'bold', // strong → bold にマッピング
   },
 };

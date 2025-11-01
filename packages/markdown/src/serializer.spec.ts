@@ -1,6 +1,7 @@
 import { defaultMarkdownParser, MarkdownParser } from '@tiptap/pm/markdown';
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
+import { createMarkdownSerializer, serializeToMarkdown } from './serializer';
 import { getMarkdownTokenizer } from './tokenizer';
 
 import type { ParseSpec } from '@tiptap/pm/markdown';
@@ -110,215 +111,187 @@ function createTokensForSchema(schema: Schema): Record<string, ParseSpec> {
 
 const testTokens = createTokensForSchema(schema);
 
-describe('createMarkdownParser', () => {
-  it('should create a MarkdownParser instance', () => {
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    expect(parser).toBeDefined();
-    expect(parser.schema).toBe(schema);
-    expect(parser.tokenizer).toBeDefined();
-    expect(parser.tokens).toBeDefined();
-  });
-
-  it('should use the correct schema', () => {
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    expect(parser.schema).toBe(schema);
+describe('createMarkdownSerializer', () => {
+  it('should create a MarkdownSerializer instance', () => {
+    const serializer = createMarkdownSerializer();
+    expect(serializer).toBeDefined();
+    expect(typeof serializer.serialize).toBe('function');
   });
 });
 
-describe('parseMarkdown', () => {
-  it('should parse simple paragraph', () => {
+describe('serializeToMarkdown', () => {
+  it('should serialize simple paragraph', () => {
     const markdown = 'Hello, World!';
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc).toBeInstanceOf(Object);
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content).toBeDefined();
-    expect(doc.content.size).toBeGreaterThan(0);
+    expect(result).toBeTruthy();
+    expect(typeof result).toBe('string');
+    // シリアライズされた結果に元の内容が含まれていることを確認
+    expect(result).toContain('Hello');
+    expect(result).toContain('World');
   });
 
-  it('should parse heading', () => {
+  it('should serialize heading', () => {
     const markdown = '# Heading 1';
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content).toBeDefined();
-    expect(doc.content.size).toBeGreaterThan(0);
-    // 見出しが含まれていることを確認
-    let headingFound = false;
-    doc.descendants((node) => {
-      if (node.type.name === 'heading') {
-        expect(node.attrs.level).toBe(1);
-        headingFound = true;
-      }
-    });
-    expect(headingFound).toBe(true);
+    expect(result).toBeTruthy();
+    expect(result).toContain('Heading 1');
   });
 
-  it('should parse multiple paragraphs', () => {
-    const markdown = 'First paragraph.\n\nSecond paragraph.';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content.size).toBeGreaterThan(0);
-    // パラグラフが含まれていることを確認
-    let paragraphCount = 0;
-    doc.descendants((node) => {
-      if (node.type.name === 'paragraph') {
-        paragraphCount++;
-      }
-    });
-    expect(paragraphCount).toBeGreaterThanOrEqual(2);
-  });
-
-  it('should parse bullet list', () => {
+  it('should serialize bullet list', () => {
     const markdown = '- Item 1\n- Item 2\n- Item 3';
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc.type.name).toBe('doc');
-    // bulletListが含まれていることを確認（キャメルケース）
-    let bulletListFound = false;
-    let listItemCount = 0;
-    doc.descendants((node) => {
-      if (node.type.name === 'bulletList') {
-        bulletListFound = true;
-      }
-      if (node.type.name === 'listItem') {
-        listItemCount++;
-      }
-    });
-    expect(bulletListFound).toBe(true);
-    expect(listItemCount).toBeGreaterThanOrEqual(3);
+    expect(result).toBeTruthy();
+    // bulletListが正しくシリアライズされていることを確認
+    expect(result).toContain('Item 1');
+    expect(result).toContain('Item 2');
+    expect(result).toContain('Item 3');
+    // リストマーカーが含まれていることを確認
+    expect(result.match(/[-*]/)).toBeTruthy();
   });
 
-  it('should parse ordered list', () => {
+  it('should serialize ordered list', () => {
     const markdown = '1. First\n2. Second\n3. Third';
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content.firstChild?.type.name).toBe('orderedList');
+    expect(result).toBeTruthy();
+    expect(result).toContain('First');
+    expect(result).toContain('Second');
+    expect(result).toContain('Third');
   });
 
-  it('should parse code block', () => {
-    const markdown = '```\nconst x = 1;\n```';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content.firstChild?.type.name).toBe('codeBlock');
-  });
-
-  it('should parse inline code', () => {
-    const markdown = 'This is `code` inline.';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    // インラインコードはparagraph内のmarkとして存在する
-    const paragraph = doc.content.firstChild;
-    expect(paragraph?.type.name).toBe('paragraph');
-  });
-
-  it('should parse bold text', () => {
-    const markdown = 'This is **bold** text.';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    const paragraph = doc.content.firstChild;
-    expect(paragraph?.type.name).toBe('paragraph');
-  });
-
-  it('should parse italic text', () => {
-    const markdown = 'This is *italic* text.';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    const paragraph = doc.content.firstChild;
-    expect(paragraph?.type.name).toBe('paragraph');
-  });
-
-  it('should parse link', () => {
-    const markdown = 'This is a [link](https://example.com).';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    const paragraph = doc.content.firstChild;
-    expect(paragraph?.type.name).toBe('paragraph');
-  });
-
-  it('should parse blockquote', () => {
-    const markdown = '> This is a quote.';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content.firstChild?.type.name).toBe('blockquote');
-  });
-
-  it('should parse horizontal rule', () => {
-    const markdown = '---';
-    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
-    const doc = parser.parse(markdown);
-
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content.firstChild?.type.name).toBe('horizontal_rule');
-  });
-
-  it('should parse nested lists', () => {
+  it('should serialize nested bullet list', () => {
     const markdown = '- Item 1\n  - Nested 1\n  - Nested 2\n- Item 2';
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc.type.name).toBe('doc');
-    const bulletList = doc.content.firstChild;
-    expect(bulletList?.type.name).toBe('bulletList');
+    expect(result).toBeTruthy();
+    expect(result).toContain('Item 1');
+    expect(result).toContain('Nested 1');
+    expect(result).toContain('Nested 2');
+    expect(result).toContain('Item 2');
   });
 
-  it('should handle empty markdown', () => {
-    const markdown = '';
+  it('should serialize code block', () => {
+    const markdown = '```\nconst x = 1;\n```';
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc.type.name).toBe('doc');
-    // 空のmarkdownでもdocノードは作成されるが、内容は空
-    expect(doc.content.size).toBeGreaterThanOrEqual(0);
+    expect(result).toBeTruthy();
+    // コードブロックが含まれていることを確認
+    expect(result).toContain('const x = 1');
   });
 
-  it('should handle complex markdown with multiple elements', () => {
+  it('should serialize blockquote', () => {
+    const markdown = '> This is a quote.';
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
+
+    expect(result).toBeTruthy();
+    expect(result).toContain('quote');
+  });
+
+  it('should serialize image', () => {
+    const markdown = '![alt text](https://example.com/image.png)';
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
+
+    expect(result).toBeTruthy();
+    expect(result).toContain('alt text');
+    expect(result).toContain('https://example.com/image.png');
+  });
+
+  it('should serialize complex document with bullet list', () => {
     const markdown = `# Title
 
-This is a paragraph with **bold** and *italic* text.
+This is a paragraph.
 
 - List item 1
 - List item 2
+- List item 3
 
-> This is a quote.
-
-\`\`\`
-code block
-\`\`\`
-`;
+Another paragraph.`;
     const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
 
-    expect(doc.type.name).toBe('doc');
-    expect(doc.content.size).toBeGreaterThan(1);
+    expect(result).toBeTruthy();
+    expect(result).toContain('Title');
+    expect(result).toContain('List item 1');
+    expect(result).toContain('List item 2');
+    expect(result).toContain('List item 3');
+    expect(result).toContain('Another paragraph');
   });
 
-  it('should throw error with invalid schema', () => {
-    // 無効なスキーマを作成（docノードなし）
-    expect(() => {
-      new Schema({
-        nodes: {},
-        marks: {},
-      });
-    }).toThrow("Schema is missing its top node type ('doc')");
+  it('should handle empty document', () => {
+    const markdown = '';
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
+    const result = serializeToMarkdown(doc);
+
+    expect(typeof result).toBe('string');
+    // 空のドキュメントは空文字列を返す可能性がある
+    expect(result).toBeDefined();
+  });
+
+  it('should round-trip bullet list (parse then serialize)', () => {
+    const originalMarkdown = '- Item 1\n- Item 2\n- Item 3';
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(originalMarkdown);
+    const serializedMarkdown = serializeToMarkdown(doc);
+
+    expect(serializedMarkdown).toBeTruthy();
+    // シリアライズされた結果を再度パースできることを確認
+    const reParsedDoc = parser.parse(serializedMarkdown);
+    expect(reParsedDoc).toBeDefined();
+
+    // bulletListが含まれていることを確認（キャメルケース）
+    let bulletListFound = false;
+    reParsedDoc.descendants((node) => {
+      if (node.type.name === 'bulletList') {
+        bulletListFound = true;
+      }
+    });
+    expect(bulletListFound).toBe(true);
+  });
+
+  it('should serialize bullet list created programmatically', () => {
+    // プログラム的にbulletListドキュメントを作成（キャメルケース）
+    const bulletListType = schema.nodes.bulletList;
+    const listItemType = schema.nodes.listItem;
+    const paragraphType = schema.nodes.paragraph;
+
+    if (!bulletListType || !listItemType || !paragraphType) {
+      throw new Error('Required node types not found in schema');
+    }
+
+    const doc = schema.node('doc', {}, [
+      bulletListType.create({}, [
+        listItemType.create({}, [paragraphType.create({}, [schema.text('Programmatic Item 1')])]),
+        listItemType.create({}, [paragraphType.create({}, [schema.text('Programmatic Item 2')])]),
+        listItemType.create({}, [paragraphType.create({}, [schema.text('Programmatic Item 3')])]),
+      ]),
+    ]);
+
+    const result = serializeToMarkdown(doc);
+
+    expect(result).toBeTruthy();
+    expect(result).toContain('Programmatic Item 1');
+    expect(result).toContain('Programmatic Item 2');
+    expect(result).toContain('Programmatic Item 3');
   });
 });

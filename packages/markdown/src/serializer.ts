@@ -20,8 +20,16 @@ export function createMarkdownSerializer(): MarkdownSerializer {
           state.write(`![${alt}](${src})\n`);
         }
       },
+      bulletList: defaultMarkdownSerializer.nodes.bullet_list,
+      orderedList: defaultMarkdownSerializer.nodes.ordered_list,
+      listItem: defaultMarkdownSerializer.nodes.list_item,
+      codeBlock: defaultMarkdownSerializer.nodes.code_block,
     },
-    defaultMarkdownSerializer.marks,
+    {
+      ...defaultMarkdownSerializer.marks,
+      bold: defaultMarkdownSerializer.marks.strong,
+      italic: defaultMarkdownSerializer.marks.em,
+    },
   );
 }
 

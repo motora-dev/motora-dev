@@ -1,8 +1,8 @@
 'use client';
+import { markdownToHtml } from '@monorepo/markdown';
 import { useQuery } from '@tanstack/react-query';
 
 import { createApiQuery } from '$shared/api/create-api-query';
-import { markdownToHtml } from '$shared/lib/utils/markdown-to-html';
 import { getArticle } from './get-article.api';
 import { ArticleDto, ArticleResponseSchema, ArticleSchema } from '../model/article.schema';
 
