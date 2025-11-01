@@ -29,7 +29,7 @@ COPY . .
 RUN pnpm run build --filter=@monorepo/server
 
 # Production stage
-FROM node:22.18-slim AS runner
+FROM node:24.11.0-slim AS runner
 
 WORKDIR /app
 
