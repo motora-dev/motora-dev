@@ -20,8 +20,6 @@ export function createMarkdownSerializer(): MarkdownSerializer {
           state.write(`![${alt}](${src})\n`);
         }
       },
-      // TiptapのStarterKitが使用するキャメルケースのノードタイプに対応
-      // スネークケース（defaultMarkdownSerializer）と同じ処理を適用
       bulletList: defaultMarkdownSerializer.nodes.bullet_list,
       orderedList: defaultMarkdownSerializer.nodes.ordered_list,
       listItem: defaultMarkdownSerializer.nodes.list_item,
@@ -30,6 +28,7 @@ export function createMarkdownSerializer(): MarkdownSerializer {
     {
       ...defaultMarkdownSerializer.marks,
       bold: defaultMarkdownSerializer.marks.strong,
+      italic: defaultMarkdownSerializer.marks.em,
     },
   );
 }
