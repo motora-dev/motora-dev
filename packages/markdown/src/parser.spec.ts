@@ -1,14 +1,118 @@
-import { defaultMarkdownParser } from '@tiptap/pm/markdown';
-import { Schema } from 'prosemirror-model';
+import { defaultMarkdownParser, MarkdownParser } from '@tiptap/pm/markdown';
+import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
-import { createMarkdownParser, parseMarkdown } from './parser';
+import { getMarkdownTokenizer } from './tokenizer';
 
-// defaultMarkdownParserのスキーマを使用（実際の使用環境と同じ）
-const schema: Schema = defaultMarkdownParser.schema;
+import type { ParseSpec } from '@tiptap/pm/markdown';
+
+// Tiptapのキャメルケースノード名に対応したスキーマを作成
+// tokens.tsがキャメルケース（bulletList, codeBlock等）にマッピングしているため、
+// テストでも同じキャメルケースのノード名を使用する必要がある
+const defaultSchema = defaultMarkdownParser.schema;
+
+// ノード名のマッピング（スネークケース → キャメルケース）
+const nodeNameMapping: Record<string, string> = {
+  bullet_list: 'bulletList',
+  ordered_list: 'orderedList',
+  list_item: 'listItem',
+  code_block: 'codeBlock',
+};
+
+// マーク名のマッピング（スネークケース → キャメルケース）
+const markNameMapping: Record<string, string> = {
+  em: 'italic',
+  strong: 'bold',
+};
+
+// キャメルケースのノード名でスキーマを作成
+const nodes: Record<string, unknown> = {};
+const marks: Record<string, unknown> = {};
+
+// ノードをコピーして名前を変更（defaultSchema.nodesはプロパティアクセス可能）
+for (const nodeName of Object.keys(defaultSchema.nodes)) {
+  const nodeType = defaultSchema.nodes[nodeName];
+  if (nodeType) {
+    const mappedName = nodeNameMapping[nodeName] || nodeName;
+    const spec = { ...nodeType.spec };
+    // content文字列内のノード名を置換（例: "list_item+" → "listItem+"）
+    if (typeof spec.content === 'string') {
+      let content = spec.content;
+      for (const [oldName, newName] of Object.entries(nodeNameMapping)) {
+        content = content.replace(new RegExp(`\\b${oldName}\\b`, 'g'), newName);
+      }
+      spec.content = content;
+    }
+    nodes[mappedName] = spec;
+  }
+}
+
+// マークをコピーして名前を変更（defaultSchema.marksはプロパティアクセス可能）
+for (const markName of Object.keys(defaultSchema.marks)) {
+  const markType = defaultSchema.marks[markName];
+  if (markType) {
+    const mappedName = markNameMapping[markName] || markName;
+    marks[mappedName] = { ...markType.spec };
+  }
+}
+
+const schema: Schema = new Schema({
+  nodes: nodes as Record<string, NodeSpec>,
+  marks: marks as Record<string, MarkSpec>,
+});
+
+// スキーマに応じたトークンセットを作成（MARKDOWN_TOKENSのスネークケース参照を回避）
+function createTokensForSchema(schema: Schema): Record<string, ParseSpec> {
+  const tokens: Record<string, ParseSpec> = {};
+
+  // defaultMarkdownParser.tokensをベースに、スキーマのノード名に合わせて変換
+  for (const [tokenName, parseSpec] of Object.entries(defaultMarkdownParser.tokens)) {
+    const spec = { ...parseSpec };
+
+    // blockやmarkで参照されているノード/マーク名をスキーマに合わせて変換
+    if (spec.block) {
+      // スネークケース → キャメルケースにマッピング
+      const mappedBlock = nodeNameMapping[spec.block] || spec.block;
+      // スキーマに存在するかチェック
+      if (schema.nodes[mappedBlock]) {
+        tokens[tokenName] = { ...spec, block: mappedBlock };
+      }
+    } else if (spec.mark) {
+      // スネークケース → キャメルケースにマッピング
+      const mappedMark = markNameMapping[spec.mark] || spec.mark;
+      // スキーマに存在するかチェック
+      if (schema.marks[mappedMark]) {
+        tokens[tokenName] = { ...spec, mark: mappedMark };
+      }
+    } else {
+      // block/markを持たないトークン（ignoreなど）はそのまま
+      tokens[tokenName] = spec;
+    }
+  }
+
+  // 追加のトークンマッピング（tokens.tsと同じ）
+  tokens.bullet_list_open = { block: 'bulletList' };
+  tokens.bullet_list_close = { ignore: true };
+  tokens.ordered_list_open = { block: 'orderedList' };
+  tokens.ordered_list_close = { ignore: true };
+  tokens.list_item_open = { block: 'listItem' };
+  tokens.list_item_close = { ignore: true };
+  tokens.code_block = { block: 'codeBlock' };
+  tokens.fence = {
+    block: 'codeBlock',
+    getAttrs: (tok: { info?: string }) => ({ params: tok.info || '' }),
+    noCloseToken: true,
+  };
+  tokens.em = { mark: 'italic' };
+  tokens.strong = { mark: 'bold' };
+
+  return tokens;
+}
+
+const testTokens = createTokensForSchema(schema);
 
 describe('createMarkdownParser', () => {
   it('should create a MarkdownParser instance', () => {
-    const parser = createMarkdownParser(schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     expect(parser).toBeDefined();
     expect(parser.schema).toBe(schema);
     expect(parser.tokenizer).toBeDefined();
@@ -16,7 +120,7 @@ describe('createMarkdownParser', () => {
   });
 
   it('should use the correct schema', () => {
-    const parser = createMarkdownParser(schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
     expect(parser.schema).toBe(schema);
   });
 });
@@ -24,7 +128,8 @@ describe('createMarkdownParser', () => {
 describe('parseMarkdown', () => {
   it('should parse simple paragraph', () => {
     const markdown = 'Hello, World!';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc).toBeInstanceOf(Object);
     expect(doc.type.name).toBe('doc');
@@ -34,7 +139,8 @@ describe('parseMarkdown', () => {
 
   it('should parse heading', () => {
     const markdown = '# Heading 1';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     expect(doc.content).toBeDefined();
@@ -52,7 +158,8 @@ describe('parseMarkdown', () => {
 
   it('should parse multiple paragraphs', () => {
     const markdown = 'First paragraph.\n\nSecond paragraph.';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     expect(doc.content.size).toBeGreaterThan(0);
@@ -68,17 +175,18 @@ describe('parseMarkdown', () => {
 
   it('should parse bullet list', () => {
     const markdown = '- Item 1\n- Item 2\n- Item 3';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
-    // bullet_listが含まれていることを確認
+    // bulletListが含まれていることを確認（キャメルケース）
     let bulletListFound = false;
     let listItemCount = 0;
     doc.descendants((node) => {
-      if (node.type.name === 'bullet_list') {
+      if (node.type.name === 'bulletList') {
         bulletListFound = true;
       }
-      if (node.type.name === 'list_item') {
+      if (node.type.name === 'listItem') {
         listItemCount++;
       }
     });
@@ -88,23 +196,26 @@ describe('parseMarkdown', () => {
 
   it('should parse ordered list', () => {
     const markdown = '1. First\n2. Second\n3. Third';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
-    expect(doc.content.firstChild?.type.name).toBe('ordered_list');
+    expect(doc.content.firstChild?.type.name).toBe('orderedList');
   });
 
   it('should parse code block', () => {
     const markdown = '```\nconst x = 1;\n```';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
-    expect(doc.content.firstChild?.type.name).toBe('code_block');
+    expect(doc.content.firstChild?.type.name).toBe('codeBlock');
   });
 
   it('should parse inline code', () => {
     const markdown = 'This is `code` inline.';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     // インラインコードはparagraph内のmarkとして存在する
@@ -114,7 +225,8 @@ describe('parseMarkdown', () => {
 
   it('should parse bold text', () => {
     const markdown = 'This is **bold** text.';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     const paragraph = doc.content.firstChild;
@@ -123,7 +235,8 @@ describe('parseMarkdown', () => {
 
   it('should parse italic text', () => {
     const markdown = 'This is *italic* text.';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     const paragraph = doc.content.firstChild;
@@ -132,7 +245,8 @@ describe('parseMarkdown', () => {
 
   it('should parse link', () => {
     const markdown = 'This is a [link](https://example.com).';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     const paragraph = doc.content.firstChild;
@@ -141,7 +255,8 @@ describe('parseMarkdown', () => {
 
   it('should parse blockquote', () => {
     const markdown = '> This is a quote.';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     expect(doc.content.firstChild?.type.name).toBe('blockquote');
@@ -149,7 +264,8 @@ describe('parseMarkdown', () => {
 
   it('should parse horizontal rule', () => {
     const markdown = '---';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     expect(doc.content.firstChild?.type.name).toBe('horizontal_rule');
@@ -157,16 +273,18 @@ describe('parseMarkdown', () => {
 
   it('should parse nested lists', () => {
     const markdown = '- Item 1\n  - Nested 1\n  - Nested 2\n- Item 2';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     const bulletList = doc.content.firstChild;
-    expect(bulletList?.type.name).toBe('bullet_list');
+    expect(bulletList?.type.name).toBe('bulletList');
   });
 
   it('should handle empty markdown', () => {
     const markdown = '';
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     // 空のmarkdownでもdocノードは作成されるが、内容は空
@@ -187,7 +305,8 @@ This is a paragraph with **bold** and *italic* text.
 code block
 \`\`\`
 `;
-    const doc = parseMarkdown(markdown, schema);
+    const parser = new MarkdownParser(schema, getMarkdownTokenizer(), testTokens);
+    const doc = parser.parse(markdown);
 
     expect(doc.type.name).toBe('doc');
     expect(doc.content.size).toBeGreaterThan(1);
