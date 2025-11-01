@@ -1,9 +1,9 @@
 'use client';
+import { serializeToMarkdown } from '@monorepo/markdown';
 import Image from '@tiptap/extension-image';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useCallback, useEffect, useRef } from 'react';
-import { serializeToMarkdown } from '@monorepo/markdown';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
 
