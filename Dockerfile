@@ -15,7 +15,7 @@ RUN apt-get update && \
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/server/package.json ./apps/server/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY packages/jest-config/package.json ./packages/jest-config/
+COPY packages/markdown/package.json ./packages/markdown/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY apps/server/prisma/ ./apps/server/prisma/
 
@@ -29,7 +29,7 @@ COPY . .
 RUN pnpm run build --filter=@monorepo/server
 
 # Production stage
-FROM node:22.18-slim AS runner
+FROM node:24.11.0-slim AS runner
 
 WORKDIR /app
 
