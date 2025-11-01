@@ -1,8 +1,8 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import MarkdownIt from 'markdown-it';
 
 import { createApiQuery } from '$shared/api/create-api-query';
+import { markdownToHtml } from '$shared/lib/utils/markdown-to-html';
 import { getEditArticle } from './get-edit-article.api';
 import { EditArticleDto, EditArticleResponseSchema, EditArticleSchema } from '../model/edit-article.schema';
 
@@ -14,13 +14,14 @@ export function useEditArticleQuery(articleId: string) {
         api: getEditArticle,
         schema: EditArticleResponseSchema,
         transform: async (res) => {
-          const md = new MarkdownIt();
-          const html = md.render(res.content);
+          // @tiptap/pm/markdownを使用して一貫した変換を実現
+          const html = markdownToHtml(res.content);
           return EditArticleSchema.parse({
             id: res.id,
             title: res.title,
             tags: res.tags,
             html,
+            markdown: res.content,
           });
         },
       },

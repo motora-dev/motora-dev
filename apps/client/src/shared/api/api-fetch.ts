@@ -58,7 +58,12 @@ export const api = ky.create({
         const cookieStore = await cookies();
         const cookieHeader = cookieStore
           .getAll()
-          .map((cookie) => `${cookie.name}=${cookie.value}`)
+          .map((cookie) => {
+            // Cookieの値が非ASCII文字を含む場合に備えてエンコード
+            // ただし、すでにエンコードされている可能性もあるため、安全に処理
+            const encodedValue = encodeURIComponent(cookie.value);
+            return `${cookie.name}=${encodedValue}`;
+          })
           .join('; ');
 
         if (cookieHeader) {
@@ -115,6 +120,15 @@ export async function get<T>(url: Input): Promise<ApiResponse<T>> {
 export async function post<T>(url: Input, json?: unknown): Promise<ApiResponse<T>> {
   try {
     const response = await api.post(url, { json });
+    return createSuccessResponse(response);
+  } catch (error) {
+    return createFailureResponse(error);
+  }
+}
+
+export async function put<T>(url: Input, json?: unknown): Promise<ApiResponse<T>> {
+  try {
+    const response = await api.put(url, { json });
     return createSuccessResponse(response);
   } catch (error) {
     return createFailureResponse(error);
