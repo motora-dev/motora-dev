@@ -1,5 +1,6 @@
-import { Schema, Node } from 'prosemirror-model';
 import { defaultMarkdownParser } from '@tiptap/pm/markdown';
+import { Schema } from 'prosemirror-model';
+
 import { createMarkdownParser, parseMarkdown } from './parser';
 
 // defaultMarkdownParserのスキーマを使用（実際の使用環境と同じ）

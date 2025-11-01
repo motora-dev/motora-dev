@@ -1,6 +1,6 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useForm } from '@tanstack/react-form';
+import { useMemo } from 'react';
 
 import { useEditArticleQuery } from '$domains/article-edit/api/use-edit-article.query';
 import { useUpdateArticleMutation } from '$domains/article-edit/api/use-update-article.mutation';
@@ -10,41 +10,39 @@ import { TiptapEditor } from '$shared/ui/tiptap';
 export function EditorClient({ id }: { id: string }) {
   const { data, isLoading } = useEditArticleQuery(id);
   const updateArticleMutation = useUpdateArticleMutation(id);
-  const [title, setTitle] = useState<string>('');
-  const [tagsInput, setTagsInput] = useState<string>('');
-  const [content, setContent] = useState<string>('');
-  const [markdown, setMarkdown] = useState<string>('');
 
-  // 初回取得時のみエディタに反映
-  useEffect(() => {
+  const defaultValues = useMemo(() => {
     if (!isLoading && data) {
-      setTitle(data.title);
-      setTagsInput(data.tags.join(', '));
-      setContent(data.html);
-      setMarkdown(data.markdown);
+      return {
+        title: data.title,
+        tagsInput: data.tags.join(', '),
+        content: data.html,
+        markdown: data.markdown,
+      };
     }
+    return {
+      title: '',
+      tagsInput: '',
+      content: '',
+      markdown: '',
+    };
   }, [isLoading, data]);
 
-  const handleContentChange = (newContent: string) => {
-    setContent(newContent);
-  };
+  const form = useForm({
+    defaultValues,
+    onSubmit: async ({ value }) => {
+      const tagsArray = value.tagsInput
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
 
-  const handleMarkdownChange = (newMarkdown: string) => {
-    setMarkdown(newMarkdown);
-  };
-
-  const handleSave = async () => {
-    const tagsArray = tagsInput
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-
-    await updateArticleMutation.mutateAsync({
-      title,
-      tags: tagsArray,
-      content: markdown,
-    });
-  };
+      await updateArticleMutation.mutateAsync({
+        title: value.title,
+        tags: tagsArray,
+        content: value.markdown,
+      });
+    },
+  });
 
   if (isLoading) {
     return <div>読み込み中...</div>;
@@ -53,42 +51,84 @@ export function EditorClient({ id }: { id: string }) {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">記事編集</h1>
-      <div className="space-y-4 mb-6">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-2">
-            タイトル
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="記事のタイトルを入力してください"
-          />
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <div className="space-y-4 mb-6">
+          <form.Field
+            name="title"
+            validators={{
+              onChange: ({ value }) => (value.length === 0 ? 'タイトルは必須です' : undefined),
+            }}
+          >
+            {(field) => (
+              <div>
+                <label htmlFor={field.name} className="block text-sm font-medium mb-2">
+                  タイトル
+                </label>
+                <input
+                  id={field.name}
+                  type="text"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="記事のタイトルを入力してください"
+                />
+                {field.state.meta.errors && (
+                  <div className="text-red-500 text-sm mt-1">{field.state.meta.errors[0]}</div>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          <form.Field name="tagsInput">
+            {(field) => (
+              <div>
+                <label htmlFor={field.name} className="block text-sm font-medium mb-2">
+                  タグ（カンマ区切り）
+                </label>
+                <input
+                  id={field.name}
+                  type="text"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="例: JavaScript, React, Next.js"
+                />
+              </div>
+            )}
+          </form.Field>
         </div>
-        <div>
-          <label htmlFor="tags" className="block text-sm font-medium mb-2">
-            タグ（カンマ区切り）
-          </label>
-          <input
-            id="tags"
-            type="text"
-            value={tagsInput}
-            onChange={(e) => setTagsInput(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="例: JavaScript, React, Next.js"
-          />
+
+        <form.Field name="content">
+          {(field) => (
+            <div className="mb-4">
+              <TiptapEditor
+                content={field.state.value}
+                onChange={(newContent) => {
+                  field.handleChange(newContent);
+                }}
+                onChangeMarkdown={(newMarkdown) => {
+                  form.setFieldValue('markdown', newMarkdown);
+                }}
+              />
+            </div>
+          )}
+        </form.Field>
+
+        <div className="flex justify-end gap-4">
+          <Button type="submit" disabled={updateArticleMutation.isPending || !form.state.canSubmit} variant="default">
+            {updateArticleMutation.isPending ? '保存中...' : '保存'}
+          </Button>
         </div>
-      </div>
-      <div className="mb-4">
-        <TiptapEditor content={content} onChange={handleContentChange} onChangeMarkdown={handleMarkdownChange} />
-      </div>
-      <div className="flex justify-end gap-4">
-        <Button onClick={handleSave} disabled={updateArticleMutation.isPending} variant="default">
-          {updateArticleMutation.isPending ? '保存中...' : '保存'}
-        </Button>
-      </div>
+      </form>
+
       {updateArticleMutation.isSuccess && (
         <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md text-green-800">保存が完了しました</div>
       )}

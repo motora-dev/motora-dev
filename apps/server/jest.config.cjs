@@ -3,7 +3,7 @@ module.exports = {
   roots: ['<rootDir>/src/'],
   rootDir: '.',
   collectCoverage: process.env.COLLECT_COVERAGE === 'true',
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/main.ts'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/main.ts', '!index.ts'],
   coverageProvider: 'babel',
   coverageDirectory: './coverage',
   coverageReporters: ['text', 'json', 'lcov'],

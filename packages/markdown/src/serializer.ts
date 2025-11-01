@@ -1,5 +1,6 @@
-import type { Schema, Node } from 'prosemirror-model';
 import { MarkdownSerializer, defaultMarkdownSerializer } from '@tiptap/pm/markdown';
+
+import type { Node } from 'prosemirror-model';
 
 /**
  * ProseMirrorドキュメント → Markdown 変換シリアライザーを作成
@@ -31,7 +32,7 @@ export function createMarkdownSerializer(): MarkdownSerializer {
  * @param schema ProseMirrorスキーマ（オプション、将来の拡張用）
  * @returns Markdown文字列
  */
-export function serializeToMarkdown(doc: Node, schema?: Schema): string {
+export function serializeToMarkdown(doc: Node): string {
   const serializer = createMarkdownSerializer();
   return serializer.serialize(doc);
 }

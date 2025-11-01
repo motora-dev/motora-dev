@@ -1,5 +1,6 @@
-import type { ParseSpec } from '@tiptap/pm/markdown';
 import { defaultMarkdownParser } from '@tiptap/pm/markdown';
+
+import type { ParseSpec } from '@tiptap/pm/markdown';
 
 /**
  * サーバー・クライアント共通のmarkdown-itトークンマッピング

@@ -3,7 +3,7 @@
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
-    "typescript": "5.9.3"
+    "typescript": "catalog:"
   },
   "volta": {
     "extends": "../../package.json"

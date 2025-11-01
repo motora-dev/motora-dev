@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.spec.ts", "src/**/*.ts"],
-  "exclude": ["node_modules", ".turbo", "dist"],
+  "include": ["src/**/*.ts", "src/**/*.spec.ts"],
+  "exclude": [".trubo", "coverage", "dist", "node_modules"],
   "compilerOptions": {
     "types": ["node", "jest"]
   }
