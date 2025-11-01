@@ -32,7 +32,7 @@ motora-dev/
 
 #### 📱 Client (`apps/client`)
 
-- **Framework**: [Next.js](https://nextjs.org/) 15.4.2 (App Router)
+- **Framework**: [Next.js](https://nextjs.org/) 16.0.1 (App Router)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) v4 + CSS Modules
 - **UI Components**: [Shadcn UI](https://ui.shadcn.com/) (Radix UIベース)
 - **Rich Text Editor**: [TipTap](https://tiptap.dev/) (ProseMirrorベース)
@@ -56,7 +56,7 @@ motora-dev/
 
 - **Package Manager**: [pnpm](https://pnpm.io/) (ワークスペース機能使用)
 - **Build System**: [Turborepo](https://turbo.build/repo)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) 5.8.2
+- **Language**: [TypeScript](https://www.typescriptlang.org/) 5.9.3
 - **Code Quality**: ESLint + Prettier + Stylelint
 - **Testing**: Jest + Testing Library
 - **Module System**: ES Modules (`"type": "module"`)
@@ -191,17 +191,17 @@ pnpm --filter @monorepo/server test
 
 ### Monorepo & Development
 
-![Turborepo](https://img.shields.io/badge/Turborepo-2.5.5-ef4444?logo=turborepo&logoColor=white)
+![Turborepo](https://img.shields.io/badge/Turborepo-2.6.0-ef4444?logo=turborepo&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-10.19.0-f69220?logo=pnpm&logoColor=white)
-![TypeScript](<https://img.shields.io/badge/TypeScript-5.8.2%20(shared)-3178c6?logo=typescript&logoColor=white>)
+![TypeScript](<https://img.shields.io/badge/TypeScript-5.9.3%20(shared)-3178c6?logo=typescript&logoColor=white>)
 ![ESLint](https://img.shields.io/badge/ESLint-shared-4b32c3?logo=eslint&logoColor=white)
 ![Jest](https://img.shields.io/badge/Jest-shared-c21325?logo=jest&logoColor=white)
 
 ### Client
 
-![Next.js](https://img.shields.io/badge/Next.js-15.4.2-black?logo=next.js&logoColor=white)
-![React](https://img.shields.io/badge/React-18.3.1-61dafb?logo=react&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-4.1.11-38bdf8?logo=tailwindcss&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-16.0.1-black?logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19.2.0-61dafb?logo=react&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-4.1.16-38bdf8?logo=tailwindcss&logoColor=white)
 ![Radix UI](https://img.shields.io/badge/Radix%20UI-1.x-161618?logo=radixui&logoColor=white)
 ![Shadcn UI](https://img.shields.io/badge/Shadcn%20UI-latest-000000?logo=shadcnui&logoColor=white)
 ![TipTap](https://img.shields.io/badge/TipTap-3.10.1-000000?logo=tiptap&logoColor=white)
@@ -215,7 +215,7 @@ pnpm --filter @monorepo/server test
 ![NestJS](https://img.shields.io/badge/NestJS-11.0.1-e0234e?logo=nestjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-via%20NestJS-000000?logo=express&logoColor=white)
 ![RxJS](https://img.shields.io/badge/RxJS-7.8.1-b7178c?logo=reactivex&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-6.17.1-2d3748?logo=prisma&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-6.18.0-2d3748?logo=prisma&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-2.75.0-3ecf8e?logo=supabase&logoColor=white)
 
 ## 🏃 開発フロー
