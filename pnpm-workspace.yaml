@@ -3,23 +3,26 @@ packages:
   - packages/*
 
 versions:
+  '@tanstack/react-form': &tanstack-react-form 1.23.7
+  '@tanstack/react-query': &tanstack-react-query 5.90.6
   eslint: &eslint 9.39.0
   google-auth-library: &google-auth-library 10.5.0
   husky: &husky 9.1.7
   jest: &jest 30.2.0
   ky: &ky 1.13.0
+  lint-staged: &lint-staged 16.2.6
   next: &next 16.0.1
   node: &node 24.9.2
   nestjs: &nestjs 11.1.8
-  playwright: &playwright 1.56.0
+  playwright: &playwright 1.56.1
   prettier: &prettier 3.6.2
   prisma: &prisma 6.18.0
   prismjs: &prismjs 1.30.0
   react: &react 19.2.0
-  rxjs: &rxjs 7.8.1
+  rxjs: &rxjs 7.8.2
   storybook: &storybook 10.0.2
   stylelint: &stylelint 16.25.0
-  supabase: &supabase 2.75.0
+  supabase: &supabase 2.78.0
   tailwindcss: &tailwindcss 4.1.16
   tiptap: &tiptap 3.10.1
   turbo: &turbo 2.6.0
@@ -38,6 +41,8 @@ catalog:
   '@storybook/addon-vitest': *storybook
   '@storybook/nextjs-vite': *storybook
   '@supabase/supabase-js': *supabase
+  '@tanstack/react-form': *tanstack-react-form
+  '@tanstack/react-query': *tanstack-react-query
   '@tiptap/core': *tiptap
   '@tiptap/extension-image': *tiptap
   '@tiptap/pm': *tiptap
@@ -53,6 +58,7 @@ catalog:
   jest: *jest
   jest-environment-jsdom: *jest
   ky: *ky
+  lint-staged: *lint-staged
   next: *next
   playwright: *playwright
   prettier: *prettier

@@ -37,6 +37,18 @@
       "optional": true
     }
   },
+  "lint-staged": {
+    "src/**/*.spec.ts?(x)": [
+      "tsc --noEmit -p tsconfig.spec.json"
+    ],
+    "src/**/!(*.spec).ts?(x)": [
+      "tsc --noEmit -p tsconfig.json"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix --config eslint.config.mjs"
+    ]
+  },
   "volta": {
     "extends": "../../package.json"
   }
