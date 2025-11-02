@@ -21,6 +21,7 @@
     "@monorepo/eslint-config": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
+    "lint-staged": "catalog:",
     "prettier": "catalog:",
     "husky": "catalog:",
     "turbo": "catalog:",

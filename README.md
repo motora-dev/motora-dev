@@ -33,18 +33,18 @@ motora-dev/
 #### 📱 Client (`apps/client`)
 
 - **Framework**: [Next.js](https://nextjs.org/) 16.0.1 (App Router)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) v4 + CSS Modules
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) 4.1.16 + CSS Modules
 - **UI Components**: [Shadcn UI](https://ui.shadcn.com/) (Radix UIベース)
-- **Rich Text Editor**: [TipTap](https://tiptap.dev/) (ProseMirrorベース)
-- **Testing**: Jest + React Testing Library + Vitest + Storybook
-- **Linting**: ESLint (Flat Config) + Stylelint
+- **Rich Text Editor**: [TipTap](https://tiptap.dev/) 3.10.1 (ProseMirrorベース)
+- **Testing**: Jest 30.2.0 + React Testing Library + Vitest 4.0.6 + Storybook 10.0.2
+- **Linting**: ESLint 9.39.0 (Flat Config) + Stylelint 16.25.0
 
 #### 🚀 Server (`apps/server`)
 
-- **Framework**: [NestJS](https://nestjs.com/) 11.0
+- **Framework**: [NestJS](https://nestjs.com/) 11.1.8
 - **Platform**: Express
-- **Testing**: Jest + Supertest
-- **Linting**: ESLint (Flat Config)
+- **Testing**: Jest 30.2.0 + Supertest
+- **Linting**: ESLint 9.39.0 (Flat Config)
 
 #### 📦 Shared Packages
 
@@ -54,11 +54,11 @@ motora-dev/
 
 ## 🛠 技術スタック
 
-- **Package Manager**: [pnpm](https://pnpm.io/) (ワークスペース機能使用)
-- **Build System**: [Turborepo](https://turbo.build/repo)
+- **Package Manager**: [pnpm](https://pnpm.io/) 10.19.0 (ワークスペース機能使用)
+- **Build System**: [Turborepo](https://turbo.build/repo) 2.6.0
 - **Language**: [TypeScript](https://www.typescriptlang.org/) 5.9.3
-- **Code Quality**: ESLint + Prettier + Stylelint
-- **Testing**: Jest + Testing Library
+- **Code Quality**: ESLint 9.39.0 + Prettier 3.6.2 + Stylelint 16.25.0
+- **Testing**: Jest 30.2.0 + Testing Library
 - **Module System**: ES Modules (`"type": "module"`)
 
 ## 🚀 開発環境のセットアップ
@@ -67,6 +67,54 @@ motora-dev/
 
 - Node.js 24.11.0（推奨）
 - pnpm 10.19.0
+
+### Voltaのセットアップ（推奨）
+
+このプロジェクトでは[Volta](https://volta.sh/)を使用してNode.jsとpnpmのバージョンを自動管理しています。
+
+```bash
+# Voltaがインストールされていない場合
+# macOS / Linux
+curl https://get.volta.sh | bash
+
+# Windows
+# https://docs.volta.sh/guide/getting-started を参照
+```
+
+#### pnpmサポートの有効化
+
+Voltaのpnpmサポートは現在実験的な機能です。有効にするには、環境変数`VOLTA_FEATURE_PNPM`を設定する必要があります。
+
+**macOS / Linuxの場合：**
+
+シェルプロファイルファイル（`.zshrc`、`.bash_profile`など）に以下を追加：
+
+```bash
+export VOLTA_FEATURE_PNPM=1
+```
+
+設定を反映：
+
+```bash
+# zshの場合
+source ~/.zshrc
+
+# bashの場合
+source ~/.bash_profile
+```
+
+**Windowsの場合：**
+
+システム環境変数として`VOLTA_FEATURE_PNPM`を`1`に設定してください（システム設定 > 環境変数）。
+
+```bash
+# プロジェクトディレクトリに移動すると、Voltaが自動的に
+# package.jsonの設定に基づいてNode.js 24.11.0とpnpm 10.19.0を切り替えます
+```
+
+> **注意**: Voltaのpnpmサポートは実験的な機能です。詳細は[公式ドキュメント](https://docs.volta.sh/advanced/pnpm)を参照してください。
+
+Voltaを使用することで、プロジェクトごとに適切なバージョンが自動的に設定され、バージョンの不整合を防げます。
 
 ### インストール
 
@@ -193,9 +241,10 @@ pnpm --filter @monorepo/server test
 
 ![Turborepo](https://img.shields.io/badge/Turborepo-2.6.0-ef4444?logo=turborepo&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-10.19.0-f69220?logo=pnpm&logoColor=white)
-![TypeScript](<https://img.shields.io/badge/TypeScript-5.9.3%20(shared)-3178c6?logo=typescript&logoColor=white>)
-![ESLint](https://img.shields.io/badge/ESLint-shared-4b32c3?logo=eslint&logoColor=white)
-![Jest](https://img.shields.io/badge/Jest-shared-c21325?logo=jest&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178c6?logo=typescript&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-9.39.0-4b32c3?logo=eslint&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-30.2.0-c21325?logo=jest&logoColor=white)
+![Prettier](https://img.shields.io/badge/Prettier-3.6.2-F7B93E?logo=prettier&logoColor=white)
 
 ### Client
 
@@ -212,7 +261,7 @@ pnpm --filter @monorepo/server test
 
 ### Server
 
-![NestJS](https://img.shields.io/badge/NestJS-11.0.1-e0234e?logo=nestjs&logoColor=white)
+![NestJS](https://img.shields.io/badge/NestJS-11.1.8-e0234e?logo=nestjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-via%20NestJS-000000?logo=express&logoColor=white)
 ![RxJS](https://img.shields.io/badge/RxJS-7.8.1-b7178c?logo=reactivex&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-6.18.0-2d3748?logo=prisma&logoColor=white)
@@ -226,17 +275,3 @@ pnpm --filter @monorepo/server test
 4. `pnpm check-all`で全チェック（型チェック、フォーマット、リント、ビルド、テスト）
 5. コミット（lint-stagedが自動実行）
 6. プルリクエストを作成
-
-## 📝 ライセンス
-
-このテンプレートプロジェクト自体はMITライセンスで提供されています。
-
-### ⚠️ 重要：新しいプロジェクトを作成する際の注意
-
-このテンプレートから新しいプロジェクトを作成する場合は：
-
-1. **LICENSEファイルのコピーライト情報を変更してください**
-2. **または、プロジェクトの性質に応じて適切なライセンスを選択してください**
-3. **この注意書きをREADMEから削除してください**
-
-テンプレート利用者は、作成したプロジェクトに対して自由にライセンスを選択できます（MIT、Apache 2.0、プロプライエタリなど）。
