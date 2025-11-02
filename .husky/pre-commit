@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# clientアプリのlint-stagedを実行
+if [ -f "apps/client/package.json" ] && grep -q '"lint-staged"' apps/client/package.json; then
+  echo "Running client lint-staged..."
+  (cd apps/client && npx lint-staged) || exit 1
+fi
+
+# serverアプリのlint-stagedを実行
+if [ -f "apps/server/package.json" ] && grep -q '"lint-staged"' apps/server/package.json; then
+  echo "Running server lint-staged..."
+  (cd apps/server && npx lint-staged) || exit 1
+fi
+
+# markdownパッケージのlint-stagedを実行
+if [ -f "packages/markdown/package.json" ] && grep -q '"lint-staged"' packages/markdown/package.json; then
+  echo "Running markdown lint-staged..."
+  (cd packages/markdown && npx lint-staged) || exit 1
+fi
