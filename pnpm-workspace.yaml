@@ -2,25 +2,73 @@ packages:
   - apps/*
   - packages/*
 
+versions:
+  eslint: &eslint 9.39.0
+  google-auth-library: &google-auth-library 10.5.0
+  husky: &husky 9.1.7
+  jest: &jest 30.2.0
+  ky: &ky 1.13.0
+  next: &next 16.0.1
+  node: &node 24.9.2
+  nestjs: &nestjs 11.1.8
+  playwright: &playwright 1.56.0
+  prettier: &prettier 3.6.2
+  prisma: &prisma 6.18.0
+  prismjs: &prismjs 1.30.0
+  react: &react 19.2.0
+  rxjs: &rxjs 7.8.1
+  storybook: &storybook 10.0.2
+  stylelint: &stylelint 16.25.0
+  supabase: &supabase 2.75.0
+  tailwindcss: &tailwindcss 4.1.16
+  tiptap: &tiptap 3.10.1
+  turbo: &turbo 2.6.0
+  typescript: &typescript 5.9.3
+  vitest: &vitest 4.0.6
+  zod: &zod 4.1.12
+  zustand: &zustand 5.0.8
+
 catalog:
-  '@nestjs/core': 11.1.8
-  '@tiptap/core': 3.10.1
-  '@tiptap/pm': 3.10.1
-  '@types/node': 24.9.2
-  eslint: 9.39.0
-  google-auth-library: 10.5.0
-  husky: 9.1.7
-  jest: 30.2.0
-  next: 16.0.1
-  prettier: 3.6.2
-  prisma: 6.18.0
-  react: 19.2.0
-  storybook: 10.0.2
-  stylelint: 16.25.0
-  tailwindcss: 4.1.16
-  turbo: 2.6.0
-  typescript: 5.9.3
-  vitest: 4.0.6
+  '@nestjs/common': *nestjs
+  '@nestjs/core': *nestjs
+  '@nestjs/platform-express': *nestjs
+  '@nestjs/testing': *nestjs
+  '@prisma/client': *prisma
+  '@storybook/addon-a11y': *storybook
+  '@storybook/addon-vitest': *storybook
+  '@storybook/nextjs-vite': *storybook
+  '@supabase/supabase-js': *supabase
+  '@tiptap/core': *tiptap
+  '@tiptap/extension-image': *tiptap
+  '@tiptap/pm': *tiptap
+  '@tiptap/react': *tiptap
+  '@tiptap/starter-kit': *tiptap
+  '@types/node': *node
+  '@vitest/browser': *vitest
+  '@vitest/browser-playwright': *vitest
+  '@vitest/coverage-v8': *vitest
+  eslint: *eslint
+  google-auth-library: *google-auth-library
+  husky: *husky
+  jest: *jest
+  jest-environment-jsdom: *jest
+  ky: *ky
+  next: *next
+  playwright: *playwright
+  prettier: *prettier
+  prisma: *prisma
+  prismjs: *prismjs
+  react: *react
+  react-dom: *react
+  rxjs: *rxjs
+  storybook: *storybook
+  stylelint: *stylelint
+  tailwindcss: *tailwindcss
+  turbo: *turbo
+  typescript: *typescript
+  vitest: *vitest
+  zod: *zod
+  zustand: *zustand
 
 ignoredBuiltDependencies:
   - '@nestjs/core'
