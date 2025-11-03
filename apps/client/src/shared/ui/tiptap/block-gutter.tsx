@@ -271,10 +271,9 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
       {hoveredBlock && buttonPosition && (
         <div
           ref={buttonContainerRef}
-          className="absolute flex flex-row items-center justify-center gap-1 transition-all duration-200"
+          className="absolute flex flex-row items-start justify-center gap-1 pt-1 transition-all duration-200"
           style={{
             top: `${buttonPosition.top}px`,
-            height: `${buttonPosition.height}px`,
           }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => handleDrop(e, hoveredBlock)}
