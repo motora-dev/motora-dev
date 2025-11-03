@@ -176,6 +176,12 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.2.2)(react@19.2.0)
+      '@tanstack/react-form':
+        specifier: ^1.23.7
+        version: 1.23.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.90.6(react@19.2.0)
       '@tiptap/core':
         specifier: 'catalog:'
         version: 3.10.1(@tiptap/pm@3.10.1)
@@ -224,6 +230,9 @@ importers:
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.12
       zustand:
         specifier: 'catalog:'
         version: 5.0.8(@types/react@19.2.2)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0))
@@ -264,12 +273,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.1.16)
-      '@tanstack/react-form':
-        specifier: ^1.23.7
-        version: 1.23.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.90.6(react@19.2.0)
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -354,9 +357,6 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.0.6(@types/node@24.9.2)(@vitest/browser-playwright@4.0.6)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1)
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.12
 
   apps/server:
     dependencies:

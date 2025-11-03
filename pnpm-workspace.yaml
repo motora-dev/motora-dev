@@ -41,6 +41,7 @@ catalog:
   '@storybook/addon-vitest': *storybook
   '@storybook/nextjs-vite': *storybook
   '@supabase/supabase-js': *supabase
+  '@tailwindcss/postcss': *tailwindcss
   '@tanstack/react-form': *tanstack-react-form
   '@tanstack/react-query': *tanstack-react-query
   '@tiptap/core': *tiptap
