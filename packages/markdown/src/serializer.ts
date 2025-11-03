@@ -20,6 +20,7 @@ export function createMarkdownSerializer(): MarkdownSerializer {
           state.write(`![${alt}](${src})\n`);
         }
       },
+      hardBreak: defaultMarkdownSerializer.nodes.hard_break,
       bulletList: defaultMarkdownSerializer.nodes.bullet_list,
       orderedList: defaultMarkdownSerializer.nodes.ordered_list,
       listItem: defaultMarkdownSerializer.nodes.list_item,

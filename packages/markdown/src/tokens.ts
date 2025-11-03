@@ -14,6 +14,9 @@ export const MARKDOWN_TOKENS: Record<string, ParseSpec> = {
   ...defaultMarkdownParser.tokens,
   // markdown-itのリストトークンを適切にマッピング
   // これらのトークンはdefaultMarkdownParser.tokensには含まれていないが、必要
+  hardbreak: {
+    node: 'hardBreak',
+  },
   bullet_list_open: {
     block: 'bulletList',
   },
