@@ -267,11 +267,11 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
   }, [hoveredBlock, calculateBlockPosition]);
 
   return (
-    <div ref={gutterRef} className="absolute -left-10 top-0 w-10 h-full pointer-events-auto z-10">
+    <div ref={gutterRef} className="absolute -left-16 top-0 w-10 h-full pointer-events-auto z-10">
       {hoveredBlock && buttonPosition && (
         <div
           ref={buttonContainerRef}
-          className="absolute flex flex-row items-start justify-center gap-1 pt-1 transition-all duration-200"
+          className="absolute flex flex-row items-start justify-center gap-1 transition-all duration-200"
           style={{
             top: `${buttonPosition.top}px`,
           }}

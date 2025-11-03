@@ -203,7 +203,7 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
   }, []);
 
   return (
-    <>
+    <div className="tiptap-editor">
       {/* hidden file input */}
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
 
@@ -221,10 +221,10 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
       )}
 
       {/* エディタ本体 */}
-      <div className="relative pl-10" onMouseMove={handleContainerMouseMove} onMouseLeave={handleContainerMouseLeave}>
+      <div className="relative" onMouseMove={handleContainerMouseMove} onMouseLeave={handleContainerMouseLeave}>
         {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
         <EditorContent editor={editor} />
       </div>
-    </>
+    </div>
   );
 };
