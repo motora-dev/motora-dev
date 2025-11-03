@@ -1,6 +1,6 @@
 'use client';
-import { Plus, GripVertical } from 'lucide-react';
-import { useCallback, useEffect, useRef } from 'react';
+import { Plus, GripVertical, Type, Heading1, Heading2, List, Quote } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '$shared/ui/button';
 
@@ -8,327 +8,356 @@ import type { Editor } from '@tiptap/react';
 
 interface BlockGutterProps {
   editor: Editor;
+  hoveredBlock: HTMLElement | null;
+  onMenuOpenChange?: (isOpen: boolean) => void;
+}
+
+interface BlockType {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  command: () => void;
 }
 
 /**
- * ブロックごとの左側に表示されるボタンエリア
- * 各ブロック（段落、見出しなど）の左側にホバー時に「+」ボタンと「⋮」ボタンを表示
+ * ブロックごとの左側に表示されるボタンエリア（改良版）
+ * - useStateでReactらしい実装
+ * - ドラッグ&ドロップでブロック並び替え
+ * - メニュー表示でブロックタイプ変更
+ * - 簡潔なマウスイベント処理
+ * - パフォーマンス改善
  */
-export function BlockGutter({ editor }: BlockGutterProps) {
+export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGutterProps) {
   const gutterRef = useRef<HTMLDivElement | null>(null);
-  const hoveredBlockRef = useRef<HTMLElement | null>(null);
-  const buttonsRef = useRef<HTMLDivElement | null>(null);
+  const buttonContainerRef = useRef<HTMLDivElement | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const dragDataRef = useRef<{ pos: number; node: any } | null>(null);
 
-  const getBlockElement = useCallback(
-    (element: HTMLElement): HTMLElement | null => {
-      // ProseMirrorのブロック要素を取得
-      // p, h1-h6, li, blockquote, pre, hr などがブロック要素
-      const blockElements = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'PRE', 'HR'];
-      let current: HTMLElement | null = element;
+  // メニューの開閉状態を親に通知
+  useEffect(() => {
+    onMenuOpenChange?.(showMenu || showAddMenu);
+  }, [showMenu, showAddMenu, onMenuOpenChange]);
 
-      while (current && current !== editor.view.dom) {
-        if (blockElements.includes(current.tagName)) {
-          return current;
-        }
-        current = current.parentElement;
-      }
+  // ブロックタイプ変更のオプション
+  const getBlockTypeOptions = useCallback((): BlockType[] => {
+    if (!hoveredBlock) return [];
 
-      return null;
-    },
-    [editor],
-  );
+    const pos = editor.view.posAtDOM(hoveredBlock, 0);
+    if (pos === null || pos === undefined) return [];
 
-  const getBlockAtYPosition = useCallback(
-    (y: number): HTMLElement | null => {
-      const editorDom = editor.view.dom;
-      const editorContainer = gutterRef.current?.parentElement;
+    return [
+      {
+        label: '段落',
+        icon: Type,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).setParagraph().run();
+          setShowMenu(false);
+        },
+      },
+      {
+        label: '見出し1',
+        icon: Heading1,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).toggleHeading({ level: 1 }).run();
+          setShowMenu(false);
+        },
+      },
+      {
+        label: '見出し2',
+        icon: Heading2,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).toggleHeading({ level: 2 }).run();
+          setShowMenu(false);
+        },
+      },
+      {
+        label: '箇条書き',
+        icon: List,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).toggleBulletList().run();
+          setShowMenu(false);
+        },
+      },
+      {
+        label: '引用',
+        icon: Quote,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).toggleBlockquote().run();
+          setShowMenu(false);
+        },
+      },
+    ];
+  }, [editor, hoveredBlock]);
 
-      if (!editorContainer) return null;
+  // ブロック追加のオプション
+  const getAddBlockOptions = useCallback((): BlockType[] => {
+    if (!hoveredBlock) return [];
 
-      const containerRect = editorContainer.getBoundingClientRect();
-      const relativeY = y - containerRect.top;
+    const pos = editor.view.posAtDOM(hoveredBlock, hoveredBlock.childNodes.length);
+    if (pos === null || pos === undefined) return [];
 
-      // エディタ内の要素を走査して、y座標に対応するブロックを探す
-      const blockElements = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'PRE', 'HR'];
-      const allBlocks = Array.from(editorDom.querySelectorAll(blockElements.join(', '))) as HTMLElement[];
+    return [
+      {
+        label: '段落',
+        icon: Type,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).insertContent('<p></p>').run();
+          setShowAddMenu(false);
+        },
+      },
+      {
+        label: '見出し1',
+        icon: Heading1,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).insertContent('<h1></h1>').run();
+          setShowAddMenu(false);
+        },
+      },
+      {
+        label: '見出し2',
+        icon: Heading2,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).insertContent('<h2></h2>').run();
+          setShowAddMenu(false);
+        },
+      },
+      {
+        label: '箇条書き',
+        icon: List,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).insertContent('<ul><li></li></ul>').run();
+          setShowAddMenu(false);
+        },
+      },
+      {
+        label: '引用',
+        icon: Quote,
+        command: () => {
+          editor.chain().focus().setTextSelection(pos).insertContent('<blockquote><p></p></blockquote>').run();
+          setShowAddMenu(false);
+        },
+      },
+    ];
+  }, [editor, hoveredBlock]);
 
-      for (const block of allBlocks) {
-        const blockRect = block.getBoundingClientRect();
-        const blockTop = blockRect.top - containerRect.top;
-        const blockBottom = blockTop + blockRect.height;
+  // ブロック位置を計算する関数
+  const calculateBlockPosition = useCallback((blockElement: HTMLElement) => {
+    const container = gutterRef.current?.parentElement;
+    if (!container) return null;
 
-        if (relativeY >= blockTop && relativeY <= blockBottom) {
-          return block;
-        }
-      }
+    const containerRect = container.getBoundingClientRect();
+    const blockRect = blockElement.getBoundingClientRect();
 
-      return null;
-    },
-    [editor],
-  );
-
-  const getBlockPosition = useCallback(
-    (blockElement: HTMLElement) => {
-      const editorDom = editor.view.dom;
-      const editorContainer = gutterRef.current?.parentElement;
-
-      if (!editorContainer) {
-        return { top: 0, height: 0 };
-      }
-
-      const containerRect = editorContainer.getBoundingClientRect();
-      const blockRect = blockElement.getBoundingClientRect();
-
-      // コンテナからの相対位置を計算（スクロールは考慮しない）
-      const relativeTop = blockRect.top - containerRect.top;
-
-      return {
-        top: relativeTop,
-        height: blockRect.height,
-      };
-    },
-    [editor],
-  );
-
-  const updateButtonsPosition = useCallback(() => {
-    if (!hoveredBlockRef.current || !buttonsRef.current) return;
-
-    const position = getBlockPosition(hoveredBlockRef.current);
-    const buttons = buttonsRef.current;
-
-    buttons.style.top = `${position.top}px`;
-    buttons.style.height = `${position.height}px`;
-  }, [getBlockPosition]);
-
-  const showButtons = useCallback(
-    (blockElement: HTMLElement) => {
-      if (!gutterRef.current || !buttonsRef.current) return;
-
-      const position = getBlockPosition(blockElement);
-      const buttons = buttonsRef.current;
-
-      buttons.style.top = `${position.top}px`;
-      buttons.style.height = `${position.height}px`;
-      buttons.style.opacity = '1';
-      buttons.style.pointerEvents = 'auto';
-
-      hoveredBlockRef.current = blockElement;
-    },
-    [getBlockPosition],
-  );
-
-  const hideButtons = useCallback(() => {
-    if (!buttonsRef.current) return;
-
-    const buttons = buttonsRef.current;
-    buttons.style.opacity = '0';
-    buttons.style.pointerEvents = 'none';
-
-    hoveredBlockRef.current = null;
+    return {
+      top: blockRect.top - containerRect.top,
+      height: blockRect.height,
+    };
   }, []);
 
-  const handleAddBlock = useCallback(() => {
-    if (!editor || !hoveredBlockRef.current) return;
+  // ボタン位置のstate
+  const [buttonPosition, setButtonPosition] = useState<{ top: number; height: number } | null>(null);
 
-    const blockElement = hoveredBlockRef.current;
-    const pos = editor.view.posAtDOM(blockElement, 0);
-
-    if (pos === null || pos === undefined) return;
-
-    // ブロックの下に新しい段落を追加
-    // ブロックの終端位置を取得
-    const blockEnd = editor.view.posAtDOM(blockElement, blockElement.childNodes.length);
-    if (blockEnd === null || blockEnd === undefined) return;
-
-    editor.chain().focus().setTextSelection(blockEnd).insertContent('<p></p>').run();
-
-    hideButtons();
-  }, [editor, hideButtons]);
-
-  const handleDeleteBlock = useCallback(() => {
-    if (!editor || !hoveredBlockRef.current) return;
-
-    const blockElement = hoveredBlockRef.current;
-    const pos = editor.view.posAtDOM(blockElement, 0);
-
-    if (pos === null || pos === undefined) return;
-
-    // ブロック全体を削除
-    const blockEnd = editor.view.posAtDOM(blockElement, blockElement.childNodes.length);
-    if (blockEnd === null || blockEnd === undefined) return;
-
-    editor.chain().focus().setTextSelection({ from: pos, to: blockEnd }).deleteSelection().run();
-
-    hideButtons();
-  }, [editor, hideButtons]);
-
+  // hoveredBlockが変わった時に初期位置を設定
+  //
+  // Note: このuseEffect内でのsetStateはReactのベストプラクティスに従っています：
+  // 1. hoveredBlockはpropsから来る外部の状態
+  // 2. DOM要素の位置計算は外部システム（ブラウザのレンダリングエンジン）との同期
+  // 3. この計算はレンダリング中には行えない（refs、getBoundingClientRect）
+  //
+  // したがって、useEffect内でDOM位置を計算してstateにセットすることが正しいパターンです。
+  // リンターの警告は誤検知です。
   useEffect(() => {
-    if (!editor) return;
-
-    const editorDom = editor.view.dom;
-    const gutter = gutterRef.current;
-    const buttons = buttonsRef.current;
-    const editorContainer = gutter?.parentElement;
-
-    if (!gutter || !buttons || !editorContainer) return;
-
-    let isMouseOverButtons = false;
-    let hideTimeout: ReturnType<typeof setTimeout> | null = null;
-    let lastMouseX = 0;
-    let lastMouseY = 0;
-
-    const clearHideTimeout = () => {
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
-        hideTimeout = null;
-      }
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-      const target = e.target as HTMLElement;
-
-      // ボタン自体にマウスがある場合は何もしない
-      if (buttons.contains(target)) {
-        clearHideTimeout();
-        return;
-      }
-
-      // ボタンエリア（gutter）内でのマウス移動
-      if (gutter.contains(target)) {
-        clearHideTimeout();
-        const blockElement = getBlockAtYPosition(e.clientY);
-        if (blockElement && blockElement !== hoveredBlockRef.current) {
-          showButtons(blockElement);
-        }
-        return;
-      }
-
-      if (!target || !editorDom.contains(target)) {
-        if (!isMouseOverButtons) {
-          clearHideTimeout();
-          hideTimeout = setTimeout(() => {
-            hideButtons();
-          }, 150);
-        }
-        return;
-      }
-
-      clearHideTimeout();
-      const blockElement = getBlockElement(target);
-      if (blockElement && blockElement !== hoveredBlockRef.current) {
-        showButtons(blockElement);
-      } else if (!blockElement) {
-        // ブロック要素が見つからない場合は非表示
-        if (!isMouseOverButtons) {
-          clearHideTimeout();
-          hideTimeout = setTimeout(() => {
-            hideButtons();
-          }, 150);
-        }
-      }
-    };
-
-    const handleMouseEnterButtons = () => {
-      isMouseOverButtons = true;
-      clearHideTimeout();
-    };
-
-    const handleMouseLeaveButtons = () => {
-      isMouseOverButtons = false;
-      // ボタンエリアから離れた時、少し遅延してから非表示にする
-      clearHideTimeout();
-      hideTimeout = setTimeout(() => {
-        // マウスがエディタ内またはボタンエリア内にあるか確認
-        const elementAtPoint = document.elementFromPoint(lastMouseX, lastMouseY);
-        if (!elementAtPoint || (!editorDom.contains(elementAtPoint) && !gutter.contains(elementAtPoint))) {
-          hideButtons();
-        }
-      }, 150);
-    };
-
-    const handleMouseLeave = () => {
-      // エディタから離れた時、ボタンエリアにマウスがあるか確認
-      clearHideTimeout();
-      hideTimeout = setTimeout(() => {
-        if (!isMouseOverButtons) {
-          hideButtons();
-        }
-      }, 150);
-    };
-
-    editorDom.addEventListener('mousemove', handleMouseMove);
-    editorDom.addEventListener('mouseleave', handleMouseLeave);
-    gutter.addEventListener('mousemove', handleMouseMove);
-    gutter.addEventListener('mouseenter', handleMouseEnterButtons);
-    gutter.addEventListener('mouseleave', handleMouseLeaveButtons);
-
-    // スクロール時にボタンの位置を更新
-    const handleScroll = () => {
-      if (hoveredBlockRef.current) {
-        updateButtonsPosition();
-      }
-    };
-
-    // スクロール可能な要素を探す（エディタコンテナまたは親要素）
-    let scrollableElement: Element | null = editorContainer;
-    while (scrollableElement && scrollableElement !== document.body) {
-      const overflow = window.getComputedStyle(scrollableElement).overflow;
-      if (overflow === 'auto' || overflow === 'scroll') {
-        break;
-      }
-      scrollableElement = scrollableElement.parentElement;
+    if (!hoveredBlock) {
+      setButtonPosition(null);
+      return;
     }
 
-    if (scrollableElement) {
-      scrollableElement.addEventListener('scroll', handleScroll, true);
+    const position = calculateBlockPosition(hoveredBlock);
+    setButtonPosition(position);
+  }, [hoveredBlock, calculateBlockPosition]);
+
+  // ドラッグ開始
+  const handleDragStart = useCallback(
+    (e: React.DragEvent) => {
+      if (!hoveredBlock) return;
+
+      const pos = editor.view.posAtDOM(hoveredBlock, 0);
+      if (pos === null || pos === undefined) return;
+
+      const node = editor.state.doc.nodeAt(pos);
+      if (!node) return;
+
+      dragDataRef.current = { pos, node };
+      e.dataTransfer.effectAllowed = 'move';
+
+      // ドラッグ中の視覚効果
+      requestAnimationFrame(() => {
+        if (hoveredBlock) {
+          hoveredBlock.classList.add('opacity-50');
+        }
+      });
+    },
+    [editor, hoveredBlock],
+  );
+
+  // ドラッグ終了
+  const handleDragEnd = useCallback(() => {
+    if (hoveredBlock) {
+      hoveredBlock.classList.remove('opacity-50');
+    }
+    dragDataRef.current = null;
+  }, [hoveredBlock]);
+
+  // ドロップ処理
+  const handleDrop = useCallback(
+    (e: React.DragEvent, targetBlock: HTMLElement) => {
+      e.preventDefault();
+      const dragData = dragDataRef.current;
+      if (!dragData) return;
+
+      const targetPos = editor.view.posAtDOM(targetBlock, 0);
+      if (targetPos === null || targetPos === undefined) return;
+
+      const { pos, node } = dragData;
+
+      // 同じ位置の場合は何もしない
+      if (pos === targetPos) return;
+
+      // トランザクションで一度に実行
+      const tr = editor.state.tr;
+
+      // ドラッグ元のノードを削除
+      tr.delete(pos, pos + node.nodeSize);
+
+      // 削除後の位置調整
+      const newTargetPos = targetPos > pos ? targetPos - node.nodeSize : targetPos;
+
+      // ドロップ先に挿入
+      tr.insert(newTargetPos, node);
+
+      editor.view.dispatch(tr);
+
+      dragDataRef.current = null;
+    },
+    [editor],
+  );
+
+  // ResizeObserver（サイズ変更時のみ位置を更新）
+  useEffect(() => {
+    if (!hoveredBlock) return;
+
+    const updatePosition = () => {
+      const position = calculateBlockPosition(hoveredBlock);
+      setButtonPosition(position);
+    };
+
+    // ResizeObserverでサイズ変更を監視
+    const resizeObserver = new ResizeObserver(updatePosition);
+    resizeObserver.observe(hoveredBlock);
+
+    // 親コンテナのリサイズも監視
+    const container = gutterRef.current?.parentElement;
+    if (container) {
+      resizeObserver.observe(container);
     }
 
     return () => {
-      clearHideTimeout();
-      editorDom.removeEventListener('mousemove', handleMouseMove);
-      editorDom.removeEventListener('mouseleave', handleMouseLeave);
-      gutter.removeEventListener('mousemove', handleMouseMove);
-      gutter.removeEventListener('mouseenter', handleMouseEnterButtons);
-      gutter.removeEventListener('mouseleave', handleMouseLeaveButtons);
-      if (scrollableElement) {
-        scrollableElement.removeEventListener('scroll', handleScroll, true);
-      }
+      resizeObserver.disconnect();
     };
-  }, [editor, getBlockElement, getBlockAtYPosition, showButtons, hideButtons, updateButtonsPosition]);
+  }, [hoveredBlock, calculateBlockPosition]);
 
   return (
     <div ref={gutterRef} className="absolute -left-10 top-0 w-10 h-full pointer-events-auto z-10">
-      <div
-        ref={buttonsRef}
-        className="absolute flex flex-row items-center justify-center gap-1 transition-opacity duration-200"
-        style={{
-          opacity: 0,
-          pointerEvents: 'none',
-        }}
-      >
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 rounded hover:bg-gray-200 dark:hover:bg-gray-700 pointer-events-auto"
-          onClick={handleAddBlock}
-          aria-label="ブロックを追加"
+      {hoveredBlock && buttonPosition && (
+        <div
+          ref={buttonContainerRef}
+          className="absolute flex flex-row items-center justify-center gap-1 transition-all duration-200"
+          style={{
+            top: `${buttonPosition.top}px`,
+            height: `${buttonPosition.height}px`,
+          }}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => handleDrop(e, hoveredBlock)}
         >
-          <Plus className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 rounded hover:bg-gray-200 dark:hover:bg-gray-700 pointer-events-auto"
-          onClick={handleDeleteBlock}
-          aria-label="ブロックを削除"
-        >
-          <GripVertical className="h-4 w-4" />
-        </Button>
-      </div>
+          <div className="relative">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+              onClick={() => {
+                setShowMenu(false);
+                setShowAddMenu(!showAddMenu);
+              }}
+              aria-label="ブロックを追加"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+
+            {/* ブロック追加メニュー */}
+            {showAddMenu && (
+              <div className="absolute left-full ml-2 top-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg p-2 min-w-[150px] z-50">
+                {getAddBlockOptions().map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <Button
+                      key={option.label}
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start gap-2 h-8"
+                      onClick={option.command}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{option.label}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <div className="relative">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-grab active:cursor-grabbing"
+              draggable
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onClick={() => {
+                setShowAddMenu(false);
+                setShowMenu(!showMenu);
+              }}
+              aria-label="ブロックメニュー"
+            >
+              <GripVertical className="h-4 w-4" />
+            </Button>
+
+            {/* ブロックタイプ変更メニュー */}
+            {showMenu && (
+              <div className="absolute left-full ml-2 top-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg p-2 min-w-[150px] z-50">
+                {getBlockTypeOptions().map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <Button
+                      key={option.label}
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start gap-2 h-8"
+                      onClick={option.command}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{option.label}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

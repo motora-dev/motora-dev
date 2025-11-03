@@ -4,7 +4,7 @@ import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
 import { BlockGutter } from './block-gutter';
@@ -29,6 +29,8 @@ const BUCKET_NAME = 'media';
 export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEditorProps) => {
   const createUploadUrlMutation = useCreateUploadUrlMutation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [hoveredBlock, setHoveredBlock] = useState<HTMLElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleImageUpload = useCallback(
     async (file: File, editorInstance: Editor | null) => {
@@ -193,9 +195,42 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     }
   }, [editor, content, onChangeMarkdown]);
 
+  // マウス移動時にブロック要素を検出
+  const handleContainerMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!editor) return;
+
+      // メニューが開いている時はブロック検出を停止（ボタン位置を固定）
+      if (isMenuOpen) return;
+
+      const target = e.target as HTMLElement;
+      const editorDom = editor.view.dom;
+
+      // ブロック要素を探す
+      const BLOCK_ELEMENTS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'PRE', 'HR'];
+      let current: HTMLElement | null = target;
+
+      while (current && current !== editorDom && current !== editorDom.parentElement) {
+        if (BLOCK_ELEMENTS.includes(current.tagName)) {
+          if (current !== hoveredBlock) {
+            setHoveredBlock(current);
+          }
+          return;
+        }
+        current = current.parentElement;
+      }
+    },
+    [editor, hoveredBlock, isMenuOpen],
+  );
+
+  // コンテナからマウスが離れた時
+  const handleContainerMouseLeave = useCallback(() => {
+    setHoveredBlock(null);
+  }, []);
+
   return (
-    <div className="relative pl-10">
-      {editor && <BlockGutter editor={editor} />}
+    <div className="relative pl-10" onMouseMove={handleContainerMouseMove} onMouseLeave={handleContainerMouseLeave}>
+      {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
       <EditorContent editor={editor} />
     </div>
   );
