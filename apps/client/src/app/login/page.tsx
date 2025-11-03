@@ -1,6 +1,6 @@
 'use client';
+import { googleLogin } from '$modules/auth/api';
 import { Button } from '$shared/ui/button';
-import { googleLogin } from '../../modules/auth/api';
 
 export default function LoginPage() {
   return (
