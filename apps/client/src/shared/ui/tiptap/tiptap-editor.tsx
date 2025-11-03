@@ -6,6 +6,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
+import { BlockGutter } from './block-gutter';
 
 interface TiptapEditorProps {
   content: string; // HTML形式のコンテンツ（後方互換性のため残す）
@@ -172,5 +173,10 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     }
   }, [editor, content, onChangeMarkdown]);
 
-  return <EditorContent editor={editor} />;
+  return (
+    <div className="relative pl-10">
+      {editor && <BlockGutter editor={editor} />}
+      <EditorContent editor={editor} />
+    </div>
+  );
 };
