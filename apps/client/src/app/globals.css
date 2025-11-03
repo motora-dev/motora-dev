@@ -121,3 +121,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Tiptap Placeholder Styles */
+
+/* 標準の段落 - 最初の空ブロック */
+.tiptap p.is-editor-empty:first-child::before,
+.tiptap p.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* 見出し */
+.tiptap h1.is-empty::before,
+.tiptap h2.is-empty::before,
+.tiptap h3.is-empty::before,
+.tiptap h4.is-empty::before,
+.tiptap h5.is-empty::before,
+.tiptap h6.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* リスト・引用など */
+.tiptap ul.is-empty::before,
+.tiptap ol.is-empty::before,
+.tiptap blockquote.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* ダークモード */
+.dark .tiptap p.is-editor-empty:first-child::before,
+.dark .tiptap p.is-empty::before,
+.dark .tiptap h1.is-empty::before,
+.dark .tiptap h2.is-empty::before,
+.dark .tiptap h3.is-empty::before,
+.dark .tiptap h4.is-empty::before,
+.dark .tiptap h5.is-empty::before,
+.dark .tiptap h6.is-empty::before,
+.dark .tiptap ul.is-empty::before,
+.dark .tiptap ol.is-empty::before,
+.dark .tiptap blockquote.is-empty::before {
+  color: #6c757d;
+}

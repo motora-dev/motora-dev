@@ -1,6 +1,7 @@
 'use client';
 import { serializeToMarkdown } from '@monorepo/markdown';
 import Image from '@tiptap/extension-image';
+import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useCallback, useEffect, useRef } from 'react';
@@ -73,6 +74,25 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
       Image.configure({
         inline: true,
         allowBase64: false,
+      }),
+      Placeholder.configure({
+        showOnlyWhenEditable: false,
+        showOnlyCurrent: false,
+        placeholder: ({ node }: { node: any }) => {
+          if (node.type.name === 'heading') {
+            if (node.attrs.level === 1) return '見出し1';
+            if (node.attrs.level === 2) return '見出し2';
+            if (node.attrs.level === 3) return '見出し3';
+            if (node.attrs.level === 4) return '見出し4';
+            if (node.attrs.level === 5) return '見出し5';
+            if (node.attrs.level === 6) return '見出し6';
+          }
+          if (node.type.name === 'bulletList') return 'リスト';
+          if (node.type.name === 'orderedList') return '番号付きリスト';
+          if (node.type.name === 'blockquote') return '引用';
+          if (node.type.name === 'codeBlock') return 'コード';
+          return '標準';
+        },
       }),
     ],
     content: content,
