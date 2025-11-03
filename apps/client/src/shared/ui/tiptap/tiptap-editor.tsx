@@ -172,26 +172,41 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
   // マウス移動時にブロック要素を検出
   const handleContainerMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!editor) return;
-
-      // メニューが開いている時はブロック検出を停止（ボタン位置を固定）
-      if (isMenuOpen) return;
+      if (!editor || isMenuOpen) return;
 
       const target = e.target as HTMLElement;
       const editorDom = editor.view.dom;
 
-      // ブロック要素を探す
-      const BLOCK_ELEMENTS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'PRE', 'HR'];
-      let current: HTMLElement | null = target;
+      // 1. エディタ内なら要素ベースで検出（高速）
+      if (editorDom.contains(target)) {
+        const BLOCK_ELEMENTS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'PRE', 'HR'];
+        let current: HTMLElement | null = target;
 
-      while (current && current !== editorDom && current !== editorDom.parentElement) {
-        if (BLOCK_ELEMENTS.includes(current.tagName)) {
-          if (current !== hoveredBlock) {
-            setHoveredBlock(current);
+        while (current && current !== editorDom) {
+          if (BLOCK_ELEMENTS.includes(current.tagName)) {
+            if (current !== hoveredBlock) {
+              setHoveredBlock(current);
+            }
+            return;
+          }
+          current = current.parentElement;
+        }
+        return;
+      }
+
+      // 2. ガター内ならY座標から最も近いブロックを検出
+      const blocks = Array.from(editorDom.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, pre, hr'));
+
+      for (const block of blocks) {
+        const rect = block.getBoundingClientRect();
+
+        // マウスのY座標がブロックの範囲内？
+        if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          if (block !== hoveredBlock) {
+            setHoveredBlock(block as HTMLElement);
           }
           return;
         }
-        current = current.parentElement;
       }
     },
     [editor, hoveredBlock, isMenuOpen],
