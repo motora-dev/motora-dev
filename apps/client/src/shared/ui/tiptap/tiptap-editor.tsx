@@ -28,7 +28,7 @@ const BUCKET_NAME = 'media';
  */
 export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEditorProps) => {
   const createUploadUrlMutation = useCreateUploadUrlMutation();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [hoveredBlock, setHoveredBlock] = useState<HTMLElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -139,49 +139,23 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     },
   });
 
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleImageButtonClick = () => {
-      if (!fileInputRef.current) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.style.display = 'none';
-        input.onchange = async (e) => {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (file) {
-            await handleImageUpload(file, editor);
-          }
-        };
-        document.body.appendChild(input);
-        fileInputRef.current = input;
+  // ファイル選択時のハンドラー
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && editor) {
+        await handleImageUpload(file, editor);
+        // inputをリセット（同じファイルを再選択可能にする）
+        e.target.value = '';
       }
-      fileInputRef.current.click();
-    };
+    },
+    [editor, handleImageUpload],
+  );
 
-    const toolbar = document.createElement('div');
-    toolbar.className = 'flex gap-2 mb-2 p-2 border-b';
-    const imageButton = document.createElement('button');
-    imageButton.type = 'button';
-    imageButton.textContent = '画像を追加';
-    imageButton.onclick = handleImageButtonClick;
-    imageButton.className = 'px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600';
-    toolbar.appendChild(imageButton);
-
-    const editorElement = editor.view.dom.parentElement;
-    if (editorElement) {
-      editorElement.insertBefore(toolbar, editorElement.firstChild);
-    }
-
-    return () => {
-      toolbar.remove();
-      if (fileInputRef.current && fileInputRef.current.parentElement) {
-        fileInputRef.current.parentElement.removeChild(fileInputRef.current);
-      }
-      fileInputRef.current = null;
-    };
-  }, [editor, handleImageUpload]);
+  // 画像追加ボタンのクリックハンドラー
+  const handleImageButtonClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   // 外からcontentが変わった時にエディタへ反映
   useEffect(() => {
@@ -229,9 +203,28 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
   }, []);
 
   return (
-    <div className="relative pl-10" onMouseMove={handleContainerMouseMove} onMouseLeave={handleContainerMouseLeave}>
-      {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
-      <EditorContent editor={editor} />
-    </div>
+    <>
+      {/* hidden file input */}
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+
+      {/* ツールバー */}
+      {editor && (
+        <div className="flex gap-2 mb-2 p-2 border-b">
+          <button
+            type="button"
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            onClick={handleImageButtonClick}
+          >
+            画像を追加
+          </button>
+        </div>
+      )}
+
+      {/* エディタ本体 */}
+      <div className="relative pl-10" onMouseMove={handleContainerMouseMove} onMouseLeave={handleContainerMouseLeave}>
+        {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
+        <EditorContent editor={editor} />
+      </div>
+    </>
   );
 };
