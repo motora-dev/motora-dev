@@ -140,16 +140,16 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
     ];
   }, [editor, hoveredBlock]);
 
-  // ブロック位置を計算する関数
+  // ブロック位置を計算する関数（Gridレイアウト対応）
   const calculateBlockPosition = useCallback((blockElement: HTMLElement) => {
-    const container = gutterRef.current?.parentElement;
-    if (!container) return null;
+    const gutter = gutterRef.current;
+    if (!gutter) return null;
 
-    const containerRect = container.getBoundingClientRect();
+    const gutterRect = gutter.getBoundingClientRect();
     const blockRect = blockElement.getBoundingClientRect();
 
     return {
-      top: blockRect.top - containerRect.top,
+      top: blockRect.top - gutterRect.top,
       height: blockRect.height,
     };
   }, []);
@@ -255,10 +255,10 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
     const resizeObserver = new ResizeObserver(updatePosition);
     resizeObserver.observe(hoveredBlock);
 
-    // 親コンテナのリサイズも監視
-    const container = gutterRef.current?.parentElement;
-    if (container) {
-      resizeObserver.observe(container);
+    // Gutterコンテナのリサイズも監視
+    const gutter = gutterRef.current;
+    if (gutter) {
+      resizeObserver.observe(gutter);
     }
 
     return () => {
@@ -267,7 +267,7 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
   }, [hoveredBlock, calculateBlockPosition]);
 
   return (
-    <div ref={gutterRef} className="absolute -left-16 top-0 w-10 h-full pointer-events-auto z-10">
+    <div ref={gutterRef} className="relative w-16 pointer-events-auto">
       {hoveredBlock && buttonPosition && (
         <div
           ref={buttonContainerRef}

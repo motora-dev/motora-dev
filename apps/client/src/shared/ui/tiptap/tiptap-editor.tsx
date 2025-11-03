@@ -209,7 +209,7 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
 
       {/* ツールバー */}
       {editor && (
-        <div className="flex gap-2 mb-2 p-2 border-b">
+        <div className="pl-16 flex gap-2 mb-2 p-2 border-b">
           <button
             type="button"
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -220,10 +220,21 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
         </div>
       )}
 
-      {/* エディタ本体 */}
-      <div className="relative" onMouseMove={handleContainerMouseMove} onMouseLeave={handleContainerMouseLeave}>
-        {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
-        <EditorContent editor={editor} />
+      {/* エディタ本体（Gridレイアウト） */}
+      <div
+        className="grid grid-cols-[64px_1fr]"
+        onMouseMove={handleContainerMouseMove}
+        onMouseLeave={handleContainerMouseLeave}
+      >
+        {/* 左カラム：BlockGutter */}
+        <div className="gutter-column">
+          {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
+        </div>
+
+        {/* 右カラム：EditorContent */}
+        <div className="editor-column">
+          <EditorContent editor={editor} />
+        </div>
       </div>
     </div>
   );
