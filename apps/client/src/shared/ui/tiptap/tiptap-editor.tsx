@@ -1,13 +1,24 @@
 'use client';
 import { serializeToMarkdown } from '@monorepo/markdown';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import go from 'highlight.js/lib/languages/go';
+import rust from 'highlight.js/lib/languages/rust';
+import { common, createLowlight } from 'lowlight';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
 import { BlockGutter } from './block-gutter';
+
+// highlight.jsのテーマ（Prism-tomorrowに似たもの）
+import 'highlight.js/styles/tomorrow-night-blue.css';
+
+const lowlight = createLowlight(common);
+lowlight.register('rust', rust);
+lowlight.register('go', go);
 
 interface TiptapEditorProps {
   content: string; // HTML形式のコンテンツ（後方互換性のため残す）
@@ -72,7 +83,12 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        codeBlock: false,
+      }),
+      CodeBlockLowlight.configure({
+        lowlight,
+      }),
       Image.configure({
         inline: true,
         allowBase64: false,
