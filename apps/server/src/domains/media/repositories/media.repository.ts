@@ -3,6 +3,7 @@ import { MediaType } from '@prisma/client';
 import { ulid } from 'ulid';
 
 import { PrismaAdapter } from '$adapters';
+import { generatePublicId } from '$utils';
 
 @Injectable()
 export class MediaRepository {
@@ -13,6 +14,7 @@ export class MediaRepository {
     const filePath = `images/${publicId}.${extension}`;
     return this.prisma.media.create({
       data: {
+        publicId: generatePublicId(),
         type: type,
         fileName: fileName,
         mimeType: mimeType,
