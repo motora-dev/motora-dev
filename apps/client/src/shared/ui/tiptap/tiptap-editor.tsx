@@ -1,11 +1,24 @@
 'use client';
 import { serializeToMarkdown } from '@monorepo/markdown';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Image from '@tiptap/extension-image';
+import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useCallback, useEffect, useRef } from 'react';
+import go from 'highlight.js/lib/languages/go';
+import rust from 'highlight.js/lib/languages/rust';
+import { common, createLowlight } from 'lowlight';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
+import { BlockGutter } from './block-gutter';
+
+// highlight.jsのテーマ（Prism-tomorrowに似たもの）
+import 'highlight.js/styles/tomorrow-night-blue.css';
+
+const lowlight = createLowlight(common);
+lowlight.register('rust', rust);
+lowlight.register('go', go);
 
 interface TiptapEditorProps {
   content: string; // HTML形式のコンテンツ（後方互換性のため残す）
@@ -26,7 +39,11 @@ const BUCKET_NAME = 'media';
  */
 export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEditorProps) => {
   const createUploadUrlMutation = useCreateUploadUrlMutation();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const gutterRef = useRef<HTMLDivElement | null>(null);
+  const [hoveredBlock, setHoveredBlock] = useState<HTMLElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState<{ top: number; height: number } | null>(null);
 
   const handleImageUpload = useCallback(
     async (file: File, editorInstance: Editor | null) => {
@@ -68,10 +85,34 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        codeBlock: false,
+      }),
+      CodeBlockLowlight.configure({
+        lowlight,
+      }),
       Image.configure({
         inline: true,
         allowBase64: false,
+      }),
+      Placeholder.configure({
+        showOnlyWhenEditable: false,
+        showOnlyCurrent: false,
+        placeholder: ({ node }: { node: any }) => {
+          if (node.type.name === 'heading') {
+            if (node.attrs.level === 1) return '見出し1';
+            if (node.attrs.level === 2) return '見出し2';
+            if (node.attrs.level === 3) return '見出し3';
+            if (node.attrs.level === 4) return '見出し4';
+            if (node.attrs.level === 5) return '見出し5';
+            if (node.attrs.level === 6) return '見出し6';
+          }
+          if (node.type.name === 'bulletList') return 'リスト';
+          if (node.type.name === 'orderedList') return '番号付きリスト';
+          if (node.type.name === 'blockquote') return '引用';
+          if (node.type.name === 'codeBlock') return 'コード';
+          return '標準';
+        },
       }),
     ],
     content: content,
@@ -116,49 +157,23 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     },
   });
 
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleImageButtonClick = () => {
-      if (!fileInputRef.current) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.style.display = 'none';
-        input.onchange = async (e) => {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (file) {
-            await handleImageUpload(file, editor);
-          }
-        };
-        document.body.appendChild(input);
-        fileInputRef.current = input;
+  // ファイル選択時のハンドラー
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && editor) {
+        await handleImageUpload(file, editor);
+        // inputをリセット（同じファイルを再選択可能にする）
+        e.target.value = '';
       }
-      fileInputRef.current.click();
-    };
+    },
+    [editor, handleImageUpload],
+  );
 
-    const toolbar = document.createElement('div');
-    toolbar.className = 'flex gap-2 mb-2 p-2 border-b';
-    const imageButton = document.createElement('button');
-    imageButton.type = 'button';
-    imageButton.textContent = '画像を追加';
-    imageButton.onclick = handleImageButtonClick;
-    imageButton.className = 'px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600';
-    toolbar.appendChild(imageButton);
-
-    const editorElement = editor.view.dom.parentElement;
-    if (editorElement) {
-      editorElement.insertBefore(toolbar, editorElement.firstChild);
-    }
-
-    return () => {
-      toolbar.remove();
-      if (fileInputRef.current && fileInputRef.current.parentElement) {
-        fileInputRef.current.parentElement.removeChild(fileInputRef.current);
-      }
-      fileInputRef.current = null;
-    };
-  }, [editor, handleImageUpload]);
+  // 画像追加ボタンのクリックハンドラー
+  const handleImageButtonClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   // 外からcontentが変わった時にエディタへ反映
   useEffect(() => {
@@ -172,5 +187,140 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     }
   }, [editor, content, onChangeMarkdown]);
 
-  return <EditorContent editor={editor} />;
+  // hoveredBlock が変わったら buttonPosition を計算
+  // useLayoutEffect を使うことで、DOM 更新後すぐに計算し、画面描画前に state を更新
+  useLayoutEffect(() => {
+    if (!hoveredBlock || !gutterRef.current) {
+      return;
+    }
+
+    const gutterRect = gutterRef.current.getBoundingClientRect();
+    const blockRect = hoveredBlock.getBoundingClientRect();
+
+    setButtonPosition({
+      top: blockRect.top - gutterRect.top,
+      height: blockRect.height,
+    });
+  }, [hoveredBlock]);
+
+  // ResizeObserver でブロックのサイズ変更を監視
+  useEffect(() => {
+    if (!hoveredBlock || !gutterRef.current) return;
+
+    const updatePosition = () => {
+      if (!hoveredBlock || !gutterRef.current) return;
+
+      const gutterRect = gutterRef.current.getBoundingClientRect();
+      const blockRect = hoveredBlock.getBoundingClientRect();
+
+      setButtonPosition({
+        top: blockRect.top - gutterRect.top,
+        height: blockRect.height,
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(updatePosition);
+    resizeObserver.observe(hoveredBlock);
+    if (gutterRef.current) {
+      resizeObserver.observe(gutterRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [hoveredBlock]);
+
+  // マウス移動時にブロック要素を検出
+  const handleContainerMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!editor || isMenuOpen) return;
+
+      const target = e.target as HTMLElement;
+      const editorDom = editor.view.dom;
+
+      // 1. エディタ内なら要素ベースで検出（高速）
+      if (editorDom.contains(target)) {
+        const BLOCK_ELEMENTS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'PRE', 'HR'];
+        let current: HTMLElement | null = target;
+
+        while (current && current !== editorDom) {
+          if (BLOCK_ELEMENTS.includes(current.tagName)) {
+            if (current !== hoveredBlock) {
+              setHoveredBlock(current);
+            }
+            return;
+          }
+          current = current.parentElement;
+        }
+        return;
+      }
+
+      // 2. ガター内ならY座標から最も近いブロックを検出
+      const blocks = Array.from(editorDom.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, pre, hr'));
+
+      for (const block of blocks) {
+        const rect = block.getBoundingClientRect();
+
+        // マウスのY座標がブロックの範囲内？
+        if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          if (block !== hoveredBlock) {
+            setHoveredBlock(block as HTMLElement);
+          }
+          return;
+        }
+      }
+    },
+    [editor, hoveredBlock, isMenuOpen],
+  );
+
+  // コンテナからマウスが離れた時
+  const handleContainerMouseLeave = useCallback(() => {
+    setHoveredBlock(null);
+    setButtonPosition(null);
+  }, []);
+
+  return (
+    <div className="tiptap-editor">
+      {/* hidden file input */}
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+
+      {/* ツールバー */}
+      {editor && (
+        <div className="pl-16 flex gap-2 mb-2 p-2 border-b">
+          <button
+            type="button"
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            onClick={handleImageButtonClick}
+          >
+            画像を追加
+          </button>
+        </div>
+      )}
+
+      {/* エディタ本体（Gridレイアウト） */}
+      <div
+        className="grid grid-cols-[64px_1fr]"
+        onMouseMove={handleContainerMouseMove}
+        onMouseLeave={handleContainerMouseLeave}
+      >
+        {/* 左カラム：BlockGutter */}
+        <div className="gutter-column">
+          {editor && (
+            <BlockGutter
+              editor={editor}
+              hoveredBlock={hoveredBlock}
+              buttonPosition={buttonPosition}
+              gutterRef={gutterRef}
+              onMenuOpenChange={setIsMenuOpen}
+            />
+          )}
+        </div>
+
+        {/* 右カラム：EditorContent */}
+        <div className="editor-column">
+          <EditorContent editor={editor} />
+        </div>
+      </div>
+    </div>
+  );
 };

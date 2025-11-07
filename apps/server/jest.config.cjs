@@ -19,6 +19,7 @@ module.exports = {
   },
   testEnvironment: 'node',
   moduleNameMapper: {
+    '^@paralleldrive/cuid2$': '<rootDir>/test/__mocks__/@paralleldrive/cuid2.ts',
     '^\\$adapters$': '<rootDir>/src/shared/adapters',
     '^\\$decorators$': '<rootDir>/src/shared/decorators',
     '^\\$domains/(.*)$': '<rootDir>/src/domains/$1',
@@ -26,5 +27,6 @@ module.exports = {
     '^\\$interceptors$': '<rootDir>/src/shared/interceptors',
     '^\\$modules/(.*)$': '<rootDir>/src/modules/$1',
     '^\\$shared/(.*)$': '<rootDir>/src/shared/$1',
+    '^\\$utils$': '<rootDir>/src/shared/utils',
   },
 };

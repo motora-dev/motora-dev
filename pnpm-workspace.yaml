@@ -24,7 +24,7 @@ versions:
   stylelint: &stylelint 16.25.0
   supabase: &supabase 2.78.0
   tailwindcss: &tailwindcss 4.1.16
-  tiptap: &tiptap 3.10.1
+  tiptap: &tiptap 3.10.2
   turbo: &turbo 2.6.0
   typescript: &typescript 5.9.3
   vitest: &vitest 4.0.6
@@ -46,6 +46,8 @@ catalog:
   '@tanstack/react-query': *tanstack-react-query
   '@tiptap/core': *tiptap
   '@tiptap/extension-image': *tiptap
+  '@tiptap/extension-code-block-lowlight': *tiptap
+  '@tiptap/extension-placeholder': *tiptap
   '@tiptap/pm': *tiptap
   '@tiptap/react': *tiptap
   '@tiptap/starter-kit': *tiptap

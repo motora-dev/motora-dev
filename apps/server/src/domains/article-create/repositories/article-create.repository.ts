@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ArticleStatus } from '@prisma/client';
 
 import { PrismaAdapter } from '$adapters';
+import { generatePublicId } from '$utils';
 
 import type { Article } from '@prisma/client';
 
@@ -20,6 +21,7 @@ export class ArticleCreateRepository {
 
     return await this.prisma.article.create({
       data: {
+        publicId: generatePublicId(),
         userId: userId,
         title: '',
         content: '',

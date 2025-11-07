@@ -26,7 +26,7 @@ export default [
           groups: [['builtin', 'external'], ['internal', 'parent', 'sibling', 'index', 'object'], 'type'],
           pathGroups: [
             {
-              pattern: '${adapters,decorators,domains,guards,interceptors,modules,shared}/**',
+              pattern: '${adapters,decorators,domains,guards,interceptors,modules,shared,utils}/**',
               group: 'internal',
             },
           ],

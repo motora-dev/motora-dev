@@ -29,6 +29,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "catalog:",
     "@nestjs/throttler": "^6.0.0",
+    "@paralleldrive/cuid2": "^3.0.4",
     "@prisma/client": "catalog:",
     "@supabase/supabase-js": "catalog:",
     "cookie-parser": "^1.4.7",
