@@ -1,6 +1,6 @@
 'use client';
 import { Plus, GripVertical, Type, Heading1, Heading2, List, Quote } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '$shared/ui/button';
 
@@ -9,6 +9,8 @@ import type { Editor } from '@tiptap/react';
 interface BlockGutterProps {
   editor: Editor;
   hoveredBlock: HTMLElement | null;
+  buttonPosition: { top: number; height: number } | null;
+  gutterRef: React.RefObject<HTMLDivElement | null>;
   onMenuOpenChange?: (isOpen: boolean) => void;
 }
 
@@ -26,8 +28,7 @@ interface BlockType {
  * - 簡潔なマウスイベント処理
  * - パフォーマンス改善
  */
-export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGutterProps) {
-  const gutterRef = useRef<HTMLDivElement | null>(null);
+export function BlockGutter({ editor, hoveredBlock, buttonPosition, gutterRef, onMenuOpenChange }: BlockGutterProps) {
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showMenu, setShowMenu] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -140,42 +141,6 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
     ];
   }, [editor, hoveredBlock]);
 
-  // ブロック位置を計算する関数（Gridレイアウト対応）
-  const calculateBlockPosition = useCallback((blockElement: HTMLElement) => {
-    const gutter = gutterRef.current;
-    if (!gutter) return null;
-
-    const gutterRect = gutter.getBoundingClientRect();
-    const blockRect = blockElement.getBoundingClientRect();
-
-    return {
-      top: blockRect.top - gutterRect.top,
-      height: blockRect.height,
-    };
-  }, []);
-
-  // ボタン位置のstate
-  const [buttonPosition, setButtonPosition] = useState<{ top: number; height: number } | null>(null);
-
-  // hoveredBlockが変わった時に初期位置を設定
-  //
-  // Note: このuseEffect内でのsetStateはReactのベストプラクティスに従っています：
-  // 1. hoveredBlockはpropsから来る外部の状態
-  // 2. DOM要素の位置計算は外部システム（ブラウザのレンダリングエンジン）との同期
-  // 3. この計算はレンダリング中には行えない（refs、getBoundingClientRect）
-  //
-  // したがって、useEffect内でDOM位置を計算してstateにセットすることが正しいパターンです。
-  // リンターの警告は誤検知です。
-  useEffect(() => {
-    if (!hoveredBlock) {
-      setButtonPosition(null);
-      return;
-    }
-
-    const position = calculateBlockPosition(hoveredBlock);
-    setButtonPosition(position);
-  }, [hoveredBlock, calculateBlockPosition]);
-
   // ドラッグ開始
   const handleDragStart = useCallback(
     (e: React.DragEvent) => {
@@ -241,30 +206,6 @@ export function BlockGutter({ editor, hoveredBlock, onMenuOpenChange }: BlockGut
     },
     [editor],
   );
-
-  // ResizeObserver（サイズ変更時のみ位置を更新）
-  useEffect(() => {
-    if (!hoveredBlock) return;
-
-    const updatePosition = () => {
-      const position = calculateBlockPosition(hoveredBlock);
-      setButtonPosition(position);
-    };
-
-    // ResizeObserverでサイズ変更を監視
-    const resizeObserver = new ResizeObserver(updatePosition);
-    resizeObserver.observe(hoveredBlock);
-
-    // Gutterコンテナのリサイズも監視
-    const gutter = gutterRef.current;
-    if (gutter) {
-      resizeObserver.observe(gutter);
-    }
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [hoveredBlock, calculateBlockPosition]);
 
   return (
     <div ref={gutterRef} className="relative w-16 pointer-events-auto">

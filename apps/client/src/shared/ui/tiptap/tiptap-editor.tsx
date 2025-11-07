@@ -8,7 +8,7 @@ import StarterKit from '@tiptap/starter-kit';
 import go from 'highlight.js/lib/languages/go';
 import rust from 'highlight.js/lib/languages/rust';
 import { common, createLowlight } from 'lowlight';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { useCreateUploadUrlMutation } from '$domains/media/api/use-create-upload-url.mutation';
 import { BlockGutter } from './block-gutter';
@@ -40,8 +40,10 @@ const BUCKET_NAME = 'media';
 export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEditorProps) => {
   const createUploadUrlMutation = useCreateUploadUrlMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const gutterRef = useRef<HTMLDivElement | null>(null);
   const [hoveredBlock, setHoveredBlock] = useState<HTMLElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState<{ top: number; height: number } | null>(null);
 
   const handleImageUpload = useCallback(
     async (file: File, editorInstance: Editor | null) => {
@@ -185,6 +187,49 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
     }
   }, [editor, content, onChangeMarkdown]);
 
+  // hoveredBlock が変わったら buttonPosition を計算
+  // useLayoutEffect を使うことで、DOM 更新後すぐに計算し、画面描画前に state を更新
+  useLayoutEffect(() => {
+    if (!hoveredBlock || !gutterRef.current) {
+      return;
+    }
+
+    const gutterRect = gutterRef.current.getBoundingClientRect();
+    const blockRect = hoveredBlock.getBoundingClientRect();
+
+    setButtonPosition({
+      top: blockRect.top - gutterRect.top,
+      height: blockRect.height,
+    });
+  }, [hoveredBlock]);
+
+  // ResizeObserver でブロックのサイズ変更を監視
+  useEffect(() => {
+    if (!hoveredBlock || !gutterRef.current) return;
+
+    const updatePosition = () => {
+      if (!hoveredBlock || !gutterRef.current) return;
+
+      const gutterRect = gutterRef.current.getBoundingClientRect();
+      const blockRect = hoveredBlock.getBoundingClientRect();
+
+      setButtonPosition({
+        top: blockRect.top - gutterRect.top,
+        height: blockRect.height,
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(updatePosition);
+    resizeObserver.observe(hoveredBlock);
+    if (gutterRef.current) {
+      resizeObserver.observe(gutterRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [hoveredBlock]);
+
   // マウス移動時にブロック要素を検出
   const handleContainerMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -231,6 +276,7 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
   // コンテナからマウスが離れた時
   const handleContainerMouseLeave = useCallback(() => {
     setHoveredBlock(null);
+    setButtonPosition(null);
   }, []);
 
   return (
@@ -259,7 +305,15 @@ export const TiptapEditor = ({ content, onChange, onChangeMarkdown }: TiptapEdit
       >
         {/* 左カラム：BlockGutter */}
         <div className="gutter-column">
-          {editor && <BlockGutter editor={editor} hoveredBlock={hoveredBlock} onMenuOpenChange={setIsMenuOpen} />}
+          {editor && (
+            <BlockGutter
+              editor={editor}
+              hoveredBlock={hoveredBlock}
+              buttonPosition={buttonPosition}
+              gutterRef={gutterRef}
+              onMenuOpenChange={setIsMenuOpen}
+            />
+          )}
         </div>
 
         {/* 右カラム：EditorContent */}
