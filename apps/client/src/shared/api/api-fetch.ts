@@ -1,4 +1,5 @@
 'server-only';
+import { ERROR_CODE } from '@monorepo/error-code';
 import { parse } from 'cookie';
 import ky, { HTTPError, Input } from 'ky';
 import { cookies } from 'next/headers';
@@ -96,17 +97,19 @@ async function createFailureResponse(error: unknown): Promise<FailureResponse> {
   if (error instanceof HTTPError) {
     const errorBody = await error.response.json().catch(() => ({ message: error.response.statusText }));
     const apiError: ApiErrorPayload = {
-      message: errorBody.message || 'An unknown error occurred',
+      errorCode: errorBody.errorCode,
+      message: errorBody.message || ERROR_CODE.INTERNAL_SERVER_ERROR.message,
       statusCode: error.response.status,
     };
-    return { isSuccess: false, status: error.response.status, error: apiError };
+    return { isSuccess: false, status: apiError.statusCode, error: apiError };
   }
   // その他の予期せぬエラー
   const apiError: ApiErrorPayload = {
-    message: error instanceof Error ? error.message : 'An unexpected error occurred',
-    statusCode: 500,
+    errorCode: ERROR_CODE.INTERNAL_SERVER_ERROR.code,
+    message: ERROR_CODE.INTERNAL_SERVER_ERROR.message,
+    statusCode: ERROR_CODE.INTERNAL_SERVER_ERROR.statusCode,
   };
-  return { isSuccess: false, status: 500, error: apiError };
+  return { isSuccess: false, status: apiError.statusCode, error: apiError };
 }
 
 export async function get<T>(url: Input): Promise<ApiResponse<T>> {

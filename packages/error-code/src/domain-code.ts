@@ -1,6 +1,6 @@
 export const DOMAIN = {
   // Common
-  common: '000',
+  common: '999',
 
   // User/Auth related (001-099)
   auth: '001',

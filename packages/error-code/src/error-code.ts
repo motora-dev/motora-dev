@@ -27,6 +27,16 @@ const articleError = createErrorCodeFactory(DOMAIN.article);
 const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit);
 
 export const ERROR_CODE = {
+  SYSTEM_ERROR: {
+    code: 'E-999',
+    statusCode: STATUS.unknown,
+    message: MESSAGES.SYSTEM_ERROR,
+  },
+  INTERNAL_SERVER_ERROR: createErrorCodeFactory(DOMAIN.common)(
+    STATUS.serverError,
+    ENTITY.common,
+    MESSAGES.INTERNAL_SERVER_ERROR,
+  ),
   ARTICLE_NOT_FOUND: articleError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
   ARTICLE_EDIT_NOT_FOUND: articleEditError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
   ARTICLE_EDIT_FORBIDDEN: articleEditError(STATUS.forbidden, ENTITY.article, MESSAGES.ARTICLE_EDIT_FORBIDDEN),

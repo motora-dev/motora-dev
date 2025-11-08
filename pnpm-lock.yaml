@@ -167,6 +167,9 @@ importers:
 
   apps/client:
     dependencies:
+      '@monorepo/error-code':
+        specifier: workspace:*
+        version: link:../../packages/error-code
       '@monorepo/markdown':
         specifier: workspace:*
         version: link:../../packages/markdown
