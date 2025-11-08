@@ -9,6 +9,7 @@ export class GetArticleHandler implements IQueryHandler<GetArticleQuery> {
   constructor(private readonly articleEditService: ArticleEditService) {}
 
   async execute(query: GetArticleQuery): Promise<GetArticleResponseDto> {
-    return await this.articleEditService.getArticle(query.userId, query.articleId);
+    const article = await this.articleEditService.getArticle(query.userId, query.articleId);
+    return { id: article.publicId, title: article.title, tags: article.tags, content: article.content };
   }
 }

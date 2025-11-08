@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 
-import { GetArticleResponseDto, UpdateArticleResponseDto } from '$domains/article-edit/dto';
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
 
 import type { Article } from '@prisma/client';
@@ -9,7 +8,7 @@ import type { Article } from '@prisma/client';
 export class ArticleEditService {
   constructor(private readonly articleEditRepository: ArticleEditRepository) {}
 
-  async getArticle(userId: number, articleId: string): Promise<GetArticleResponseDto> {
+  async getArticle(userId: number, articleId: string): Promise<Article> {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
@@ -20,31 +19,26 @@ export class ArticleEditService {
       throw new ForbiddenException('You are not the owner of this article');
     }
 
-    return {
-      id: article.publicId,
-      title: article.title,
-      tags: article.tags,
-      content: article.content,
-    };
+    return article;
   }
 
   async updateArticle(
+    userId: number,
     articleId: string,
     title: string,
     tags: string[],
     content: string,
-  ): Promise<UpdateArticleResponseDto> {
-    const article: Article | null = await this.articleEditRepository.updateArticle(articleId, title, tags, content);
+  ): Promise<Article> {
+    const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
       throw new NotFoundException('Article not found');
     }
 
-    return {
-      id: article.publicId,
-      title: article.title,
-      tags: article.tags,
-      content: article.content,
-    };
+    if (article.userId !== userId) {
+      throw new ForbiddenException('You are not the owner of this article');
+    }
+
+    return await this.articleEditRepository.updateArticle(articleId, title, tags, content);
   }
 }

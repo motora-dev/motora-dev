@@ -25,11 +25,13 @@ export class ArticleEditController {
 
   @Put('update/:articleId')
   async updateArticle(
+    @CurrentUser() user: Express.UserPayload,
     @Param('articleId') articleId: string,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<UpdateArticleResponseDto> {
     return await this.commandBus.execute(
       new UpdateArticleCommand(
+        user.id,
         articleId,
         updateArticleRequestDto.title,
         updateArticleRequestDto.tags,
