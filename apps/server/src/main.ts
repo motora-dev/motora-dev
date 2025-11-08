@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import session from 'express-session';
 
+import { HttpExceptionFilter } from '$filters';
 import { LoggingInterceptor } from '$interceptors';
 import { AppModule } from './app.module';
 
@@ -84,6 +85,8 @@ async function bootstrap() {
 
   // ロギング機能を有効化
   app.useGlobalInterceptors(app.get(LoggingInterceptor));
+  // グローバルな例外フィルターとして登録
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(config.get('PORT') ?? 4000);
 }

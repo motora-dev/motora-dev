@@ -372,6 +372,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@monorepo/error-code':
+        specifier: workspace:*
+        version: link:../../packages/error-code
       '@nestjs/common':
         specifier: 'catalog:'
         version: 11.1.8(reflect-metadata@0.2.2)(rxjs@7.8.2)

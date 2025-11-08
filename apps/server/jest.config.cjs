@@ -23,6 +23,8 @@ module.exports = {
     '^\\$adapters$': '<rootDir>/src/shared/adapters',
     '^\\$decorators$': '<rootDir>/src/shared/decorators',
     '^\\$domains/(.*)$': '<rootDir>/src/domains/$1',
+    '^\\$exceptions$': '<rootDir>/src/shared/exceptions',
+    '^\\$filters$': '<rootDir>/src/shared/filters',
     '^\\$guards$': '<rootDir>/src/shared/guards',
     '^\\$interceptors$': '<rootDir>/src/shared/interceptors',
     '^\\$modules/(.*)$': '<rootDir>/src/modules/$1',

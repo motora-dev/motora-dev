@@ -29,6 +29,7 @@ const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit);
 export const ERROR_CODE = {
   ARTICLE_NOT_FOUND: articleError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
   ARTICLE_EDIT_NOT_FOUND: articleEditError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
+  ARTICLE_EDIT_FORBIDDEN: articleEditError(STATUS.forbidden, ENTITY.article, MESSAGES.ARTICLE_EDIT_FORBIDDEN),
 } as const;
 
 // --- 型定義 ---

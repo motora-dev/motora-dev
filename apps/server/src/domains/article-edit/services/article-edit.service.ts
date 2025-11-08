@@ -1,6 +1,8 @@
+import { ERROR_CODE } from '@monorepo/error-code';
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
+import { BusinessLogicError } from '$exceptions';
 
 import type { Article } from '@prisma/client';
 
@@ -12,11 +14,11 @@ export class ArticleEditService {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
-      throw new NotFoundException('Article not found');
+      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
     }
 
     if (article.userId !== userId) {
-      throw new ForbiddenException('You are not the owner of this article');
+      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
     }
 
     return article;
