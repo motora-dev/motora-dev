@@ -9,6 +9,19 @@ export class UpdateArticleHandler implements ICommandHandler<UpdateArticleComman
   constructor(private readonly articleEditService: ArticleEditService) {}
 
   async execute(command: UpdateArticleCommand): Promise<UpdateArticleResponseDto> {
-    return await this.articleEditService.updateArticle(command.articleId, command.title, command.tags, command.content);
+    const article = await this.articleEditService.updateArticle(
+      command.userId,
+      command.articleId,
+      command.title,
+      command.tags,
+      command.content,
+    );
+
+    return {
+      id: article.publicId,
+      title: article.title,
+      tags: article.tags,
+      content: article.content,
+    };
   }
 }

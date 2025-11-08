@@ -1,9 +1,11 @@
 'server-only';
+import { ERROR_CODE } from '@monorepo/error-code';
 import { parse } from 'cookie';
 import ky, { HTTPError, Input } from 'ky';
 import { cookies } from 'next/headers';
 
-import { ApiError, ApiResponse, FailureResponse, SuccessResponse } from './api-response';
+import { ApiErrorPayload } from './api-error';
+import { ApiResponse, FailureResponse, SuccessResponse } from './api-response';
 import { getGoogleAuth } from './google-auth';
 
 /**
@@ -94,18 +96,20 @@ async function createSuccessResponse<T>(response: Response): Promise<SuccessResp
 async function createFailureResponse(error: unknown): Promise<FailureResponse> {
   if (error instanceof HTTPError) {
     const errorBody = await error.response.json().catch(() => ({ message: error.response.statusText }));
-    const apiError: ApiError = {
-      message: errorBody.message || 'An unknown error occurred',
+    const apiError: ApiErrorPayload = {
+      errorCode: errorBody.errorCode,
+      message: errorBody.message || ERROR_CODE.INTERNAL_SERVER_ERROR.message,
       statusCode: error.response.status,
     };
-    return { isSuccess: false, status: error.response.status, error: apiError };
+    return { isSuccess: false, status: apiError.statusCode, error: apiError };
   }
   // その他の予期せぬエラー
-  const apiError: ApiError = {
-    message: error instanceof Error ? error.message : 'An unexpected error occurred',
-    statusCode: 500,
+  const apiError: ApiErrorPayload = {
+    errorCode: ERROR_CODE.INTERNAL_SERVER_ERROR.code,
+    message: ERROR_CODE.INTERNAL_SERVER_ERROR.message,
+    statusCode: ERROR_CODE.INTERNAL_SERVER_ERROR.statusCode,
   };
-  return { isSuccess: false, status: 500, error: apiError };
+  return { isSuccess: false, status: apiError.statusCode, error: apiError };
 }
 
 export async function get<T>(url: Input): Promise<ApiResponse<T>> {

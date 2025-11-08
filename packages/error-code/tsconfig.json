@@ -4,6 +4,8 @@
   "exclude": [".turbo", "coverage", "node_modules"],
   "compilerOptions": {
     "rootDir": ".",
+    "outDir": "dist",
+    "module": "CommonJS", // これを追加
     "moduleResolution": "node",
     "types": ["node", "jest"]
   }

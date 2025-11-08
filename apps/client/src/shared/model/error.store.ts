@@ -1,19 +1,29 @@
 import { create } from 'zustand';
 
-type AppError = {
+type ErrorMessage = {
   message: string;
-  code?: string;
   at?: string;
 };
 
-interface ErrorStore {
-  errors: AppError[];
-  push: (e: AppError) => void;
-  clear: () => void;
-}
+// ページ全体のエラー状態を表す型
+type PageError = {
+  statusCode: number;
+} | null;
 
-export const useErrorStore = create<ErrorStore>((set) => ({
+type ErrorState = {
+  errors: ErrorMessage[];
+  push: (error: ErrorMessage) => void;
+  clear: () => void;
+  // pageErrorを管理するための新しいstateとaction
+  pageError: PageError;
+  setPageError: (statusCode: number | null) => void;
+};
+
+export const useErrorStore = create<ErrorState>((set) => ({
   errors: [],
-  push: (e) => set((s) => ({ errors: [...s.errors, e] })),
+  push: (error) => set((state) => ({ errors: [...state.errors, error] })),
   clear: () => set({ errors: [] }),
+  // stateとactionの初期値と実装
+  pageError: null,
+  setPageError: (statusCode) => set({ pageError: statusCode ? { statusCode } : null }),
 }));

@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ERROR_CODE } from '@monorepo/error-code';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 
-import { GetArticleResponseDto, UpdateArticleResponseDto } from '$domains/article-edit/dto';
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
+import { BusinessLogicError } from '$exceptions';
 
 import type { Article } from '@prisma/client';
 
@@ -9,38 +10,37 @@ import type { Article } from '@prisma/client';
 export class ArticleEditService {
   constructor(private readonly articleEditRepository: ArticleEditRepository) {}
 
-  async getArticle(articleId: string): Promise<GetArticleResponseDto> {
+  async getArticle(userId: number, articleId: string): Promise<Article> {
+    const article: Article | null = await this.articleEditRepository.getArticle(articleId);
+
+    if (!article) {
+      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
+    }
+
+    if (article.userId !== userId) {
+      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
+    }
+
+    return article;
+  }
+
+  async updateArticle(
+    userId: number,
+    articleId: string,
+    title: string,
+    tags: string[],
+    content: string,
+  ): Promise<Article> {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
       throw new NotFoundException('Article not found');
     }
 
-    return {
-      id: article.publicId,
-      title: article.title,
-      tags: article.tags,
-      content: article.content,
-    };
-  }
-
-  async updateArticle(
-    articleId: string,
-    title: string,
-    tags: string[],
-    content: string,
-  ): Promise<UpdateArticleResponseDto> {
-    const article: Article | null = await this.articleEditRepository.updateArticle(articleId, title, tags, content);
-
-    if (!article) {
-      throw new NotFoundException('Article not found');
+    if (article.userId !== userId) {
+      throw new ForbiddenException('You are not the owner of this article');
     }
 
-    return {
-      id: article.publicId,
-      title: article.title,
-      tags: article.tags,
-      content: article.content,
-    };
+    return await this.articleEditRepository.updateArticle(articleId, title, tags, content);
   }
 }

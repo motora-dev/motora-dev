@@ -8,16 +8,16 @@
  */
 
 // Tokenizer
-export { getMarkdownTokenizer } from './tokenizer';
+export { getMarkdownTokenizer } from './src/tokenizer';
 
 // Tokens
-export { MARKDOWN_TOKENS } from './tokens';
+export { MARKDOWN_TOKENS } from './src/tokens';
 
 // Parser (Markdown → ProseMirror)
-export { createMarkdownParser, parseMarkdown } from './parser';
+export { createMarkdownParser, parseMarkdown } from './src/parser';
 
 // Serializer (ProseMirror → Markdown)
-export { createMarkdownSerializer, serializeToMarkdown } from './serializer';
+export { createMarkdownSerializer, serializeToMarkdown } from './src/serializer';
 
 // HTML Converter (Markdown → HTML)
-export { markdownToHtml } from './html-converter';
+export { markdownToHtml } from './src/html-converter';

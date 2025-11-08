@@ -1,3 +1,4 @@
+import { ApiError } from './api-error';
 import { isSuccessResponse, type ApiResponse } from './api-response';
 
 import type { ZodType } from 'zod';
@@ -15,7 +16,7 @@ export function createApiQuery<TApiData, TFinalData = TApiData, TArgs extends un
   return async () => {
     const response = await config.api(...args);
     if (!isSuccessResponse(response)) {
-      throw new Error(`API request failed: ${response.status} ${response.error.message}`);
+      throw new ApiError(response.error);
     }
 
     const data = response.data as unknown as TApiData;

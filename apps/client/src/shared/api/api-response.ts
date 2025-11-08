@@ -1,8 +1,4 @@
-// 汎用的なAPIエラー情報の型
-export type ApiError = {
-  message: string;
-  statusCode: number;
-};
+import { ApiErrorPayload } from './api-error';
 
 // 成功レスポンスの型
 export type SuccessResponse<T> = {
@@ -15,7 +11,7 @@ export type SuccessResponse<T> = {
 export type FailureResponse = {
   isSuccess: false;
   status: number;
-  error: ApiError;
+  error: ApiErrorPayload;
 };
 
 // Server ComponentからClient Componentへ渡すためのAPIレスポンスの型

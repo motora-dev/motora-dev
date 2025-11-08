@@ -1,5 +1,4 @@
-import { ErrorDialog } from '$layouts/error-dialog';
-import { Header } from '$layouts/header';
+import DefaultLayout from './default-layout';
 import { Providers } from './providers';
 
 import './globals.css';
@@ -17,17 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }}
       >
         <Providers>
-          <Header />
-          <main
-            style={{
-              maxWidth: '1280px',
-              margin: '0 auto',
-              padding: '48px 16px',
-            }}
-          >
-            {children}
-          </main>
-          <ErrorDialog />
+          <DefaultLayout>{children}</DefaultLayout>
         </Providers>
       </body>
     </html>

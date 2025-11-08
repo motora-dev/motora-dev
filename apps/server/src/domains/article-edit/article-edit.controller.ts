@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
+import { CurrentUser } from '$decorators';
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
 import { UpdateArticleCommand } from './commands';
 import { GetArticleResponseDto, UpdateArticleRequestDto, UpdateArticleResponseDto } from './dto';
@@ -15,17 +16,22 @@ export class ArticleEditController {
   ) {}
 
   @Get('edit/:articleId')
-  async getArticle(@Param('articleId') articleId: string): Promise<GetArticleResponseDto> {
-    return await this.queryBus.execute(new GetArticleQuery(articleId));
+  async getArticle(
+    @CurrentUser() user: Express.UserPayload,
+    @Param('articleId') articleId: string,
+  ): Promise<GetArticleResponseDto> {
+    return await this.queryBus.execute(new GetArticleQuery(user.id, articleId));
   }
 
   @Put('update/:articleId')
   async updateArticle(
+    @CurrentUser() user: Express.UserPayload,
     @Param('articleId') articleId: string,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<UpdateArticleResponseDto> {
     return await this.commandBus.execute(
       new UpdateArticleCommand(
+        user.id,
         articleId,
         updateArticleRequestDto.title,
         updateArticleRequestDto.tags,
