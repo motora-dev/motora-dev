@@ -3,7 +3,8 @@ import { parse } from 'cookie';
 import ky, { HTTPError, Input } from 'ky';
 import { cookies } from 'next/headers';
 
-import { ApiError, ApiResponse, FailureResponse, SuccessResponse } from './api-response';
+import { ApiErrorPayload } from './api-error';
+import { ApiResponse, FailureResponse, SuccessResponse } from './api-response';
 import { getGoogleAuth } from './google-auth';
 
 /**
@@ -94,14 +95,14 @@ async function createSuccessResponse<T>(response: Response): Promise<SuccessResp
 async function createFailureResponse(error: unknown): Promise<FailureResponse> {
   if (error instanceof HTTPError) {
     const errorBody = await error.response.json().catch(() => ({ message: error.response.statusText }));
-    const apiError: ApiError = {
+    const apiError: ApiErrorPayload = {
       message: errorBody.message || 'An unknown error occurred',
       statusCode: error.response.status,
     };
     return { isSuccess: false, status: error.response.status, error: apiError };
   }
   // その他の予期せぬエラー
-  const apiError: ApiError = {
+  const apiError: ApiErrorPayload = {
     message: error instanceof Error ? error.message : 'An unexpected error occurred',
     statusCode: 500,
   };
