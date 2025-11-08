@@ -1,10 +1,9 @@
 {
-  "name": "@monorepo/markdown",
+  "name": "@monorepo/error-code",
   "version": "0.0.0",
-  "license": "UNLICENSED",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "scripts": {
     "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
     "check-types": "pnpm check-types:src && pnpm check-types:spec",
@@ -22,29 +21,10 @@
   "devDependencies": {
     "@monorepo/eslint-config": "workspace:*",
     "@monorepo/typescript-config": "workspace:*",
-    "@tiptap/pm": "catalog:",
     "@types/jest": "^30.0.0",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "@types/markdown-it": "^14.0.0",
-    "markdown-it": "^14.0.0",
-    "prosemirror-markdown": "^1.13.0",
-    "prosemirror-model": "^1.25.4"
-  },
-  "peerDependenciesMeta": {
-    "@types/markdown-it": {
-      "optional": true
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --fix --config eslint.config.mjs"
-    ]
-  },
-  "volta": {
-    "extends": "../../package.json"
   }
 }
