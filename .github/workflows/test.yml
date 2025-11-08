@@ -71,6 +71,9 @@ jobs:
       - name: Run error-code coverage
         run: pnpm --filter "@monorepo/error-code" test:coverage
 
+      - name: Run markdown coverage
+        run: pnpm --filter "@monorepo/markdown" test:coverage
+
       - name: Run client coverage
         run: pnpm --filter "@monorepo/client" test:coverage
 
@@ -84,6 +87,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./apps/client/coverage/jest/coverage-final.json,./apps/client/coverage/storybook/coverage-final.json,./apps/server/coverage/coverage-final.json
-          flags: client,server
+          files: ./packages/error-code/coverage/jest/coverage-final.json,./packages/markdown/coverage/jest/coverage-final.json,./packages/markdown/coverage/jest/coverage-final.json,./apps/client/coverage/jest/coverage-final.json,./apps/client/coverage/storybook/coverage-final.json,./apps/server/coverage/coverage-final.json
+          flags: error-code,markdown,client,server
           verbose: true
