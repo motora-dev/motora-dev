@@ -13,7 +13,7 @@ const createErrorCodeFactory = (domain: DomainCode) => {
     // counterを3桁のゼロパディング文字列に変換
     const codeNumber = String(counter++).padStart(3, '0');
 
-    const code = `E-${domain}-${statusCode}-${entity}-${codeNumber}`;
+    const code = `E-${statusCode}-${domain}-${entity}-${codeNumber}`;
     return {
       code,
       statusCode,
