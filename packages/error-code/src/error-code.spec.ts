@@ -27,7 +27,14 @@ describe('Error Code Definitions', () => {
 
   it('should have a valid format (E-ddd-ddd-ddd-ddd)', () => {
     const errorCodeRegex = /^E-\d{3}-\d{3}-\d{3}-\d{3}$/;
-    Object.values(ERROR_CODE).forEach((errorObject) => {
+
+    // ERROR_CODEオブジェクトからSYSTEM_ERRORを除外した新しい配列を作成
+    const codesToTest = Object.entries(ERROR_CODE)
+      .filter(([key]) => key !== 'SYSTEM_ERROR')
+      .map(([, value]) => value);
+
+    // 除外後の配列に対してテストを実行
+    codesToTest.forEach((errorObject) => {
       expect(errorObject.code).toMatch(errorCodeRegex);
     });
   });

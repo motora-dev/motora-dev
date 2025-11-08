@@ -1,6 +1,9 @@
+import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
+
+import { BusinessLogicError } from '$exceptions';
 
 @Injectable()
 export class SupabaseStorageAdapter {
@@ -12,7 +15,7 @@ export class SupabaseStorageAdapter {
     const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Supabase URL and ROLE_KEY must be provided');
+      throw new BusinessLogicError(ERROR_CODE.INTERNAL_SERVER_ERROR, 'Supabase URL and ROLE_KEY must be provided');
     }
 
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -31,21 +34,15 @@ export class SupabaseStorageAdapter {
     fileName: string,
     expiresIn: number = 3600,
   ): Promise<string> {
-    try {
-      const { data, error } = await this.supabase.storage.from(bucketName).createSignedUrl(filePath, expiresIn, {
-        download: fileName,
-      });
+    const { data, error } = await this.supabase.storage.from(bucketName).createSignedUrl(filePath, expiresIn, {
+      download: fileName,
+    });
 
-      if (error) {
-        this.logger.error('Failed to create signed URL', error);
-        throw new Error(`Signed URL creation failed: ${error.message}`);
-      }
-
-      return data.signedUrl;
-    } catch (error) {
-      this.logger.error('Error creating signed URL', error);
-      throw error;
+    if (error) {
+      throw new BusinessLogicError(ERROR_CODE.FILE_NOT_FOUND, error.message);
     }
+
+    return data.signedUrl;
   }
 
   /**
@@ -63,12 +60,7 @@ export class SupabaseStorageAdapter {
     const { data, error } = await this.supabase.storage.from(bucketName).createSignedUploadUrl(filePath, options);
 
     if (error) {
-      this.logger.error('Failed to create signed upload URL', error);
-      throw new Error(`Signed upload URL creation failed: ${error.message}`);
-    }
-
-    if (!data) {
-      throw new Error('Failed to create signed upload URL: no data returned');
+      throw new BusinessLogicError(ERROR_CODE.FILE_NOT_FOUND, error.message);
     }
 
     return {

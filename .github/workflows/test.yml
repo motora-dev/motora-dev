@@ -68,6 +68,9 @@ jobs:
           echo "DATABASE_URL=${{ vars.DATABASE_URL }}" >> .env.test
           echo "NODE_ENV=test" >> .env.test
 
+      - name: Run error-code coverage
+        run: pnpm --filter "@monorepo/error-code" test:coverage
+
       - name: Run client coverage
         run: pnpm --filter "@monorepo/client" test:coverage
 

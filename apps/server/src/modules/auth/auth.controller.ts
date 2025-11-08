@@ -1,18 +1,11 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  InternalServerErrorException,
-  Req,
-  Res,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ERROR_CODE } from '@monorepo/error-code';
+import { Controller, Get, HttpCode, HttpStatus, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 
 import { createServerSupabase } from '$adapters';
 import { Public } from '$decorators';
+import { BusinessLogicError } from '$exceptions';
 import { CreateUserCommand } from './commands/create-user/create-user.command';
 
 @Controller('auth')
@@ -47,7 +40,7 @@ export class AuthController {
     const supabase = createServerSupabase(req, res);
     const { error } = await supabase.auth.signOut();
     if (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new BusinessLogicError(ERROR_CODE.INTERNAL_SERVER_ERROR, error.message);
     }
 
     // callbackGoogleで設定したオプションと完全に同じオプションでCookieをクリア
@@ -80,7 +73,10 @@ export class AuthController {
         redirectTo: `${backendUrl}/auth/callback/google`,
       },
     });
-    if (error) throw new InternalServerErrorException(error.message);
+
+    if (error) {
+      throw new BusinessLogicError(ERROR_CODE.INTERNAL_SERVER_ERROR, error.message);
+    }
 
     // data.url は Google 認証画面への 302 URL
     return res.redirect(data.url);
@@ -99,7 +95,7 @@ export class AuthController {
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      throw new UnauthorizedException(error.message);
+      throw new BusinessLogicError(ERROR_CODE.UNAUTHENTICATED, error.message);
     }
 
     const { access_token, refresh_token, expires_in } = data.session;

@@ -3,7 +3,8 @@ export const DOMAIN = {
   common: '999',
 
   // User/Auth related (001-099)
-  auth: '001',
+  auth: '201',
+  media: '301',
 
   // Article related (100-199)
   article: '100',
