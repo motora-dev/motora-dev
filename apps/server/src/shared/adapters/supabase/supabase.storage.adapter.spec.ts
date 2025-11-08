@@ -1,8 +1,10 @@
+import { ERROR_CODE } from '@monorepo/error-code';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supabaseJs from '@supabase/supabase-js';
 
+import { BusinessLogicError } from '$shared/exceptions';
 import { SupabaseStorageAdapter } from './supabase.storage.adapter';
 
 // Supabaseクライアントをモック
@@ -182,20 +184,23 @@ describe('SupabaseStorageAdapter', () => {
       expect(result).toBe(mockSignedUrl);
     });
 
-    it('should throw error when signed URL creation fails', async () => {
+    it('should throw BusinessLogicError when signed URL creation fails', async () => {
       const bucketName = 'articles';
       const filePath = 'test/path/file.md';
       const fileName = 'download-file.md';
-      const mockError = { message: 'URL creation failed' };
-
       mockStorageBucket.createSignedUrl.mockResolvedValue({
         data: null,
-        error: mockError,
+        error: { message: 'URL creation failed' },
       });
 
-      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow(
-        'Signed URL creation failed: URL creation failed',
-      );
+      try {
+        await adapter.getDownloadUrl(bucketName, filePath, fileName);
+        fail('should have thrown BusinessLogicError');
+      } catch (e) {
+        expect(e).toBeInstanceOf(BusinessLogicError);
+        expect((e as BusinessLogicError).errorCode).toBe(ERROR_CODE.FILE_NOT_FOUND.code);
+        expect((e as BusinessLogicError).message).toBe('URL creation failed');
+      }
 
       expect(mockSupabaseClient.storage.from).toHaveBeenCalledWith('articles');
       expect(mockStorageBucket.createSignedUrl).toHaveBeenCalledWith(filePath, 3600, {
@@ -203,15 +208,15 @@ describe('SupabaseStorageAdapter', () => {
       });
     });
 
-    it('should throw error when exception occurs during URL creation', async () => {
+    it('should re-throw any other error', async () => {
       const bucketName = 'articles';
       const filePath = 'test/path/file.md';
       const fileName = 'download-file.md';
-      const mockError = new Error('Network error');
+      const mockError = new Error('Some other network error');
 
       mockStorageBucket.createSignedUrl.mockRejectedValue(mockError);
 
-      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow('Network error');
+      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow('Some other network error');
     });
   });
 });

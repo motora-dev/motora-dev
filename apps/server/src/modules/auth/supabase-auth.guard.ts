@@ -20,7 +20,7 @@ export class SupabaseAuthGuard implements CanActivate {
     const accessToken = req.cookies['sb-access-token'];
     const refreshToken = req.cookies['sb-refresh-token'];
     if (!accessToken) {
-      throw new BusinessLogicError(ERROR_CODE.UNAUTHENTICATED);
+      throw new BusinessLogicError(ERROR_CODE.UNAUTHENTICATED, 'Access token is missing');
     }
 
     /** ② JWT を検証 */
@@ -52,13 +52,18 @@ export class SupabaseAuthGuard implements CanActivate {
     }
 
     const user = await this.authRepository.getUserByProvider(
-      userData.user.app_metadata.provider ?? '',
+      userData.user.app_metadata?.provider ?? '',
       userData.user.id,
     );
 
+    if (!user) {
+      // ユーザーが見つからない場合は認証エラーとする
+      throw new BusinessLogicError(ERROR_CODE.UNAUTHENTICATED, 'User not found');
+    }
+
     req.user = {
-      id: user?.id ?? 0,
-      publicId: user?.publicId ?? 'unknown',
+      id: user.id,
+      publicId: user.publicId,
     };
 
     return true;
