@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { MediaType } from '@prisma/client';
-import { ulid } from 'ulid';
 
 import { PrismaAdapter } from '$adapters';
 import { generatePublicId } from '$utils';
@@ -10,11 +9,11 @@ export class MediaRepository {
   constructor(private readonly prisma: PrismaAdapter) {}
 
   async createMedia(userId: number, type: MediaType, fileName: string, mimeType: string, extension: string) {
-    const publicId = ulid();
+    const publicId = generatePublicId();
     const filePath = `images/${publicId}.${extension}`;
     return this.prisma.media.create({
       data: {
-        publicId: generatePublicId(),
+        publicId: publicId,
         type: type,
         fileName: fileName,
         mimeType: mimeType,
