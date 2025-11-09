@@ -1,9 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { ERROR_CODE } from '@monorepo/error-code';
+import { Injectable } from '@nestjs/common';
 import { MediaType } from '@prisma/client';
 import * as path from 'path';
 
 import { CreateUploadUrlDto } from '$domains/media/dto';
 import { MediaRepository } from '$domains/media/repositories';
+import { BusinessLogicError } from '$exceptions';
 import { SupabaseStorageAdapter } from '$shared/adapters';
 
 const BUCKET_NAME = 'media';
@@ -20,7 +22,7 @@ export class MediaService {
 
     const extension = path.extname(fileName).toLowerCase().substring(1);
     if (!extension) {
-      throw new BadRequestException('File extension is missing.');
+      throw new BusinessLogicError(ERROR_CODE.MEDIA_FILE_EXTENSION_MISSING);
     }
 
     // 1. Create Media record in DB

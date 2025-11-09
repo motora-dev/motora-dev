@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supabaseJs from '@supabase/supabase-js';
 
+import { BusinessLogicError } from '$exceptions';
 import { SupabaseStorageAdapter } from './supabase.storage.adapter';
 
 // Supabaseクライアントをモック
@@ -111,7 +112,7 @@ describe('SupabaseStorageAdapter', () => {
           },
         ],
       }).compile(),
-    ).rejects.toThrow('Supabase URL and ROLE_KEY must be provided');
+    ).rejects.toThrow(BusinessLogicError);
   });
 
   it('should throw error when SUPABASE_SERVICE_ROLE_KEY is not provided', async () => {
@@ -138,7 +139,7 @@ describe('SupabaseStorageAdapter', () => {
           },
         ],
       }).compile(),
-    ).rejects.toThrow('Supabase URL and ROLE_KEY must be provided');
+    ).rejects.toThrow(BusinessLogicError);
   });
 
   describe('getDownloadUrl', () => {
@@ -193,9 +194,7 @@ describe('SupabaseStorageAdapter', () => {
         error: mockError,
       });
 
-      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow(
-        'Signed URL creation failed: URL creation failed',
-      );
+      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow(BusinessLogicError);
 
       expect(mockSupabaseClient.storage.from).toHaveBeenCalledWith('articles');
       expect(mockStorageBucket.createSignedUrl).toHaveBeenCalledWith(filePath, 3600, {

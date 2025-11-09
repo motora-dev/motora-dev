@@ -10,6 +10,9 @@ export const DOMAIN = {
   articleCreate: '101',
   articleEdit: '102',
   articleList: '103',
+
+  // Media related (200-299)
+  media: '200',
 } as const;
 
 export type DomainCode = (typeof DOMAIN)[keyof typeof DOMAIN];

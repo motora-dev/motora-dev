@@ -1,7 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ERROR_CODE } from '@monorepo/error-code';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { createServerSupabase } from '$adapters';
+import { BusinessLogicError } from '$exceptions';
 import { AuthRepository } from './repositories/auth.repository';
 
 @Injectable()
@@ -18,13 +20,13 @@ export class SupabaseAuthGuard implements CanActivate {
     const accessToken = req.cookies['sb-access-token'];
     const refreshToken = req.cookies['sb-refresh-token'];
     if (!accessToken) {
-      throw new UnauthorizedException();
+      throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED);
     }
 
     /** ② JWT を検証 */
     const { data: userData, error } = await supabase.auth.getUser(accessToken);
     if (error) {
-      throw new UnauthorizedException(error.message);
+      throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED, error.message);
     }
 
     /** ③ 期限が 5 分以内なら自動更新 */
@@ -35,7 +37,9 @@ export class SupabaseAuthGuard implements CanActivate {
       const { data: ref, error: re } = await supabase.auth.refreshSession({
         refresh_token: refreshToken,
       });
-      if (re) throw new UnauthorizedException(re.message);
+      if (re) {
+        throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED, re.message);
+      }
 
       // 新しいトークンを Cookie に上書き
       res.cookie('sb-access-token', ref.session?.access_token, {
@@ -50,20 +54,6 @@ export class SupabaseAuthGuard implements CanActivate {
     const user = await this.authRepository.getUserByProvider(
       userData.user.app_metadata.provider ?? '',
       userData.user.id,
-    );
-
-    // ② 認証成功時のログ出力（JSON形式でCloud Loggingに送信）
-    console.log(
-      JSON.stringify({
-        timestamp: new Date().toISOString(),
-        level: 'INFO',
-        message: 'User authenticated',
-        requestId: req.headers['x-request-id'] || 'unknown',
-        userId: user?.publicId ?? '',
-        email: userData.user.email ?? '',
-        provider: userData.user.app_metadata.provider ?? '',
-        action: 'authentication_success',
-      }),
     );
 
     req.user = {

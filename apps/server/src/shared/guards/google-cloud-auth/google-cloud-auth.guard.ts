@@ -1,7 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ERROR_CODE } from '@monorepo/error-code';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { OAuth2Client } from 'google-auth-library';
+
+import { BusinessLogicError } from '$exceptions';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 
@@ -31,7 +34,7 @@ export class GoogleCloudAuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('No bearer token provided');
+      throw new BusinessLogicError(ERROR_CODE.NO_BEARER_TOKEN);
     }
 
     const idToken = authHeader.split('Bearer ')[1];
@@ -39,20 +42,14 @@ export class GoogleCloudAuthGuard implements CanActivate {
     // Accept multiple audiences from CORS origins
     const apiUrl = this.configService.get<string>('API_URL') || '';
 
-    console.log('🔍 Verifying token with audiences:', apiUrl);
-
     // Verify token - will throw if invalid
     await this.client
       .verifyIdToken({
         idToken: idToken,
         audience: apiUrl,
       })
-      .then(() => {
-        console.log('✅ Token verified');
-      })
-      .catch((error) => {
-        console.error('❌ Token verification error:', error);
-        throw new UnauthorizedException('Invalid token');
+      .catch(() => {
+        throw new BusinessLogicError(ERROR_CODE.INVALID_TOKEN);
       });
 
     return true;

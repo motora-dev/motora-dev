@@ -1,7 +1,8 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import * as supabaseFactory from '$adapters';
+import { BusinessLogicError } from '$exceptions';
 import { AuthRepository } from '$modules/auth/repositories/auth.repository';
 import { SupabaseAuthGuard } from './supabase-auth.guard';
 
@@ -73,21 +74,21 @@ describe('SupabaseAuthGuard', () => {
     expect(guard).toBeDefined();
   });
 
-  it('should throw UnauthorizedException when access token is missing', async () => {
+  it('should throw BusinessLogicError when access token is missing', async () => {
     mockRequest.cookies = {}; // アクセストークンなし
 
-    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(BusinessLogicError);
     expect(mockSupabase.auth.getUser).not.toHaveBeenCalled();
   });
 
-  it('should throw UnauthorizedException when JWT validation fails', async () => {
+  it('should throw BusinessLogicError when JWT validation fails', async () => {
     mockRequest.cookies = { 'sb-access-token': 'invalid-token' };
     mockSupabase.auth.getUser.mockResolvedValue({
       data: null,
       error: { message: 'Invalid JWT' },
     });
 
-    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(BusinessLogicError);
     expect(mockSupabase.auth.getUser).toHaveBeenCalledWith('invalid-token');
   });
 
@@ -294,7 +295,7 @@ describe('SupabaseAuthGuard', () => {
     );
   });
 
-  it('should throw UnauthorizedException when refresh token fails', async () => {
+  it('should throw BusinessLogicError when refresh token fails', async () => {
     const mockUser = {
       id: '123',
       email: 'test@example.com',
@@ -322,7 +323,7 @@ describe('SupabaseAuthGuard', () => {
       error: { message: 'Invalid refresh token' },
     });
 
-    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(BusinessLogicError);
     expect(mockSupabase.auth.refreshSession).toHaveBeenCalledWith({
       refresh_token: 'refresh-token',
     });
@@ -357,11 +358,6 @@ describe('SupabaseAuthGuard', () => {
     expect(result).toBe(true);
     expect(mockRequest.user).toEqual(mockDbUser);
     expect(mockAuthRepository.getUserByProvider).toHaveBeenCalledWith('', '123');
-
-    expect(consoleLogSpy).toHaveBeenCalled();
-    const logData = JSON.parse(consoleLogSpy.mock.calls[0][0]);
-    expect(logData.email).toBe('');
-    expect(logData.provider).toBe('');
   });
 
   it('should handle user not found in database', async () => {
@@ -387,10 +383,6 @@ describe('SupabaseAuthGuard', () => {
 
     expect(result).toBe(true);
     expect(mockRequest.user).toEqual({ id: 0, publicId: 'unknown' }); // Empty string when user not found
-
-    expect(consoleLogSpy).toHaveBeenCalled();
-    const logData = JSON.parse(consoleLogSpy.mock.calls[0][0]);
-    expect(logData.userId).toBe('');
   });
 
   it('should handle request without x-request-id header', async () => {
@@ -421,10 +413,6 @@ describe('SupabaseAuthGuard', () => {
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
-
-    expect(consoleLogSpy).toHaveBeenCalled();
-    const logData = JSON.parse(consoleLogSpy.mock.calls[0][0]);
-    expect(logData.requestId).toBe('unknown');
   });
 
   it('should handle user with missing app_metadata', async () => {
@@ -455,9 +443,5 @@ describe('SupabaseAuthGuard', () => {
 
     expect(result).toBe(true);
     expect(mockAuthRepository.getUserByProvider).toHaveBeenCalledWith('', '123');
-
-    expect(consoleLogSpy).toHaveBeenCalled();
-    const logData = JSON.parse(consoleLogSpy.mock.calls[0][0]);
-    expect(logData.provider).toBe('');
   });
 });
