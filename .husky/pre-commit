@@ -20,4 +20,4 @@ fi
 
 # ルートで型チェックを実行
 echo "Running type check..."
-pnpm check-types
+pnpm tsc

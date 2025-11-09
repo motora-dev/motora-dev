@@ -152,7 +152,7 @@ pnpm start:prd
 pnpm build
 
 # 型チェック（全パッケージ）
-pnpm check-types
+pnpm tsc
 
 # テスト実行（全パッケージ）
 pnpm test
@@ -180,10 +180,10 @@ pnpm check-all
 
 ```bash
 # 型チェック（アプリケーションコード）
-pnpm --filter @monorepo/client check-types
+pnpm --filter @monorepo/client tsc
 
 # 型チェック（テストコード）
-pnpm --filter @monorepo/client check-types:spec
+pnpm --filter @monorepo/client tsc:spec
 
 # Stylelintの実行
 pnpm --filter @monorepo/client lint:style
