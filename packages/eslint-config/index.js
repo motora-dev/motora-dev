@@ -1,7 +1,8 @@
 import js from '@eslint/js';
+import boundariesPlugin from 'eslint-plugin-boundaries';
+import importPlugin from 'eslint-plugin-import';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import turboPlugin from 'eslint-plugin-turbo';
-import importPlugin from 'eslint-plugin-import';
 import onlyWarn from 'eslint-plugin-only-warn';
 import tseslint from 'typescript-eslint';
 
@@ -12,13 +13,38 @@ import tseslint from 'typescript-eslint';
  * @type {import("eslint").Linter.Config}
  */
 export const baseConfig = [
+  {
+    ignores: ['dist/**', 'build/**', '.next/**', 'node_modules/**', 'eslint.config.mjs', 'jest.config.cjs'],
+  },
   js.configs.recommended,
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: ['apps/*/tsconfig.json', 'apps/*/tsconfig.spec.json', 'packages/*/tsconfig.json'],
+        },
+      },
+      'boundaries/elements': [
+        {
+          type: 'domains',
+          pattern: '$domains/**',
+        },
+        {
+          type: 'modules',
+          pattern: '$modules/**',
+        },
+        {
+          type: 'shared',
+          pattern: '$shared/**',
+        },
+      ],
+    },
     plugins: {
-      turbo: turboPlugin,
+      boundaries: boundariesPlugin,
       import: importPlugin,
+      turbo: turboPlugin,
     },
     rules: {
       'turbo/no-undeclared-env-vars': 'warn',
@@ -26,22 +52,33 @@ export const baseConfig = [
       'import/order': [
         'error',
         {
-          groups: [
-            ['builtin', 'external'],
-            ['internal', 'parent', 'sibling', 'index', 'object', 'type'],
+          groups: [['builtin', 'external', 'internal'], ['parent', 'sibling', 'index', 'object'], 'type'],
+          pathGroups: [
+            {
+              pattern: '${domains,modules,shared}/**',
+              group: 'parent',
+            },
           ],
           'newlines-between': 'always',
-          alphabetize: { order: 'asc', caseInsensitive: true },
+          alphabetize: { order: 'asc', caseInsensitive: true, orderImportKind: 'asc' },
         },
       ],
-      // sort named imports within braces alphabetically; avoid conflict with import/order
-      'sort-imports': [
+      'boundaries/element-types': [
         'error',
         {
-          ignoreDeclarationSort: true,
-          ignoreMemberSort: false,
-          memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-          allowSeparatedGroups: true,
+          default: 'allow',
+          rules: [
+            {
+              from: 'modules',
+              disallow: ['domains'],
+              message: 'Modules should not depend on domains.',
+            },
+            {
+              from: 'shared',
+              disallow: ['domains', 'modules'],
+              message: 'Shared should not depend on domains or modules.',
+            },
+          ],
         },
       ],
     },
@@ -50,8 +87,5 @@ export const baseConfig = [
     plugins: {
       onlyWarn,
     },
-  },
-  {
-    ignores: ['dist/**', 'build/**', '.next/**', 'node_modules/**'],
   },
 ];

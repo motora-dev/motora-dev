@@ -1,4 +1,3 @@
-export { authenticatedFetch } from './authenticated-fetch';
+export { ApiError, type ApiErrorPayload } from './api-error';
+export type { ApiResponse, SuccessResponse, FailureResponse } from './api-response';
 export { getGoogleAuth, resetGoogleAuth } from './google-auth';
-export type { ApiResponse } from './api-response';
-export { createApiResponse } from './api-response';

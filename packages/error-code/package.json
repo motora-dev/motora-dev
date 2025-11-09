@@ -1,0 +1,32 @@
+{
+  "name": "@monorepo/error-code",
+  "version": "0.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"dist\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "prebuild": "rm -rf dist",
+    "build": "pnpm prebuild && tsc --project tsconfig.build.json",
+    "tsc": "pnpm tsc:src && pnpm tsc:spec",
+    "tsc:src": "tsc --noEmit -p tsconfig.json",
+    "tsc:spec": "tsc --noEmit -p tsconfig.spec.json",
+    "format": "prettier --check \"src/**/*.ts\"",
+    "format:fix": "prettier --write \"src/**/*.ts\"",
+    "lint": "pnpm lint:eslint",
+    "lint:fix": "pnpm lint:eslint:fix",
+    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
+    "lint:eslint:fix": "pnpm lint:eslint --fix",
+    "test": "jest",
+    "test:coverage": "COLLECT_COVERAGE=true jest"
+  },
+  "devDependencies": {
+    "@monorepo/eslint-config": "workspace:*",
+    "@monorepo/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}

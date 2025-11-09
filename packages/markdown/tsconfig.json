@@ -1,0 +1,10 @@
+{
+  "extends": "@monorepo/typescript-config",
+  "include": ["src/**/*.ts", "index.ts"],
+  "exclude": [".turbo", "coverage", "node_modules"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "types": ["node", "jest"]
+  }
+}

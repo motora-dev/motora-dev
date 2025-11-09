@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supabaseJs from '@supabase/supabase-js';
 
+import { BusinessLogicError } from '$exceptions';
 import { SupabaseStorageAdapter } from './supabase.storage.adapter';
 
 // Supabaseクライアントをモック
@@ -111,7 +112,7 @@ describe('SupabaseStorageAdapter', () => {
           },
         ],
       }).compile(),
-    ).rejects.toThrow('Supabase URL and ROLE_KEY must be provided');
+    ).rejects.toThrow(BusinessLogicError);
   });
 
   it('should throw error when SUPABASE_SERVICE_ROLE_KEY is not provided', async () => {
@@ -138,11 +139,12 @@ describe('SupabaseStorageAdapter', () => {
           },
         ],
       }).compile(),
-    ).rejects.toThrow('Supabase URL and ROLE_KEY must be provided');
+    ).rejects.toThrow(BusinessLogicError);
   });
 
   describe('getDownloadUrl', () => {
     it('should create and return signed URL', async () => {
+      const bucketName = 'articles';
       const filePath = 'test/path/file.md';
       const fileName = 'download-file.md';
       const expiresIn = 3600;
@@ -153,7 +155,7 @@ describe('SupabaseStorageAdapter', () => {
         error: null,
       });
 
-      const result = await adapter.getDownloadUrl(filePath, fileName, expiresIn);
+      const result = await adapter.getDownloadUrl(bucketName, filePath, fileName, expiresIn);
 
       expect(mockSupabaseClient.storage.from).toHaveBeenCalledWith('articles');
       expect(mockStorageBucket.createSignedUrl).toHaveBeenCalledWith(filePath, expiresIn, {
@@ -163,6 +165,7 @@ describe('SupabaseStorageAdapter', () => {
     });
 
     it('should use default expiration time when not provided', async () => {
+      const bucketName = 'articles';
       const filePath = 'test/path/file.md';
       const fileName = 'download-file.md';
       const mockSignedUrl = 'https://signed-url.com/file.md';
@@ -172,7 +175,7 @@ describe('SupabaseStorageAdapter', () => {
         error: null,
       });
 
-      const result = await adapter.getDownloadUrl(filePath, fileName);
+      const result = await adapter.getDownloadUrl(bucketName, filePath, fileName);
 
       expect(mockStorageBucket.createSignedUrl).toHaveBeenCalledWith(filePath, 3600, {
         download: fileName,
@@ -181,6 +184,7 @@ describe('SupabaseStorageAdapter', () => {
     });
 
     it('should throw error when signed URL creation fails', async () => {
+      const bucketName = 'articles';
       const filePath = 'test/path/file.md';
       const fileName = 'download-file.md';
       const mockError = { message: 'URL creation failed' };
@@ -190,9 +194,7 @@ describe('SupabaseStorageAdapter', () => {
         error: mockError,
       });
 
-      await expect(adapter.getDownloadUrl(filePath, fileName)).rejects.toThrow(
-        'Signed URL creation failed: URL creation failed',
-      );
+      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow(BusinessLogicError);
 
       expect(mockSupabaseClient.storage.from).toHaveBeenCalledWith('articles');
       expect(mockStorageBucket.createSignedUrl).toHaveBeenCalledWith(filePath, 3600, {
@@ -201,13 +203,14 @@ describe('SupabaseStorageAdapter', () => {
     });
 
     it('should throw error when exception occurs during URL creation', async () => {
+      const bucketName = 'articles';
       const filePath = 'test/path/file.md';
       const fileName = 'download-file.md';
       const mockError = new Error('Network error');
 
       mockStorageBucket.createSignedUrl.mockRejectedValue(mockError);
 
-      await expect(adapter.getDownloadUrl(filePath, fileName)).rejects.toThrow('Network error');
+      await expect(adapter.getDownloadUrl(bucketName, filePath, fileName)).rejects.toThrow('Network error');
     });
   });
 });

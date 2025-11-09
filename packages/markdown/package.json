@@ -1,0 +1,50 @@
+{
+  "name": "@monorepo/markdown",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "tsc": "pnpm tsc:src && pnpm tsc:spec",
+    "tsc:src": "tsc --noEmit -p tsconfig.json",
+    "tsc:spec": "tsc --noEmit -p tsconfig.spec.json",
+    "format": "prettier --check \"src/**/*.ts\"",
+    "format:fix": "prettier --write \"src/**/*.ts\"",
+    "lint": "pnpm lint:eslint",
+    "lint:fix": "pnpm lint:eslint:fix",
+    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
+    "lint:eslint:fix": "pnpm lint:eslint --fix",
+    "test": "jest",
+    "test:coverage": "COLLECT_COVERAGE=true jest"
+  },
+  "devDependencies": {
+    "@monorepo/eslint-config": "workspace:*",
+    "@monorepo/typescript-config": "workspace:*",
+    "@tiptap/pm": "catalog:",
+    "@types/jest": "^30.0.0",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@types/markdown-it": "^14.0.0",
+    "markdown-it": "^14.0.0",
+    "prosemirror-markdown": "^1.13.0",
+    "prosemirror-model": "^1.25.4"
+  },
+  "peerDependenciesMeta": {
+    "@types/markdown-it": {
+      "optional": true
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix --config eslint.config.mjs"
+    ]
+  },
+  "volta": {
+    "extends": "../../package.json"
+  }
+}

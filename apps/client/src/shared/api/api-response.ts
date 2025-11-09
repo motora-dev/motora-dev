@@ -1,13 +1,23 @@
-// NOTE:
-// Next.js の Server→Client 間では「プレーンオブジェクト」以外は渡せません。
-// クラスインスタンスはシリアライズ不可のため、型＋ファクトリ関数で表現します。
+import { ApiErrorPayload } from './api-error';
 
-export type ApiResponse<T> = {
+// 成功レスポンスの型
+export type SuccessResponse<T> = {
+  isSuccess: true;
   status: number;
-  statusText: string;
-  json: T;
+  data: T;
 };
 
-export function createApiResponse<T>(status: number, statusText: string, json: T): ApiResponse<T> {
-  return { status, statusText, json };
+// 失敗レスポンスの型
+export type FailureResponse = {
+  isSuccess: false;
+  status: number;
+  error: ApiErrorPayload;
+};
+
+// Server ComponentからClient Componentへ渡すためのAPIレスポンスの型
+export type ApiResponse<T> = SuccessResponse<T> | FailureResponse;
+
+// レスポンスが成功したかどうかを判断する型ガード関数
+export function isSuccessResponse<T>(response: ApiResponse<T>): response is SuccessResponse<T> {
+  return response.isSuccess;
 }

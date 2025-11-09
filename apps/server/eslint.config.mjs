@@ -20,6 +20,21 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      'import/order': [
+        'error',
+        {
+          groups: [['builtin', 'external'], ['internal', 'parent', 'sibling', 'index', 'object'], 'type'],
+          pathGroups: [
+            {
+              pattern:
+                '{$adapters,$decorators,$exceptions,$filters,$guards,$interceptors,$utils,$domains/**,$modules/**,$shared/**}',
+              group: 'internal',
+            },
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true, orderImportKind: 'asc' },
+        },
+      ],
     },
   },
 ];

@@ -1,9 +1,9 @@
-FROM node:22.18-slim AS builder
+FROM node:24.11.0-slim AS builder
 
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm@10.14.0
+RUN npm install -g pnpm@10.19.0
 
 # Install required system dependencies
 RUN apt-get update && \
@@ -14,8 +14,9 @@ RUN apt-get update && \
 # Copy package.json and other configuration files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/server/package.json ./apps/server/
+COPY packages/error-code/package.json ./packages/error-code/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY packages/jest-config/package.json ./packages/jest-config/
+COPY packages/markdown/package.json ./packages/markdown/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY apps/server/prisma/ ./apps/server/prisma/
 
@@ -29,7 +30,7 @@ COPY . .
 RUN pnpm run build --filter=@monorepo/server
 
 # Production stage
-FROM node:22.18-slim AS runner
+FROM node:24.11.0-slim AS runner
 
 WORKDIR /app
 
@@ -43,6 +44,9 @@ RUN apt-get update && \
 # Copy necessary files from builder stage
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages/error-code/dist ./packages/error-code/dist
+COPY --from=builder /app/packages/error-code/node_modules ./packages/error-code/node_modules
+COPY --from=builder /app/packages/error-code/package.json ./packages/error-code/package.json
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 COPY --from=builder /app/apps/server/node_modules ./apps/server/node_modules
 COPY --from=builder /app/apps/server/package.json ./apps/server/

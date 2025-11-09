@@ -4,10 +4,15 @@ export const createServerSupabase = (req: any, res: any) => {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     auth: {
       flowType: 'pkce',
-      autoRefreshToken: true,
+      autoRefreshToken: false,
       storage: {
         getItem: (key) => req.cookies?.[key] ?? null,
         setItem: (key, value) => {
+          // レスポンスが既に送信されている場合は cookie を設定しない
+          if (res.headersSent) {
+            return;
+          }
+
           /**
            * code-verifier だけは "文字列" を剥がさないと 401 になる
            * それ以外は JSON のまま残す
@@ -25,6 +30,11 @@ export const createServerSupabase = (req: any, res: any) => {
           });
         },
         removeItem: (key) => {
+          // レスポンスが既に送信されている場合は cookie を削除しない
+          if (res.headersSent) {
+            return;
+          }
+
           res.clearCookie(key, { path: '/' });
         },
       },
