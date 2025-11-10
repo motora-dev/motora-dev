@@ -18,9 +18,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof BusinessLogicError) {
       // AppErrorの場合
-      status = exception.errorObject.statusCode;
-      errorCode = exception.errorObject.code;
-      message = exception.errorObject.message;
+      status = exception.statusCode;
+      errorCode = exception.errorCode;
+      message = exception.message;
     } else if (exception instanceof HttpException) {
       // NestJS標準のHttpExceptionの場合
       status = exception.getStatus();
