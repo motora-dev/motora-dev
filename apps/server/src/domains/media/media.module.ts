@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { PrismaAdapterModule, SupabaseAdapterModule } from '$adapters';
@@ -11,7 +12,7 @@ import { SupabaseAuthGuardModule } from '$modules/auth/supabase-auth.guard.modul
 const MediaHandlers = [CreateUploadUrlHandler];
 
 @Module({
-  imports: [CqrsModule, PrismaAdapterModule, SupabaseAdapterModule, SupabaseAuthGuardModule],
+  imports: [ConfigModule, CqrsModule, PrismaAdapterModule, SupabaseAdapterModule, SupabaseAuthGuardModule],
   controllers: [MediaController],
   providers: [MediaService, MediaRepository, ...MediaHandlers],
 })

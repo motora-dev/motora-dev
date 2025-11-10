@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
 export const createServerSupabase = (req: any, res: any) => {
+  // 環境変数または NODE_ENV から secure フラグを決定
+  const isProd = process.env.NODE_ENV === 'production';
+
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     auth: {
       flowType: 'pkce',
@@ -26,7 +29,7 @@ export const createServerSupabase = (req: any, res: any) => {
             httpOnly: true,
             path: '/',
             sameSite: 'lax',
-            secure: false, // ← 本番は true
+            secure: isProd, // ← 本番は true
           });
         },
         removeItem: (key) => {

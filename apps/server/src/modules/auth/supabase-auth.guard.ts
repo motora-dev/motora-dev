@@ -1,5 +1,6 @@
 import { ERROR_CODE } from '@monorepo/error-code';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 
 import { createServerSupabase } from '$adapters';
@@ -8,9 +9,14 @@ import { AuthRepository } from './repositories/auth.repository';
 
 @Injectable()
 export class SupabaseAuthGuard implements CanActivate {
-  constructor(private authRepository: AuthRepository) {}
+  constructor(
+    private authRepository: AuthRepository,
+    private configService: ConfigService,
+  ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    const isProd = this.configService.get('NODE_ENV') === 'production';
+
     const req = ctx.switchToHttp().getRequest<Request>();
     const res = ctx.switchToHttp().getResponse<Response>();
 
@@ -46,7 +52,7 @@ export class SupabaseAuthGuard implements CanActivate {
         httpOnly: true,
         path: '/',
         sameSite: 'lax',
-        secure: false,
+        secure: isProd,
         maxAge: ref.session?.expires_in ? ref.session.expires_in * 1000 : 0,
       });
     }

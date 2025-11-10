@@ -1,5 +1,5 @@
 import { ERROR_CODE } from '@monorepo/error-code';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
@@ -7,7 +7,6 @@ import { BusinessLogicError } from '$exceptions';
 
 @Injectable()
 export class SupabaseStorageAdapter {
-  private readonly logger = new Logger(SupabaseStorageAdapter.name);
   private readonly supabase: SupabaseClient;
 
   constructor(private readonly configService: ConfigService) {
