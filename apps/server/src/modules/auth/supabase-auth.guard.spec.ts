@@ -1,4 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import * as supabaseFactory from '$adapters';
@@ -26,11 +27,19 @@ describe('SupabaseAuthGuard', () => {
     updateUser: jest.fn(),
   };
 
+  const mockConfigService = {
+    get: jest.fn().mockReturnValue('development'),
+  };
+
   beforeEach(async () => {
     // console.logの出力を抑制
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SupabaseAuthGuard, { provide: AuthRepository, useValue: mockAuthRepository }],
+      providers: [
+        SupabaseAuthGuard,
+        { provide: AuthRepository, useValue: mockAuthRepository },
+        { provide: ConfigService, useValue: mockConfigService },
+      ],
     }).compile();
 
     guard = module.get<SupabaseAuthGuard>(SupabaseAuthGuard);

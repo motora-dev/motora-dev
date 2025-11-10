@@ -85,6 +85,7 @@ export class AuthController {
   @Get('callback/google')
   @HttpCode(HttpStatus.OK)
   async callbackGoogle(@Req() req: any, @Res() res: any) {
+    const isProd = this.configService.get('NODE_ENV') === 'production';
     const code = req.query.code as string;
     if (!code) {
       return res.status(400).send('missing code');
@@ -104,7 +105,7 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
-      secure: false,
+      secure: isProd,
       maxAge: expires_in * 1000,
     });
 
@@ -113,7 +114,7 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
-      secure: false,
+      secure: isProd,
       maxAge: expires_in * 1000,
     });
 
