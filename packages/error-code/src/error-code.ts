@@ -23,11 +23,12 @@ const createErrorCodeFactory = (domain: DomainCode) => {
 };
 
 // --- ドメインごとのファクトリを生成 ---
+const commonError = createErrorCodeFactory(DOMAIN.common);
 const authError = createErrorCodeFactory(DOMAIN.auth);
-const mediaError = createErrorCodeFactory(DOMAIN.media);
 const articleError = createErrorCodeFactory(DOMAIN.article);
 const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit);
-const commonError = createErrorCodeFactory(DOMAIN.common);
+const mediaError = createErrorCodeFactory(DOMAIN.media);
+const userError = createErrorCodeFactory(DOMAIN.user);
 
 export const ERROR_CODE = {
   // System
@@ -46,6 +47,9 @@ export const ERROR_CODE = {
   NO_BEARER_TOKEN: authError(STATUS.unauthorized, ENTITY.token, MESSAGES.NO_BEARER_TOKEN),
   INVALID_TOKEN: authError(STATUS.unauthorized, ENTITY.token, MESSAGES.INVALID_TOKEN),
   UNAUTHORIZED: authError(STATUS.unauthorized, ENTITY.user, MESSAGES.UNAUTHORIZED),
+
+  // User
+  USER_NOT_FOUND: userError(STATUS.notFound, ENTITY.user, MESSAGES.USER_NOT_FOUND),
 
   // Media
   MEDIA_FILE_EXTENSION_MISSING: mediaError(STATUS.badRequest, ENTITY.media, MESSAGES.MEDIA_FILE_EXTENSION_MISSING),

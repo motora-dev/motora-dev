@@ -10,6 +10,9 @@ export const MESSAGES = {
   INVALID_TOKEN: 'Invalid token',
   UNAUTHORIZED: 'Unauthorized',
 
+  // User
+  USER_NOT_FOUND: 'User not found',
+
   // Media
   MEDIA_FILE_EXTENSION_MISSING: 'File extension is missing',
 
