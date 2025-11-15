@@ -5,6 +5,7 @@ import { CommandBus } from '@nestjs/cqrs';
 
 import { createServerSupabase } from '$adapters';
 import { Public } from '$decorators';
+import { CreateUserCommand } from '$domains/user/commands';
 import { BusinessLogicError } from '$exceptions';
 
 @Controller('auth')
@@ -124,6 +125,11 @@ export class AuthController {
       maxAge: expires_in * 1000,
       domain: cookieDomain,
     });
+
+    // GETリクエストでDBを更新するアーキテクチャはNGなので後で修正する
+    await this.commandBus.execute(
+      new CreateUserCommand(data.user.app_metadata.provider ?? '', data.user.id ?? '', data.user.email ?? '', ''),
+    );
 
     // Referer/Originからフロントエンドのドメインを取得
     const origin = req.headers.origin || (req.headers.referer ? new URL(req.headers.referer).origin : null);
