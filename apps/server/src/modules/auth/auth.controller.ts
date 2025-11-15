@@ -66,7 +66,10 @@ export class AuthController {
   async googleLogin(@Req() req: any, @Res() res: any) {
     const supabase = createServerSupabase(req, res);
 
-    const backendUrl = this.configService.get('API_URL') || '';
+    // リクエストから自分自身のURLを構築
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const host = req.get('host'); // api.motora-dev.com or api.preview.motora-dev.com
+    const backendUrl = `${protocol}://${host}`;
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -122,7 +125,33 @@ export class AuthController {
       new CreateUserCommand(data.user.app_metadata.provider ?? '', data.user.id ?? '', data.user.email ?? ''),
     );
 
-    const frontendUrl = this.configService.get('APP_URL') || '';
+    // Referer/Originからフロントエンドのドメインを取得
+    const origin = req.headers.origin || (req.headers.referer ? new URL(req.headers.referer).origin : null);
+    const frontendUrl = origin && this.isAllowedOrigin(origin) ? origin : this.configService.get('APP_URL') || '';
     return req.res.redirect(`${frontendUrl}/auth/callback`);
+  }
+
+  private isAllowedOrigin(url: string): boolean {
+    const urlOrigin = new URL(url).origin;
+    const domain = this.configService.get<string>('DOMAIN') || '';
+
+    // 許可するパターン
+    const allowedPatterns = [
+      // ローカル開発
+      'http://localhost:3000',
+      // メインドメイン: https://motora-dev.com
+      `https://${domain}`,
+      // 任意のサブドメイン: https://*.motora-dev.com
+      new RegExp(`^https://[a-z0-9-]+\\.${domain.replace('.', '\\.')}$`),
+      // Vercelプレビュー: https://motora-dev-*.vercel.app
+      new RegExp(`^https://${domain.split('.')[0]}-[a-z0-9-]+\\.vercel\\.app$`),
+    ];
+
+    return allowedPatterns.some((pattern) => {
+      if (pattern instanceof RegExp) {
+        return pattern.test(urlOrigin);
+      }
+      return urlOrigin === pattern;
+    });
   }
 }
