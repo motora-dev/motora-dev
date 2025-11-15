@@ -36,6 +36,9 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: any, @Res() res: any) {
+    const isProd = this.configService.get('NODE_ENV') === 'production';
+    const cookieDomain = this.configService.get('COOKIE_DOMAIN') || '';
+
     const supabase = createServerSupabase(req, res);
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -47,8 +50,10 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
-      secure: false, // callbackGoogleの実装に合わせる
+      secure: isProd, // callbackGoogleの実装に合わせる
+      domain: cookieDomain,
     };
+
     // 一般的なSupabase関連クッキーもクリア
     const cookiesToClear = ['sb-access-token', 'sb-refresh-token'];
     for (const name of cookiesToClear) {
