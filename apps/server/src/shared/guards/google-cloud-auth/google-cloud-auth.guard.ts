@@ -39,14 +39,16 @@ export class GoogleCloudAuthGuard implements CanActivate {
 
     const idToken = authHeader.split('Bearer ')[1];
 
-    // Accept multiple audiences from CORS origins
-    const apiUrl = this.configService.get<string>('API_URL') || '';
+    // リクエストから自分自身のURLを構築
+    const protocol = request.headers['x-forwarded-proto'] || request.protocol || 'https';
+    const host = request.get('host'); // api.motora-dev.com or api.preview.motora-dev.com
+    const backendUrl = `${protocol}://${host}`;
 
     // Verify token - will throw if invalid
     await this.client
       .verifyIdToken({
         idToken: idToken,
-        audience: apiUrl,
+        audience: backendUrl,
       })
       .catch(() => {
         throw new BusinessLogicError(ERROR_CODE.INVALID_TOKEN);
