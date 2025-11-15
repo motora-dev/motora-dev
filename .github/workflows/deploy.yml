@@ -42,11 +42,12 @@ jobs:
           region: ${{ vars.REGION }}
           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
           flags: '--allow-unauthenticated'
-          env_vars: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            DIRECT_URL=${{ secrets.DIRECT_URL }}
-            CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
-            APP_URL=${{ vars.APP_URL }}
-            API_URL=${{ secrets.API_URL }}
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          secrets: |
+            DATABASE_URL=database-url:latest
+            DIRECT_URL=direct-url:latest
+            SUPABASE_URL=supabase-url:latest
+            SUPABASE_SERVICE_ROLE_KEY=supabase-service-role-key:latest
+            CORS_ORIGINS=cors-origins:latest
+            APP_URL=app-url:latest
+            API_URL=api-url:latest
+            COOKIE_DOMAIN=cookie-domain:latest

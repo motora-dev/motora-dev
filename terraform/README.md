@@ -7,23 +7,26 @@
 - **サービスアカウント**: GitHub ActionsとCloud Run用
 - **IAMロール**: 必要最小限の権限設定
 - **Workload Identity Federation**: GitHub ActionsからGCPへの安全な認証
+- **Secret Manager**: Cloud KMSで暗号化された機密情報管理
 - **API有効化**: 必要なGoogle Cloud APIの自動有効化
 
 ## 📁 ディレクトリ構造
 
 ```
 terraform/
-├── modules/               # 再利用可能なモジュール
-│   ├── iam/              # サービスアカウントとIAM設定
-│   ├── wif/              # Workload Identity Federation
-│   └── cloud-run/        # Cloud Runサービス（現在は手動デプロイ）
-├── environments/         # 環境別設定
-│   ├── develop/         # 開発環境（developブランチ）
-│   └── main/            # 本番環境（mainブランチ）
-├── main.tf              # メイン設定
-├── variables.tf         # 変数定義
-├── outputs.tf           # 出力定義
-└── versions.tf          # Terraformバージョン設定
+├── modules/                    # 再利用可能なモジュール
+│   ├── iam/                   # サービスアカウントとIAM設定
+│   ├── wif/                   # Workload Identity Federation
+│   ├── secrets/               # Secret Manager（KMS暗号化）
+│   └── cloud-run/             # Cloud Runサービス（現在は手動デプロイ）
+├── environments/              # 環境別設定
+│   ├── develop/              # 開発環境（developブランチ）
+│   └── main/                 # 本番環境（mainブランチ）
+├── main.tf                   # メイン設定
+├── variables.tf              # 変数定義
+├── outputs.tf                # 出力定義
+├── versions.tf               # Terraformバージョン設定
+└── SECRET_MANAGER_MIGRATION.md  # Secret Manager移行ガイド
 ```
 
 ## 🚀 使用方法
@@ -101,6 +104,26 @@ workload_identity_provider = "projects/123456789/locations/global/workloadIdenti
 
 これらの値をGitHub Secretsに設定してください。
 
+### 5. Secret Managerへのシークレット値の設定
+
+Terraform適用後、Secret Managerに機密情報を設定します：
+
+```bash
+# プロジェクトIDを設定
+PROJECT_ID="your-project-id"
+
+# ヘルパースクリプトを使用（推奨）
+chmod +x scripts/set-secrets.sh
+./scripts/set-secrets.sh $PROJECT_ID
+
+# または手動で設定
+echo -n "postgresql://..." | gcloud secrets versions add database-url --data-file=- --project=$PROJECT_ID
+echo -n "https://..." | gcloud secrets versions add supabase-url --data-file=- --project=$PROJECT_ID
+# ... 他のシークレットも同様に設定
+```
+
+詳細は [SECRET_MANAGER_MIGRATION.md](./SECRET_MANAGER_MIGRATION.md) を参照してください。
+
 ## 📝 必要な変数
 
 | 変数名         | 説明                       | 例                  |
@@ -118,7 +141,14 @@ workload_identity_provider = "projects/123456789/locations/global/workloadIdenti
    - `.gitignore`に含まれています
    - 機密情報が含まれる可能性があります
 
-2. **状態ファイルの管理**
+2. **Secret Managerによる機密情報管理**
+   - 全ての機密情報はSecret Managerで管理
+   - Cloud KMSで自動的に暗号化
+   - IAMによる細かいアクセス制御
+   - 監査ログで全アクセスを追跡
+   - GitHub Secretsには機密情報を保存しない（GCP認証情報のみ）
+
+3. **状態ファイルの管理**
    - 本番環境ではリモートバックエンド（GCS）の使用を推奨
    - バックエンド設定例:
      ```hcl
@@ -130,8 +160,9 @@ workload_identity_provider = "projects/123456789/locations/global/workloadIdenti
      }
      ```
 
-3. **最小権限の原則**
+4. **最小権限の原則**
    - 各サービスアカウントには必要最小限の権限のみ付与
+   - Cloud Runサービスアカウント: `roles/secretmanager.secretAccessor`のみ
 
 ## 🔧 トラブルシューティング
 
@@ -166,8 +197,35 @@ Error: Error creating service account: googleapi: Error 403
 terraform destroy -var-file=environments/develop/terraform.tfvars
 ```
 
+## 🔐 Secret Managerについて
+
+本プロジェクトでは、機密情報をSecret Managerで管理しています：
+
+### メリット
+- ✅ **Cloud KMSによる自動暗号化**: データは保存時・転送時ともに暗号化
+- ✅ **IAMによるアクセス制御**: 誰がどのシークレットにアクセスできるか細かく制御
+- ✅ **監査ログ**: 全てのアクセスが記録され、セキュリティコンプライアンスに対応
+- ✅ **バージョン管理**: シークレットのローテーションが容易
+- ✅ **コスト効率**: 8シークレット × $0.06/月 ≈ $0.48/月
+
+### 使用しているシークレット
+- `database-url`: PostgreSQLデータベースURL
+- `direct-url`: Prisma Direct URL
+- `supabase-url`: Supabase URL
+- `supabase-service-role-key`: Supabaseサービスロールキー
+- `cors-origins`: CORS許可オリジン
+- `app-url`: フロントエンドURL
+- `api-url`: バックエンドAPI URL
+- `cookie-domain`: Cookieドメイン
+
+**Note:** シークレット名には環境名を含めません。各環境（develop/main）は別々のGCPプロジェクトを使用しているため、プロジェクトレベルで自然に分離されます。
+
+詳細な移行手順は [SECRET_MANAGER_MIGRATION.md](./SECRET_MANAGER_MIGRATION.md) を参照してください。
+
 ## 📚 参考リンク
 
 - [Terraform Google Provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
 - [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation)
 - [Cloud Run with Terraform](https://cloud.google.com/run/docs/terraform)
+- [Secret Manager Documentation](https://cloud.google.com/secret-manager/docs)
+- [Cloud KMS](https://cloud.google.com/kms/docs)

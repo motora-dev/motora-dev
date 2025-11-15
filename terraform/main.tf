@@ -51,6 +51,17 @@ module "wif" {
   depends_on = [module.iam]
 }
 
+# Secret Manager module
+module "secrets" {
+  source = "./modules/secrets"
+
+  project_id                      = var.project_id
+  environment                     = var.environment
+  cloud_run_service_account_email = module.iam.cloud_run_service_account_email
+
+  depends_on = [google_project_service.apis, module.iam]
+}
+
 # Cloud Run module (optional - can be managed via GitHub Actions)
 # Uncomment to manage Cloud Run service via Terraform
 # module "cloud_run" {
