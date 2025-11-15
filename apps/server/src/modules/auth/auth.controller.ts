@@ -1,12 +1,11 @@
 import { ERROR_CODE } from '@monorepo/error-code';
-import { Controller, Get, HttpCode, HttpStatus, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 
 import { createServerSupabase } from '$adapters';
 import { Public } from '$decorators';
 import { BusinessLogicError } from '$exceptions';
-import { CreateUserCommand } from './commands/create-user/create-user.command';
 
 @Controller('auth')
 export class AuthController {
@@ -34,7 +33,7 @@ export class AuthController {
     });
   }
 
-  @Get('logout')
+  @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: any, @Res() res: any) {
     const supabase = createServerSupabase(req, res);
@@ -63,7 +62,7 @@ export class AuthController {
 
   @Public()
   @Get('login/google')
-  async googleLogin(@Req() req: any, @Res() res: any) {
+  async googleLogin(@Req() req: any, @Res({ passthrough: true }) res: any) {
     const supabase = createServerSupabase(req, res);
 
     // リクエストから自分自身のURLを構築
@@ -86,9 +85,9 @@ export class AuthController {
 
   @Public()
   @Get('callback/google')
-  @HttpCode(HttpStatus.OK)
-  async callbackGoogle(@Req() req: any, @Res() res: any) {
+  async callbackGoogle(@Req() req: any, @Res({ passthrough: true }) res: any) {
     const isProd = this.configService.get('NODE_ENV') === 'production';
+    const cookieDomain = this.configService.get('COOKIE_DOMAIN') || '';
     const code = req.query.code as string;
     if (!code) {
       return res.status(400).send('missing code');
@@ -103,32 +102,29 @@ export class AuthController {
 
     const { access_token, refresh_token, expires_in } = data.session;
 
-    /** ② 既存の sb-access-token も残したい場合はそのまま */
     res.cookie('sb-access-token', access_token, {
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
       secure: isProd,
       maxAge: expires_in * 1000,
+      domain: cookieDomain,
     });
 
-    /** ② 既存の sb-refresh-token も残したい場合はそのまま */
     res.cookie('sb-refresh-token', refresh_token, {
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
       secure: isProd,
       maxAge: expires_in * 1000,
+      domain: cookieDomain,
     });
-
-    await this.commandBus.execute(
-      new CreateUserCommand(data.user.app_metadata.provider ?? '', data.user.id ?? '', data.user.email ?? ''),
-    );
 
     // Referer/Originからフロントエンドのドメインを取得
     const origin = req.headers.origin || (req.headers.referer ? new URL(req.headers.referer).origin : null);
-    const frontendUrl = origin && this.isAllowedOrigin(origin) ? origin : this.configService.get('APP_URL') || '';
-    return req.res.redirect(`${frontendUrl}/auth/callback`);
+    const frontendUrl = origin && this.isAllowedOrigin(origin) ? origin : '';
+    res.writeHead(302, { Location: `${frontendUrl}/auth/callback` });
+    res.end();
   }
 
   private isAllowedOrigin(url: string): boolean {

@@ -49,3 +49,4 @@ jobs:
             SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
             CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}
             DOMAIN=${{ secrets.DOMAIN }}
+            COOKIE_DOMAIN=${{ secrets.COOKIE_DOMAIN }}

@@ -15,7 +15,10 @@ export const createServerSupabase = (req: any, res: any) => {
           if (res.headersSent) {
             return;
           }
-
+          // code-verifier だけ保存、それ以外は保存しない
+          if (!key.endsWith('-code-verifier')) {
+            return; // ← そもそも保存しない
+          }
           /**
            * code-verifier だけは "文字列" を剥がさないと 401 になる
            * それ以外は JSON のまま残す
