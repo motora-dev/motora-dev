@@ -21,7 +21,7 @@ export class UpdateArticleHandler implements ICommandHandler<UpdateArticleComman
       id: article.publicId,
       title: article.title,
       tags: article.tags,
-      content: article.content,
+      description: article.description ?? '',
     };
   }
 }
