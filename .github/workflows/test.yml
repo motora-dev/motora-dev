@@ -67,6 +67,8 @@ jobs:
           cd apps/server
           echo "DATABASE_URL=${{ vars.DATABASE_URL }}" >> .env.test
           echo "NODE_ENV=test" >> .env.test
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env.test
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env.test
 
       - name: Run error-code coverage
         run: pnpm --filter "@monorepo/error-code" test:coverage
@@ -82,6 +84,8 @@ jobs:
         env:
           DATABASE_URL: ${{ vars.DATABASE_URL }}
           NODE_ENV: test
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
