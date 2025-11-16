@@ -98,7 +98,7 @@ export async function get<T>(
         revalidate: options?.revalidate,
         tags: options?.tags,
       },
-    });
+    } as RequestInit);
 
     // statelessの場合はSet-Cookieヘッダーを処理しない
     if (!options?.stateless) {
