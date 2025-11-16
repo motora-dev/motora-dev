@@ -8,39 +8,53 @@ interface TocSidebarProps {
 }
 
 export function TocSidebar({ toc }: TocSidebarProps) {
-  const [activeId, setActiveId] = useState<string>('');
+  const [activeId, setActiveId] = useState<string>(() => {
+    // 初期値としてURLハッシュを使用
+    if (typeof window !== 'undefined') {
+      return window.location.hash.substring(1);
+    }
+    return '';
+  });
 
   useEffect(() => {
-    // Intersection Observerでビューポート内の見出しを検出
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // ビューポート内にある見出しを収集
-        const visibleHeadings = entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target.id);
+    const handleScroll = () => {
+      const headerOffset = 100; // ヘッダー + マージン
 
-        // 最初に見つかった見出しをアクティブとして設定
-        if (visibleHeadings.length > 0) {
-          setActiveId(visibleHeadings[0]);
+      // 画面上部からの基準位置
+      const fromTop = window.scrollY + headerOffset;
+
+      // 現在のスクロール位置より上にある見出しを逆順で探す
+      let currentId = '';
+
+      for (let i = toc.length - 1; i >= 0; i--) {
+        const { id } = toc[i];
+        const element = document.getElementById(id);
+
+        if (element) {
+          // ページの最上部からの絶対位置を取得
+          const elementTop = element.getBoundingClientRect().top + window.scrollY;
+
+          if (elementTop <= fromTop) {
+            currentId = id;
+            break;
+          }
         }
-      },
-      {
-        // ヘッダー（64px）を考慮したrootMargin
-        rootMargin: '-80px 0px -80% 0px',
-        threshold: 0,
-      },
-    );
-
-    // すべての見出し要素を監視
-    toc.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
       }
-    });
 
-    return () => {
-      observer.disconnect();
+      // 見出しが見つかった場合のみ更新
+      if (currentId && currentId !== activeId) {
+        setActiveId(currentId);
+      }
     };
-  }, [toc]);
+
+    // 初期ロード時にスクロール位置をチェック
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [toc, activeId]);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
