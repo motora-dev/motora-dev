@@ -15,6 +15,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @Public()
   @Get('check-session')
   @HttpCode(HttpStatus.OK)
   async getSession(@Req() req: any, @Res() res: any) {

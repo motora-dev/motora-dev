@@ -82,14 +82,12 @@ async function createFailureResponse(status: number, errorBody?: any): Promise<F
 
 export async function get<T>(url: string, options?: { revalidate?: number; tags?: string[] }): Promise<ApiResponse<T>> {
   try {
-    const authHeaders = await getAuthHeaders();
     const cookieHeaders = await getCookieHeaders();
 
     const response = await fetch(`${API_BASE_URL}/${url}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        ...authHeaders,
         ...cookieHeaders,
       },
       credentials: 'include',
