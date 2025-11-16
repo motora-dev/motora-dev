@@ -6,6 +6,18 @@
       "outputs": ["dist/**"],
       "env": ["NODE_ENV", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
     },
+    "test": {
+      "outputs": ["coverage/**"],
+      "env": [
+        "NODE_ENV",
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "DATABASE_URL",
+        "CORS_ORIGINS",
+        "PORT",
+        "SESSION_SECRET_TOKEN"
+      ]
+    },
     "lint": {
       "env": ["NODE_ENV", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
     }
