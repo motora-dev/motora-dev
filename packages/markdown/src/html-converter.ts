@@ -15,7 +15,11 @@ export function markdownToHtml(markdown: string): string {
   const md = getMarkdownTokenizer();
 
   md.use(anchor, {
-    permalink: false,
+    permalink: anchor.permalink.linkInsideHeader({
+      symbol: '#',
+      placement: 'before',
+      class: 'heading-anchor',
+    }),
     level: [1, 2, 3, 4, 5, 6],
   });
   return md.render(markdown);

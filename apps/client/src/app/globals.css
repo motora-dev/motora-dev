@@ -206,3 +206,33 @@
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
+/* GitHub風見出しリンクスタイル */
+.prose .heading-anchor {
+  float: left;
+  margin-left: -1.5rem;
+  padding-right: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.prose .heading-anchor:hover {
+  opacity: 1;
+}
+
+.prose .heading-anchor:focus {
+  opacity: 1;
+  outline: none;
+}
+
+.prose h1:hover .heading-anchor,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor,
+.prose h5:hover .heading-anchor,
+.prose h6:hover .heading-anchor {
+  opacity: 1;
+}
