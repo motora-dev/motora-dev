@@ -24,6 +24,7 @@
     "@monorepo/typescript-config": "workspace:*",
     "@tiptap/pm": "catalog:",
     "@types/jest": "^30.0.0",
+    "@types/markdown-it-anchor": "^7.0.0",
     "jest": "catalog:",
     "typescript": "catalog:"
   },
@@ -46,5 +47,8 @@
   },
   "volta": {
     "extends": "../../package.json"
+  },
+  "dependencies": {
+    "markdown-it-anchor": "^9.2.0"
   }
 }

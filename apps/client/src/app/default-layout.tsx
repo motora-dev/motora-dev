@@ -42,6 +42,7 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
           maxWidth: '1280px',
           margin: '0 auto',
           padding: '48px 16px',
+          paddingTop: 'calc(64px + 48px)', // ヘッダーの高さ + 元のパディング
         }}
       >
         <PageContentManager>{children}</PageContentManager>

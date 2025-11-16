@@ -10,7 +10,15 @@ interface PageSidebarProps {
 
 export function PageSidebar({ articleId, pages, currentPageId }: PageSidebarProps) {
   return (
-    <aside className="w-64 border-r border-gray-200 bg-gray-50 p-6 overflow-y-auto">
+    <aside
+      className="w-64 border-r border-gray-200 bg-gray-50 p-6 overflow-y-auto"
+      style={{
+        position: 'fixed',
+        top: '64px',
+        left: 0,
+        height: 'calc(100vh - 64px)',
+      }}
+    >
       <nav>
         <h2 className="text-sm font-semibold text-gray-900 mb-4">目次</h2>
         <ul className="space-y-2">

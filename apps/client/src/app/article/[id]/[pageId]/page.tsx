@@ -1,4 +1,4 @@
-import { markdownToHtml } from '@monorepo/markdown';
+import { extractTableOfContents, markdownToHtml } from '@monorepo/markdown';
 import Link from 'next/link';
 
 import { getPage, getPages } from '$domains/article-page/api';
@@ -30,6 +30,9 @@ export default async function ArticlePagePage({ params }: { params: Promise<{ id
   const htmlWithoutHighlight = markdownToHtml(pageResponse.data.content);
   const html = highlightHtml(htmlWithoutHighlight);
 
+  // 目次を抽出
+  const toc = extractTableOfContents(pageResponse.data.content);
+
   const page = {
     id: pageResponse.data.id,
     createdAt: pageResponse.data.createdAt,
@@ -40,5 +43,5 @@ export default async function ArticlePagePage({ params }: { params: Promise<{ id
     order: pageResponse.data.order,
   };
 
-  return <PageLayout articleId={articleId} pageId={pageId} pages={pagesResponse.data.pages} page={page} />;
+  return <PageLayout articleId={articleId} pageId={pageId} pages={pagesResponse.data.pages} page={page} toc={toc} />;
 }

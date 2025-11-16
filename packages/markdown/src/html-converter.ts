@@ -1,3 +1,5 @@
+import anchor from 'markdown-it-anchor';
+
 import { getMarkdownTokenizer } from './tokenizer';
 
 /**
@@ -11,5 +13,10 @@ import { getMarkdownTokenizer } from './tokenizer';
  */
 export function markdownToHtml(markdown: string): string {
   const md = getMarkdownTokenizer();
+
+  md.use(anchor, {
+    permalink: false,
+    level: [1, 2, 3, 4, 5, 6],
+  });
   return md.render(markdown);
 }

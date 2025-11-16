@@ -188,6 +188,7 @@
 .prose h6 {
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
+  scroll-margin-top: 80px; /* ヘッダー分のスクロールオフセット */
 }
 
 .prose p {
