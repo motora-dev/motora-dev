@@ -80,7 +80,10 @@ async function createFailureResponse(status: number, errorBody?: any): Promise<F
   return { isSuccess: false, status: apiError.statusCode, error: apiError };
 }
 
-export async function get<T>(url: string, options?: { revalidate?: number; tags?: string[] }): Promise<ApiResponse<T>> {
+export async function get<T>(
+  url: string,
+  options?: { revalidate?: number; tags?: string[]; stateless?: boolean },
+): Promise<ApiResponse<T>> {
   try {
     const cookieHeaders = await getCookieHeaders();
 
@@ -97,7 +100,10 @@ export async function get<T>(url: string, options?: { revalidate?: number; tags?
       },
     });
 
-    await proxySetCookie(response.headers);
+    // statelessの場合はSet-Cookieヘッダーを処理しない
+    if (!options?.stateless) {
+      await proxySetCookie(response.headers);
+    }
 
     if (!response.ok) {
       const errorBody = await response.json().catch(() => ({}));
