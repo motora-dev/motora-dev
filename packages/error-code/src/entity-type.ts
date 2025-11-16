@@ -8,6 +8,7 @@ export const ENTITY = {
 
   // Content related (100-199)
   article: '100',
+  page: '101',
 
   // Media related (200-299)
   media: '200',
