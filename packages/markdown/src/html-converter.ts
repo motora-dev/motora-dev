@@ -16,7 +16,7 @@ export function markdownToHtml(markdown: string): string {
 
   md.use(anchor, {
     permalink: anchor.permalink.linkInsideHeader({
-      symbol: '#',
+      symbol: '<span class="material-symbols-outlined" aria-hidden="true">link</span>',
       placement: 'before',
       class: 'heading-anchor',
     }),
