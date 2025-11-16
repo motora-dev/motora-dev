@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { getPage, getPages } from '$domains/article-page/api';
 import { isSuccessResponse } from '$shared/api';
+import { highlightHtml } from '$shared/ui/highlighter/highlight-server';
 import { PageLayout } from '../_components/page-layout';
 
 export default async function ArticlePagePage({ params }: { params: Promise<{ id: string; pageId: string }> }) {
@@ -25,8 +26,10 @@ export default async function ArticlePagePage({ params }: { params: Promise<{ id
     );
   }
 
-  // MarkdownをHTMLに変換
-  const html = markdownToHtml(pageResponse.data.content);
+  // MarkdownをHTMLに変換 + サーバー側でシンタックスハイライト
+  const htmlWithoutHighlight = markdownToHtml(pageResponse.data.content);
+  const html = highlightHtml(htmlWithoutHighlight);
+
   const page = {
     id: pageResponse.data.id,
     createdAt: pageResponse.data.createdAt,
