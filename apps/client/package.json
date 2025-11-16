@@ -48,7 +48,6 @@
     "google-auth-library": "catalog:",
     "hast-util-to-html": "^9.0.5",
     "highlight.js": "^11.11.1",
-    "ky": "catalog:",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.552.0",
     "next": "catalog:",
