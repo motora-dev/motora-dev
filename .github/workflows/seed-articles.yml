@@ -11,7 +11,7 @@ on:
 jobs:
   seed:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,5 +53,4 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
           SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
-        run: pnpm seed:upsert
-
+        run: pnpm seed
