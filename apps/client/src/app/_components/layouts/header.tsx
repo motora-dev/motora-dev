@@ -59,7 +59,7 @@ export function Header() {
                 textDecoration: 'none',
               }}
             >
-              Turbo Next.js + NestJS
+              もとら&apos;s dev
             </Link>
             <nav
               style={{
