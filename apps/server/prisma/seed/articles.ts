@@ -17,67 +17,99 @@ async function main() {
   // シードでは既存ユーザーID=1を前提として使用
   const userId = 1;
 
-  // 記事データの定義（実際のファイル名に合わせて修正）
-  const articlesData = [
+  // ページデータの定義（実際のファイル名に合わせて修正）
+  const pagesData = [
     {
-      publicId: 'article-typescript-angular',
+      publicId: 'page-typescript-angular',
       title: 'TypeScriptとAngularによるモダンな Web アプリケーション開発',
       fileName: 'typescript-angular.md',
-      tags: ['TypeScript', 'Angular', 'フロントエンド'],
+      order: 1,
+      level: 1,
     },
     {
-      publicId: 'article-nodejs-express',
+      publicId: 'page-nodejs-express',
       title: 'Node.jsとExpressで作るRESTful API',
       fileName: 'nodejs-express.md',
-      tags: ['Node.js', 'Express', 'バックエンド'],
+      order: 2,
+      level: 1,
     },
     {
-      publicId: 'article-react-redux',
+      publicId: 'page-react-redux',
       title: 'ReactとReduxで学ぶモダンなステート管理',
       fileName: 'react-redux.md',
-      tags: ['React', 'Redux', 'フロントエンド'],
+      order: 3,
+      level: 1,
     },
     {
-      publicId: 'article-python-django',
+      publicId: 'page-python-django',
       title: 'PythonとDjangoで作るWebアプリケーション',
       fileName: 'python-django.md',
-      tags: ['Python', 'Django', 'バックエンド'],
+      order: 4,
+      level: 1,
     },
     {
-      publicId: 'article-docker-kubernetes',
+      publicId: 'page-docker-kubernetes',
       title: 'DockerとKubernetesによるコンテナオーケストレーション',
       fileName: 'docker-kubernetes.md',
-      tags: ['Docker', 'Kubernetes', 'インフラ'],
+      order: 5,
+      level: 1,
+    },
+    {
+      publicId: 'page-sample-article',
+      title: 'サンプル記事',
+      fileName: 'sample-article.md',
+      order: 6,
+      level: 1,
     },
   ];
 
-  for (const articleData of articlesData) {
+  // 1つの記事を作成（または取得）
+  const article = await prisma.article.upsert({
+    where: { publicId: 'article-tech-collection' },
+    update: {
+      title: '技術記事集',
+      tags: ['TypeScript', 'React', 'Node.js', 'Python', 'Docker'],
+      status: ArticleStatus.PUBLIC,
+      description: '様々な技術に関する記事をまとめたコレクションです。',
+    },
+    create: {
+      publicId: 'article-tech-collection',
+      title: '技術記事集',
+      tags: ['TypeScript', 'React', 'Node.js', 'Python', 'Docker'],
+      status: ArticleStatus.PUBLIC,
+      description: '様々な技術に関する記事をまとめたコレクションです。',
+      userId: userId,
+    },
+  });
+  console.log(`記事を作成/更新しました: ${article.title}`);
+
+  // 既存のページを削除（記事に紐づくページをクリーンアップ）
+  await prisma.page.deleteMany({
+    where: { articleId: article.id },
+  });
+  console.log('既存のページを削除しました');
+
+  // 各マークダウンファイルをページとして作成
+  for (const pageData of pagesData) {
     try {
       // 1. ローカルファイルからMarkdownコンテンツを読み込み
-      const markdownContent = readMarkdownFile(articleData.fileName);
+      const markdownContent = readMarkdownFile(pageData.fileName);
 
-      // 2. 記事レコードをupsert（存在すれば更新、なければ作成）
-      const article = await prisma.article.upsert({
-        where: { publicId: articleData.publicId },
-        update: {
-          title: articleData.title,
-          tags: articleData.tags,
-          status: ArticleStatus.PUBLIC,
+      // 2. ページレコードを作成
+      const page = await prisma.page.create({
+        data: {
+          publicId: pageData.publicId,
+          title: pageData.title,
           content: markdownContent,
-        },
-        create: {
-          publicId: articleData.publicId,
-          title: articleData.title,
-          tags: articleData.tags,
-          status: ArticleStatus.PUBLIC,
-          content: markdownContent,
-          userId: userId,
+          level: pageData.level,
+          order: pageData.order,
+          articleId: article.id,
         },
       });
-      console.log(`記事をUpsertしました: ${article.title}`);
+      console.log(`ページを作成しました: ${page.title} (order: ${page.order})`);
     } catch (error) {
-      console.error(`記事作成中にエラーが発生しました: ${articleData.title}`, error);
-      // エラーが発生しても他の記事の処理を続行
+      console.error(`ページ作成中にエラーが発生しました: ${pageData.title}`, error);
+      // エラーが発生しても他のページの処理を続行
       continue;
     }
   }

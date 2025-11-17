@@ -8,5 +8,5 @@ export class UpdateArticleResponseDto {
   id: string;
   title: string;
   tags: string[];
-  content: string;
+  description: string;
 }

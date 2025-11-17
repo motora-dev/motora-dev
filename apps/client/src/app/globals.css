@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'highlight.js/styles/tomorrow-night-blue.css';
 
 @plugin '@tailwindcss/typography';
 
@@ -185,8 +186,10 @@
 .prose h4,
 .prose h5,
 .prose h6 {
+  position: relative;
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
+  scroll-margin-top: 80px; /* ヘッダー分のスクロールオフセット */
 }
 
 .prose p {
@@ -203,4 +206,48 @@
 .prose blockquote {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+/* GitHub風見出しリンクスタイル */
+
+.prose .heading-anchor {
+  position: absolute;
+  left: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose .heading-anchor .material-symbols-outlined {
+  font-size: 2rem;
+  line-height: 1;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
+}
+
+.prose .heading-anchor:hover {
+  opacity: 1;
+}
+
+.prose .heading-anchor:focus {
+  opacity: 1;
+  outline: none;
+}
+
+.prose h1:hover .heading-anchor,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor,
+.prose h5:hover .heading-anchor,
+.prose h6:hover .heading-anchor {
+  opacity: 1;
 }

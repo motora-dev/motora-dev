@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
+import { Public } from '$decorators';
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
 import { CreateUserCommand } from './commands';
 import { CreateUserDto, CreateUserResponseDto, GetUserResponseDto } from './dto';
@@ -16,6 +17,7 @@ export class UserController {
   /**
    * 現在ログインしているユーザーの情報を取得
    */
+  @Public()
   @Get()
   @UseGuards(SupabaseAuthGuard)
   @HttpCode(HttpStatus.OK)

@@ -9,7 +9,6 @@ versions:
   google-auth-library: &google-auth-library 10.5.0
   husky: &husky 9.1.7
   jest: &jest 30.2.0
-  ky: &ky 1.14.0
   lint-staged: &lint-staged 16.2.6
   next: &next 16.0.1
   node: &node 24.9.2
@@ -59,7 +58,6 @@ catalog:
   husky: *husky
   jest: *jest
   jest-environment-jsdom: *jest
-  ky: *ky
   lint-staged: *lint-staged
   next: *next
   playwright: *playwright

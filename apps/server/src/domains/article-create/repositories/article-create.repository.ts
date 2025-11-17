@@ -24,7 +24,7 @@ export class ArticleCreateRepository {
         publicId: generatePublicId(),
         userId: userId,
         title: '',
-        content: '',
+        description: '',
       },
     });
   }

@@ -7,6 +7,7 @@ import { ArticleModule } from '$domains/article/article.module';
 import { ArticleCreateModule } from '$domains/article-create/article-create.module';
 import { ArticleEditModule } from '$domains/article-edit/article-edit.module';
 import { ArticleListModule } from '$domains/article-list/article-list.module';
+import { ArticlePageModule } from '$domains/article-page/article-page.module';
 import { UserModule } from '$domains/user/user.module';
 import { GoogleCloudAuthGuard } from '$guards';
 import { LoggingInterceptor } from '$interceptors';
@@ -31,7 +32,7 @@ import { MediaModule } from './domains/media/media.module';
     ArticleEditModule,
     ArticleListModule,
     ArticleModule,
-    ArticleModule,
+    ArticlePageModule,
     AuthModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env'], // 複数ファイル対応（優先順位順）

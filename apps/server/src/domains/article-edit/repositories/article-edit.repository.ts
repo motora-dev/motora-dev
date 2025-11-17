@@ -14,10 +14,10 @@ export class ArticleEditRepository {
     });
   }
 
-  async updateArticle(articleId: string, title: string, tags: string[], content: string): Promise<Article> {
+  async updateArticle(articleId: string, title: string, tags: string[], description: string): Promise<Article> {
     return await this.prisma.article.update({
       where: { publicId: articleId },
-      data: { title, tags, content },
+      data: { title, tags, description },
     });
   }
 }

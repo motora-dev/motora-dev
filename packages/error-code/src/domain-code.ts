@@ -13,6 +13,7 @@ export const DOMAIN = {
   articleCreate: '101',
   articleEdit: '102',
   articleList: '103',
+  articlePage: '104',
 
   // Media related (200-299)
   media: '200',

@@ -84,9 +84,6 @@ catalogs:
     jest-environment-jsdom:
       specifier: 30.2.0
       version: 30.2.0
-    ky:
-      specifier: 1.14.0
-      version: 1.14.0
     lint-staged:
       specifier: 16.2.6
       version: 16.2.6
@@ -227,9 +224,6 @@ importers:
       highlight.js:
         specifier: ^11.11.1
         version: 11.11.1
-      ky:
-        specifier: 'catalog:'
-        version: 1.14.0
       lowlight:
         specifier: ^3.3.0
         version: 3.3.0
@@ -556,6 +550,9 @@ importers:
       markdown-it:
         specifier: ^14.0.0
         version: 14.1.0
+      markdown-it-anchor:
+        specifier: ^9.2.0
+        version: 9.2.0(@types/markdown-it@14.1.2)(markdown-it@14.1.0)
       prosemirror-markdown:
         specifier: ^1.13.0
         version: 1.13.2
@@ -575,6 +572,9 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
+      '@types/markdown-it-anchor':
+        specifier: ^7.0.0
+        version: 7.0.0(@types/markdown-it@14.1.2)(markdown-it@14.1.0)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.9.2)(ts-node@10.9.2(@types/node@24.9.2)(typescript@5.9.3))
@@ -3041,6 +3041,10 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
+  '@types/markdown-it-anchor@7.0.0':
+    resolution: {integrity: sha512-kFehISVfgSePSp6JWGWrcgKIPoPpAsZAqTLUt0Wq9+MNiGdnWdXQy8UerwhmD2afmjux1TWf8XCmlpL2/6ax/A==}
+    deprecated: This is a stub types definition. markdown-it-anchor provides its own type definitions, so you do not need this installed.
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -5399,10 +5403,6 @@ packages:
   known-css-properties@0.37.0:
     resolution: {integrity: sha512-JCDrsP4Z1Sb9JwG0aJ8Eo2r7k4Ou5MwmThS/6lcIe1ICyb7UBJKGRIUUdqc2ASdE/42lgz6zFUnzAIhtXnBVrQ==}
 
-  ky@1.14.0:
-    resolution: {integrity: sha512-Rczb6FMM6JT0lvrOlP5WUOCB7s9XKxzwgErzhKlKde1bEV90FXplV1o87fpt4PU/asJFiqjYJxAJyzJhcrxOsQ==}
-    engines: {node: '>=18'}
-
   language-subtag-registry@0.3.23:
     resolution: {integrity: sha512-0K65Lea881pHotoGEa5gDlMxt3pctLi2RplBb7Ezh4rRdLEOtgi7n4EwK9lamnUCkKBqaeKRVebTq6BAxSkpXQ==}
 
@@ -5595,6 +5595,12 @@ packages:
 
   makeerror@1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
+
+  markdown-it-anchor@9.2.0:
+    resolution: {integrity: sha512-sa2ErMQ6kKOA4l31gLGYliFQrMKkqSO0ZJgGhDHKijPf0pNFM9vghjAh3gn26pS4JDRs7Iwa9S36gxm3vgZTzg==}
+    peerDependencies:
+      '@types/markdown-it': '*'
+      markdown-it: '*'
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
@@ -10048,6 +10054,13 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
+  '@types/markdown-it-anchor@7.0.0(@types/markdown-it@14.1.2)(markdown-it@14.1.0)':
+    dependencies:
+      markdown-it-anchor: 9.2.0(@types/markdown-it@14.1.2)(markdown-it@14.1.0)
+    transitivePeerDependencies:
+      - '@types/markdown-it'
+      - markdown-it
+
   '@types/markdown-it@14.1.2':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -13021,8 +13034,6 @@ snapshots:
 
   known-css-properties@0.37.0: {}
 
-  ky@1.14.0: {}
-
   language-subtag-registry@0.3.23: {}
 
   language-tags@1.0.9:
@@ -13203,6 +13214,11 @@ snapshots:
   makeerror@1.0.12:
     dependencies:
       tmpl: 1.0.5
+
+  markdown-it-anchor@9.2.0(@types/markdown-it@14.1.2)(markdown-it@14.1.0):
+    dependencies:
+      '@types/markdown-it': 14.1.2
+      markdown-it: 14.1.0
 
   markdown-it@14.1.0:
     dependencies:

@@ -11,6 +11,11 @@ jobs:
   coverage:
     name: Test
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/test_db'
+      NODE_ENV: test
+      SUPABASE_URL: 'https://dummy.supabase.co'
+      SUPABASE_SERVICE_ROLE_KEY: 'dummy-supabase-service-role-key-for-testing'
 
     services:
       postgres:
@@ -18,7 +23,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: novliter_test
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
         options: >-
@@ -65,8 +70,10 @@ jobs:
       - name: Setup test environment
         run: |
           cd apps/server
-          echo "DATABASE_URL=${{ vars.DATABASE_URL }}" >> .env.test
-          echo "NODE_ENV=test" >> .env.test
+          echo "DATABASE_URL=$DATABASE_URL" >> .env.test
+          echo "NODE_ENV=$NODE_ENV" >> .env.test
+          echo "SUPABASE_URL=$SUPABASE_URL" >> .env.test
+          echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.test
 
       - name: Run error-code coverage
         run: pnpm --filter "@monorepo/error-code" test:coverage
@@ -79,9 +86,6 @@ jobs:
 
       - name: Run server coverage
         run: pnpm --filter "@monorepo/server" test:coverage
-        env:
-          DATABASE_URL: ${{ vars.DATABASE_URL }}
-          NODE_ENV: test
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
