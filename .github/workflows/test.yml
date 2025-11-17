@@ -67,8 +67,11 @@ jobs:
           cd apps/server
           echo "DATABASE_URL=${{ vars.DATABASE_URL }}" >> .env.test
           echo "NODE_ENV=test" >> .env.test
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env.test
-          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env.test
+          echo "SUPABASE_URL=${SUPABASE_URL:-https://dummy.supabase.co}" >> .env.test
+          echo "SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dummy-supabase-service-role-key-for-testing}" >> .env.test
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Run error-code coverage
         run: pnpm --filter "@monorepo/error-code" test:coverage
@@ -80,7 +83,10 @@ jobs:
         run: pnpm --filter "@monorepo/client" test:coverage
 
       - name: Run server coverage
-        run: pnpm --filter "@monorepo/server" test:coverage
+        run: |
+          export SUPABASE_URL=${SUPABASE_URL:-https://dummy.supabase.co}
+          export SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dummy-supabase-service-role-key-for-testing}
+          pnpm --filter "@monorepo/server" test:coverage
         env:
           DATABASE_URL: ${{ vars.DATABASE_URL }}
           NODE_ENV: test
