@@ -2,8 +2,6 @@
 title: PythonとDjangoで作るWebアプリケーション
 ---
 
-# PythonとDjangoで作るWebアプリケーション
-
 ## はじめに
 
 このサンプル記事では、PythonとDjangoフレームワークを使用したWebアプリケーション開発について説明します。
@@ -103,4 +101,3 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 PythonとDjangoの組み合わせは、迅速で堅牢なWebアプリケーション開発を可能にします。
 豊富な機能とアクティブなコミュニティにより、効率的な開発が実現できます。
-
