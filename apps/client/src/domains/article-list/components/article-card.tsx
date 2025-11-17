@@ -8,86 +8,21 @@ interface ArticleCardProps {
 
 export function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <article
-      style={{
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        padding: '24px',
-        position: 'relative',
-        marginBottom: '24px',
-        transition: 'box-shadow 0.3s ease',
-        cursor: 'pointer',
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 10px 15px rgba(0, 0, 0, 0.15)')}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)')}
-    >
-      <Link
-        href={`/article/${article.id}`}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 1,
-        }}
-      />
-      <div style={{ position: 'relative', pointerEvents: 'none' }}>
-        <h2
-          style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            marginBottom: '12px',
-            color: '#111827',
-          }}
-        >
-          {article.title}
-        </h2>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '8px',
-            marginBottom: '16px',
-          }}
-        >
+    <article className="bg-white rounded-xl shadow-md hover:shadow-xl p-5 md:p-6 relative transition-shadow duration-300 cursor-pointer">
+      <Link href={`/article/${article.id}`} className="absolute inset-0 z-10" />
+      <div className="relative pointer-events-none">
+        <h2 className="text-xl md:text-2xl font-bold mb-3 text-gray-900">{article.title}</h2>
+        <div className="flex flex-wrap gap-2 mb-4">
           {article.tags.map((tag) => (
-            <span
-              key={tag}
-              style={{
-                backgroundColor: '#DBEAFE',
-                color: '#1D4ED8',
-                padding: '4px 12px',
-                borderRadius: '9999px',
-                fontSize: '12px',
-                fontWeight: '500',
-              }}
-            >
+            <span key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
               {tag}
             </span>
           ))}
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingTop: '16px',
-            borderTop: '1px solid #E5E7EB',
-            fontSize: '14px',
-          }}
-        >
-          <time style={{ color: '#6B7280' }}>{new Date(article.createdAt).toLocaleDateString()}</time>
-          <span
-            style={{
-              color: '#2563EB',
-              fontWeight: '500',
-            }}
-          >
-            続きを読む →
-          </span>
+        <div className="flex justify-between items-center pt-4 border-t border-gray-200 text-sm">
+          <time className="text-gray-600">{new Date(article.createdAt).toLocaleDateString()}</time>
+          <span className="text-blue-600 font-medium">続きを読む →</span>
         </div>
       </div>
     </article>
