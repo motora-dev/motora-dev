@@ -82,15 +82,7 @@ export function TocSidebar({ toc }: TocSidebarProps) {
   }
 
   return (
-    <aside
-      className="w-60 border-l border-gray-200 bg-gray-50 p-6 overflow-y-auto"
-      style={{
-        position: 'fixed',
-        top: '64px',
-        right: 0,
-        height: 'calc(100vh - 64px)',
-      }}
-    >
+    <aside className="hidden lg:block fixed top-16 right-0 w-60 h-[calc(100vh-4rem)] border-l border-gray-200 bg-gray-50 p-6 overflow-y-auto">
       <nav>
         <h2 className="text-sm font-semibold text-gray-900 mb-4">目次</h2>
         <ul className="space-y-2">
