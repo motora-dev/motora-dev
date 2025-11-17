@@ -50,3 +50,7 @@ jobs:
             CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}
             DOMAIN=${{ secrets.DOMAIN }}
             COOKIE_DOMAIN=${{ secrets.COOKIE_DOMAIN }}
+            BASIC_AUTH_USER=${{ secrets.BASIC_AUTH_USER }}
+            BASIC_AUTH_PASSWORD=${{ secrets.BASIC_AUTH_PASSWORD }}
+            ALLOWED_EMAILS=${{ secrets.ALLOWED_EMAILS }}
+            SEED_USER_ID=${{ secrets.SEED_USER_ID }}

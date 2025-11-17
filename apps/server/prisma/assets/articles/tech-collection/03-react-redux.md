@@ -1,3 +1,7 @@
+---
+title: ReactとReduxで学ぶモダンなステート管理
+---
+
 # ReactとReduxで学ぶモダンなステート管理
 
 ## はじめに
@@ -80,3 +84,4 @@ export default todoSlice.reducer;
 
 ReactとReduxの組み合わせにより、複雑なアプリケーションでも予測可能で保守しやすい状態管理を実現できます。
 Redux Toolkitを使用することで、より簡潔で安全なコードを書くことができます。
+

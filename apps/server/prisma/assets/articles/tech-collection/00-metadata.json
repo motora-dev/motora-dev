@@ -1,0 +1,51 @@
+{
+  "publicId": "tsx8j8uh3x2br0lyvkq9o6dj",
+  "title": "技術記事集",
+  "description": "様々な技術に関する記事をまとめたコレクションです。",
+  "tags": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "Python",
+    "Docker"
+  ],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "publicId": "v2oeqm2izofgm21k2yf9d7c0",
+      "file": "01-typescript-angular.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "publicId": "jjv7jzis3o3gbjd0gjo6gdok",
+      "file": "02-nodejs-express.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "publicId": "qqyd8gkcgd93ovhjw2eglgu7",
+      "file": "03-react-redux.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "publicId": "f39vphf8jot25bi9y4isfqwf",
+      "file": "04-python-django.md",
+      "level": 1,
+      "order": 4
+    },
+    {
+      "publicId": "fmsrh2ix8kcnice6k269yuoj",
+      "file": "05-docker-kubernetes.md",
+      "level": 1,
+      "order": 5
+    },
+    {
+      "publicId": "mct2zvovowcr6679jujm2gc1",
+      "file": "06-sample-article.md",
+      "level": 1,
+      "order": 6
+    }
+  ]
+}

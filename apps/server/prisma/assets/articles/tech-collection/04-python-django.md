@@ -1,3 +1,7 @@
+---
+title: PythonとDjangoで作るWebアプリケーション
+---
+
 # PythonとDjangoで作るWebアプリケーション
 
 ## はじめに
@@ -99,3 +103,4 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 PythonとDjangoの組み合わせは、迅速で堅牢なWebアプリケーション開発を可能にします。
 豊富な機能とアクティブなコミュニティにより、効率的な開発が実現できます。
+
