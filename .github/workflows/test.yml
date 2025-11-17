@@ -65,11 +65,12 @@ jobs:
       - name: Setup test environment
         run: |
           cd apps/server
-          echo "DATABASE_URL=${{ vars.DATABASE_URL }}" >> .env.test
+          echo "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/novliter_test}" >> .env.test
           echo "NODE_ENV=test" >> .env.test
           echo "SUPABASE_URL=${SUPABASE_URL:-https://dummy.supabase.co}" >> .env.test
           echo "SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dummy-supabase-service-role-key-for-testing}" >> .env.test
         env:
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
@@ -84,6 +85,7 @@ jobs:
 
       - name: Run server coverage
         run: |
+          export DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/novliter_test}
           export SUPABASE_URL=${SUPABASE_URL:-https://dummy.supabase.co}
           export SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dummy-supabase-service-role-key-for-testing}
           pnpm --filter "@monorepo/server" test:coverage
