@@ -34,8 +34,8 @@ interface PageFrontmatter {
 
 // 記事フォルダからメタデータとページを読み込む
 function loadArticle(articleFolderPath: string) {
-  // metadata.jsonを読み込み
-  const metadataPath = join(articleFolderPath, 'metadata.json');
+  // 00-metadata.jsonを読み込み
+  const metadataPath = join(articleFolderPath, '00-metadata.json');
   const metadataContent = readFileSync(metadataPath, 'utf-8');
   const metadata: ArticleMetadata = JSON.parse(metadataContent);
 
@@ -167,7 +167,7 @@ async function main() {
         console.log(`  ページを作成/更新しました: ${page.title} (order: ${page.order}, level: ${page.level})`);
       }
 
-      // metadata.json に記載されていないページを削除
+      // 00-metadata.json に記載されていないページを削除
       const validPagePublicIds = pages.map((p) => p.publicId).filter((id): id is string => id !== undefined);
 
       const existingPages = await prisma.page.findMany({
@@ -183,7 +183,7 @@ async function main() {
         }
       }
 
-      // metadata.json を常に整形して書き戻す（publicId を最初に配置）
+      // 00-metadata.json を常に整形して書き戻す（publicId を最初に配置）
       const orderedMetadata = {
         publicId: metadata.publicId,
         title: metadata.title,
