@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 
 import { ErrorDialog } from '$layouts/error-dialog';
+import { Footer } from '$layouts/footer';
 import { Header } from '$layouts/header';
 import { useErrorStore } from '$shared/model/error.store';
 
@@ -35,11 +36,19 @@ function PageContentManager({ children }: { children: ReactNode }) {
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+      }}
+    >
       <Header />
       <main
         style={{
+          flex: '1',
           maxWidth: '1280px',
+          width: '100%',
           margin: '0 auto',
           padding: '48px 16px',
           paddingTop: 'calc(64px + 48px)', // ヘッダーの高さ + 元のパディング
@@ -47,7 +56,8 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
       >
         <PageContentManager>{children}</PageContentManager>
       </main>
+      <Footer />
       <ErrorDialog />
-    </>
+    </div>
   );
 }
