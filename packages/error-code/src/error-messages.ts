@@ -9,6 +9,7 @@ export const MESSAGES = {
   NO_BEARER_TOKEN: 'No bearer token provided',
   INVALID_TOKEN: 'Invalid token',
   UNAUTHORIZED: 'Unauthorized',
+  FORBIDDEN_EMAIL_ACCESS: 'This email address is not allowed to access this application',
 
   // User
   USER_NOT_FOUND: 'User not found',

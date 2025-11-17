@@ -1,5 +1,5 @@
 import { ERROR_CODE } from '@monorepo/error-code';
-import { Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 
@@ -7,6 +7,7 @@ import { createServerSupabase } from '$adapters';
 import { Public } from '$decorators';
 import { CreateUserCommand } from '$domains/user/commands';
 import { BusinessLogicError } from '$exceptions';
+import { BasicAuthGuard } from './guards/basic-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -68,6 +69,7 @@ export class AuthController {
   }
 
   @Public()
+  @UseGuards(BasicAuthGuard)
   @Get('login/google')
   async googleLogin(@Req() req: any, @Res({ passthrough: true }) res: any) {
     const supabase = createServerSupabase(req, res);
@@ -105,6 +107,15 @@ export class AuthController {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
       throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED, error.message);
+    }
+
+    // メールアドレスの検証
+    const allowedEmails = this.configService.get<string>('ALLOWED_EMAILS') || '';
+    const allowedEmailList = allowedEmails.split(',').map((email) => email.trim());
+    const userEmail = data.user.email || '';
+
+    if (!allowedEmailList.includes(userEmail)) {
+      throw new BusinessLogicError(ERROR_CODE.FORBIDDEN_EMAIL_ACCESS);
     }
 
     const { access_token, refresh_token, expires_in } = data.session;
