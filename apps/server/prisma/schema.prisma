@@ -84,7 +84,6 @@ model Page {
   level     Int       // 階層レベル (1 or 2)
   order     Int       // 全体通しの表示順序
 
-  @@unique([articleId, order])
   @@index([articleId])
 }
 

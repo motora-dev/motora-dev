@@ -118,9 +118,6 @@ CREATE UNIQUE INDEX "Page_publicId_key" ON "Page"("publicId");
 CREATE INDEX "Page_articleId_idx" ON "Page"("articleId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Page_articleId_order_key" ON "Page"("articleId", "order");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Media_publicId_key" ON "Media"("publicId");
 
 -- CreateIndex
