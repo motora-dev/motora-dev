@@ -45,6 +45,18 @@ export function Footer() {
             >
               プライバシーポリシー
             </Link>
+            <Link
+              href="/privacy#cookie-settings"
+              style={{
+                color: '#4B5563',
+                fontSize: '14px',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#4B5563')}
+            >
+              Cookie設定
+            </Link>
             <a
               href="https://github.com/motora-dev/motora-dev"
               target="_blank"

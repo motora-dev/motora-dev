@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 
+import { CookieConsent } from '$layouts/cookie-consent';
 import { ErrorDialog } from '$layouts/error-dialog';
 import { Footer } from '$layouts/footer';
 import { Header } from '$layouts/header';
@@ -57,6 +58,7 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
         <PageContentManager>{children}</PageContentManager>
       </main>
       <Footer />
+      <CookieConsent />
       <ErrorDialog />
     </div>
   );

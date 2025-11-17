@@ -1,3 +1,5 @@
+import { CookieSettingsButton } from './cookie-settings-button';
+
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -108,7 +110,43 @@ export default function PrivacyPage() {
               color: '#1F2937',
             }}
           >
-            3. Google AdSenseについて
+            3. 必須Cookieについて
+          </h2>
+          <p style={{ marginBottom: '12px' }}>
+            当サイトでは、サイトの基本機能を提供するために、以下の必須Cookieを使用しています。これらのCookieは、サイトの動作に不可欠であり、ユーザーの同意なしで使用されます。
+          </p>
+          <ul
+            style={{
+              listStyleType: 'disc',
+              paddingLeft: '24px',
+              marginBottom: '12px',
+            }}
+          >
+            <li>
+              <strong>認証Cookie（Supabase）</strong>：sb-auth-token、sb-refresh-token - ログイン状態の維持に使用
+            </li>
+            <li>
+              <strong>セキュリティCookie</strong>：XSRF-TOKEN - CSRF攻撃からサイトを保護するために使用
+            </li>
+            <li>
+              <strong>技術的に必要なCookie</strong>：Vercel関連のCookie - ホスティングサービスの提供に使用
+            </li>
+          </ul>
+          <p style={{ marginBottom: '12px' }}>
+            これらのCookieは、GDPRで定義される「厳密に必要なCookie」に該当し、同意なしで使用することが認められています。
+          </p>
+        </section>
+
+        <section style={{ marginBottom: '24px' }}>
+          <h2
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              marginBottom: '12px',
+              color: '#1F2937',
+            }}
+          >
+            4. Google AdSenseについて
           </h2>
           <p style={{ marginBottom: '12px' }}>
             当サイトでは、広告配信サービスとして Google AdSense を利用する予定です。
@@ -174,7 +212,7 @@ export default function PrivacyPage() {
               color: '#1F2937',
             }}
           >
-            4. クッキー（Cookie）について
+            5. クッキー（Cookie）について
           </h2>
           <p style={{ marginBottom: '12px' }}>
             当サイトでは、サイトの利便性向上のためにクッキーを使用しています。クッキーとは、ウェブサイトがユーザーのコンピューターに保存する小さなテキストファイルです。
@@ -193,7 +231,49 @@ export default function PrivacyPage() {
               color: '#1F2937',
             }}
           >
-            5. 個人情報の取り扱いについて
+            6. Google Consent Mode v2について
+          </h2>
+          <p style={{ marginBottom: '12px' }}>
+            当サイトでは、Google Consent Mode
+            v2を使用しています。これにより、Cookieの同意状態に応じて、適切にデータを収集します。
+          </p>
+          <p style={{ marginBottom: '12px' }}>
+            <strong>同意いただいた場合：</strong>
+            Google AnalyticsやGoogle AdSenseは、通常通りCookieを使用し、詳細なアクセス解析や広告配信を行います。
+          </p>
+          <p style={{ marginBottom: '12px' }}>
+            <strong>同意いただけなかった場合：</strong>
+            Cookieは使用されませんが、Googleに匿名の集計データのみが送信されます。この匿名データは個人を特定できる情報を含まず、サイト全体の統計情報の把握にのみ使用されます。
+          </p>
+        </section>
+
+        <section style={{ marginBottom: '24px', scrollMarginTop: '80px' }} id="cookie-settings">
+          <h2
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              marginBottom: '12px',
+              color: '#1F2937',
+            }}
+          >
+            7. Cookie設定の変更
+          </h2>
+          <p style={{ marginBottom: '12px' }}>
+            Cookieの同意設定は、いつでも変更することができます。以下のボタンをクリックすると、Cookie同意バナーが再表示され、設定を変更できます。
+          </p>
+          <CookieSettingsButton />
+        </section>
+
+        <section style={{ marginBottom: '24px' }}>
+          <h2
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              marginBottom: '12px',
+              color: '#1F2937',
+            }}
+          >
+            8. 個人情報の取り扱いについて
           </h2>
           <p style={{ marginBottom: '12px' }}>
             当サイトでは、お問い合わせやコメントなどを通じて個人情報を取得する場合があります。取得した個人情報は、以下の目的でのみ使用します：
@@ -223,7 +303,7 @@ export default function PrivacyPage() {
               color: '#1F2937',
             }}
           >
-            6. 免責事項
+            9. 免責事項
           </h2>
           <p style={{ marginBottom: '12px' }}>
             当サイトに掲載されている情報の正確性には万全を期していますが、利用者が当サイトの情報を用いて行う一切の行為について、当サイトは一切の責任を負いません。
@@ -242,7 +322,7 @@ export default function PrivacyPage() {
               color: '#1F2937',
             }}
           >
-            7. プライバシーポリシーの変更
+            10. プライバシーポリシーの変更
           </h2>
           <p style={{ marginBottom: '12px' }}>
             当サイトは、本プライバシーポリシーの内容を適宜見直し、予告なく変更することがあります。変更後のプライバシーポリシーは、当サイトに掲載した時点から効力を生じるものとします。
@@ -258,7 +338,7 @@ export default function PrivacyPage() {
               color: '#1F2937',
             }}
           >
-            8. お問い合わせ
+            11. お問い合わせ
           </h2>
           <p style={{ marginBottom: '12px' }}>
             本プライバシーポリシーに関するお問い合わせは、
