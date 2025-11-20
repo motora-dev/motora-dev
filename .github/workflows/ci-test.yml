@@ -28,18 +28,18 @@ jobs:
           files: |
             packages/**
 
+      - name: Setup pnpm
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.20.0
+
       - name: Setup Node.js
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 24.11.0
           cache: 'pnpm'
-
-      - name: Setup pnpm
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10.20.0
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -72,18 +72,18 @@ jobs:
             apps/client/**
             packages/**
 
+      - name: Setup pnpm
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.20.0
+
       - name: Setup Node.js
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 24.11.0
           cache: 'pnpm'
-
-      - name: Setup pnpm
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10.20.0
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -147,18 +147,18 @@ jobs:
             packages/**
             apps/server/prisma/**
 
+      - name: Setup pnpm
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.20.0
+
       - name: Setup Node.js
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 24.11.0
           cache: 'pnpm'
-
-      - name: Setup pnpm
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10.20.0
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
