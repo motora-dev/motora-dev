@@ -1,4 +1,4 @@
-name: Seed Articles
+name: Deploy Database
 
 on:
   push:
@@ -6,51 +6,52 @@ on:
       - main
       - develop
     paths:
-      - 'apps/server/prisma/assets/articles/**'
+      - 'apps/server/prisma/**'
+      - '.github/workflows/cd-db.yml'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  seed:
+  deploy-db:
+    name: Deploy Database
     runs-on: ubuntu-latest
 
     environment: ${{ github.ref_name }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.11.0
+          cache: 'pnpm'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v3
         with:
           version: 10.20.0
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
         working-directory: apps/server
         run: pnpm prisma generate
 
-      - name: Run article seed script
+      - name: Apply Migrations
+        working-directory: apps/server
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: pnpm prisma migrate deploy
+
+      - name: Run Seed
         working-directory: apps/server
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
