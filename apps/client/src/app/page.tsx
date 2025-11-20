@@ -6,7 +6,7 @@ export default function HomePage() {
   const { data, isLoading } = useArticleListQuery();
 
   return (
-    <div className="min-h-screen">
+    <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       <div className="mb-8 md:mb-10 lg:mb-12">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">記事一覧</h1>
         <p className="text-base md:text-lg lg:text-xl text-gray-600">技術記事やチュートリアルを掲載しています</p>
@@ -27,6 +27,6 @@ export default function HomePage() {
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }
