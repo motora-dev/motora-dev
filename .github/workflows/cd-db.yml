@@ -45,6 +45,24 @@ jobs:
         working-directory: apps/server
         run: pnpm prisma generate
 
+      - name: Debug Network Connectivity
+        env:
+          DB_URL: ${{ secrets.DIRECT_URL }}
+        run: |
+          # Extract hostname from URL (postgres://user:pass@hostname:5432/db)
+          # Using sed to parse safely without exposing credentials
+          HOST=$(echo $DB_URL | sed -E 's/.*@([^:/]+).*/\1/')
+          PORT=5432
+          
+          echo "Checking connectivity to $HOST:$PORT ..."
+          # nc -zv returns 0 on success, 1 on failure
+          if nc -zv $HOST $PORT; then
+            echo "✅ Connection successful!"
+          else
+            echo "❌ Connection failed!"
+            exit 1
+          fi
+
       - name: Apply Migrations
         working-directory: apps/server
         env:
