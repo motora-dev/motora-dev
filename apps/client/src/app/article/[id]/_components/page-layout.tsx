@@ -21,7 +21,7 @@ export function PageLayout({ articleId, pageId, pages, page, toc }: PageLayoutPr
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="w-full min-h-screen max-w-[90rem] mx-auto lg:grid lg:grid-cols-[16rem_1fr_15rem]">
       {/* ハンバーガーメニューボタン（モバイル・タブレットのみ） */}
       <button
         onClick={() => setIsSidebarOpen(true)}
@@ -43,12 +43,9 @@ export function PageLayout({ articleId, pageId, pages, page, toc }: PageLayoutPr
       />
 
       {/* メインコンテンツ */}
-      <main className="flex-1 overflow-y-auto lg:ml-64 lg:mr-60">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <PageContent page={page} />
-
-          <PageNavigation articleId={articleId} pages={pages} currentPageId={pageId} />
-        </div>
+      <main className="min-w-0">
+        <PageContent page={page} />
+        <PageNavigation articleId={articleId} pages={pages} currentPageId={pageId} />
       </main>
 
       {/* 右サイドバー: 見出し目次 */}
