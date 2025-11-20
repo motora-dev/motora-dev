@@ -18,6 +18,7 @@ jobs:
   deploy-db:
     name: Deploy Database
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
 
     environment: ${{ github.ref_name }}
 
