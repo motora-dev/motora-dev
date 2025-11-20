@@ -18,37 +18,15 @@ interface PageLayoutProps {
 }
 
 export function PageLayout({ articleId, pageId, pages, page, toc }: PageLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   return (
-    <div className="flex min-h-screen">
-      {/* ハンバーガーメニューボタン（モバイル・タブレットのみ） */}
-      <button
-        onClick={() => setIsSidebarOpen(true)}
-        className="fixed top-20 left-4 z-50 p-2 rounded-lg bg-white shadow-lg border border-gray-200 lg:hidden hover:bg-gray-50 transition-colors"
-        aria-label="メニューを開く"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-
+    <div className="w-full min-h-screen max-w-[90rem] mx-auto lg:grid lg:grid-cols-[16rem_1fr_15rem]">
       {/* 左サイドバー: ページ一覧 */}
-      <PageSidebar
-        articleId={articleId}
-        pages={pages}
-        currentPageId={pageId}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      <PageSidebar articleId={articleId} pages={pages} currentPageId={pageId} />
 
       {/* メインコンテンツ */}
-      <main className="flex-1 overflow-y-auto lg:ml-64 lg:mr-60">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <PageContent page={page} />
-
-          <PageNavigation articleId={articleId} pages={pages} currentPageId={pageId} />
-        </div>
+      <main className="min-w-0">
+        <PageContent page={page} />
+        <PageNavigation articleId={articleId} pages={pages} currentPageId={pageId} />
       </main>
 
       {/* 右サイドバー: 見出し目次 */}

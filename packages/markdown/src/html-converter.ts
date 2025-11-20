@@ -14,6 +14,8 @@ import { getMarkdownTokenizer } from './tokenizer';
 export function markdownToHtml(markdown: string): string {
   const md = getMarkdownTokenizer();
 
+  md.enable('table');
+
   md.use(anchor, {
     permalink: anchor.permalink.linkInsideHeader({
       symbol: '<span class="material-symbols-outlined" aria-hidden="true">link</span>',

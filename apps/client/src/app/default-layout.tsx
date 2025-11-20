@@ -45,18 +45,9 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
       }}
     >
       <Header />
-      <main
-        style={{
-          flex: '1',
-          maxWidth: '1280px',
-          width: '100%',
-          margin: '0 auto',
-          padding: '48px 16px',
-          paddingTop: 'calc(64px + 48px)', // ヘッダーの高さ + 元のパディング
-        }}
-      >
+      <div style={{ flex: '1', paddingTop: '64px', width: '100%' }}>
         <PageContentManager>{children}</PageContentManager>
-      </main>
+      </div>
       <Footer />
       <CookieConsent />
       <ErrorDialog />

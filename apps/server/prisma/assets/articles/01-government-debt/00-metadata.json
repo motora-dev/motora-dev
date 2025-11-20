@@ -1,0 +1,36 @@
+{
+  "publicId": "ccj55e9quzgsw3z444y76y65",
+  "title": "国債発行の仕組み",
+  "description": "世界一わかりやすい国債発行の仕組み",
+  "tags": [
+    "経済",
+    "国債"
+  ],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "publicId": "s6x7t1hwh5tey1po8c4txedn",
+      "file": "01-government-debt.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "publicId": "bo76obi1ve13o7o5ohmqync0",
+      "file": "02-government-debt-bookkeeping.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "publicId": "q33py5lrrkoiqd9ge1xjl5uq",
+      "file": "03-money-creation.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "publicId": "xjfp8po8a7v5czh9p0vnblyf",
+      "file": "04-common-misconceptions.md",
+      "level": 1,
+      "order": 4
+    }
+  ]
+}
