@@ -24,7 +24,7 @@
     "@monorepo/typescript-config": "workspace:*",
     "@tiptap/pm": "catalog:",
     "@types/jest": "^30.0.0",
-    "@types/markdown-it-anchor": "^7.0.0",
+    "@types/katex": "^0.16.7",
     "jest": "catalog:",
     "typescript": "catalog:"
   },
@@ -49,6 +49,8 @@
     "extends": "../../package.json"
   },
   "dependencies": {
-    "markdown-it-anchor": "^9.2.0"
+    "katex": "^0.16.25",
+    "markdown-it-anchor": "^9.2.0",
+    "markdown-it-texmath": "^1.0.0"
   }
 }

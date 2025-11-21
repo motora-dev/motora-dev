@@ -1,4 +1,6 @@
+import katex from 'katex';
 import anchor from 'markdown-it-anchor';
+import texmath from 'markdown-it-texmath';
 
 import { getMarkdownTokenizer } from './tokenizer';
 
@@ -15,6 +17,16 @@ export function markdownToHtml(markdown: string): string {
   const md = getMarkdownTokenizer();
 
   md.enable('table');
+
+  // 数式サポート（LaTeX記法）
+  md.use(texmath, {
+    engine: katex,
+    delimiters: 'dollars', // $...$ と $$...$$ をサポート
+    katexOptions: {
+      throwOnError: false, // エラーがあっても処理を続行
+      displayMode: false,
+    },
+  });
 
   md.use(anchor, {
     permalink: anchor.permalink.linkInsideHeader({
