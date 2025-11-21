@@ -1,0 +1,33 @@
+{
+  "publicId": "g2s7j7l94b8ug8wppyzjr8xy",
+  "title": "消費税の正体と日本経済への影響",
+  "description": "消費税（付加価値税）の会計的メカニズム、雇用への影響、輸出戻し税の仕組み、そして廃止シミュレーションまで、データと事実に基づいて徹底解説します。",
+  "tags": ["経済", "消費税"],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "publicId": "bcbuj1n7xo12ijde2qo145eh",
+      "file": "01-mechanism.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "publicId": "eaen26pf8uy2cfvoc3z1gv6j",
+      "file": "02-export-refund.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "publicId": "k7b29gwf8qttf9qas4d413f3",
+      "file": "03-simulation.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "publicId": "p867qnvo6lfek1246inj1vk3",
+      "file": "04-history-and-myths.md",
+      "level": 1,
+      "order": 4
+    }
+  ]
+}
