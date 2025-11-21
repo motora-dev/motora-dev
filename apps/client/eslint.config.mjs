@@ -16,6 +16,7 @@ const config = [
   {
     files: ['src/**/*.{ts,tsx}'],
     rules: {
+      '@next/next/no-page-custom-font': 'off',
       'import/order': [
         'error',
         {

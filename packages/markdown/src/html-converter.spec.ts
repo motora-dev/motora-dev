@@ -1,10 +1,16 @@
 import { markdownToHtml } from './html-converter';
 
 describe('markdownToHtml', () => {
-  it('should convert markdown heading to HTML', () => {
+  it('should convert markdown heading to HTML with anchor link', () => {
     const markdown = '# Hello, World!';
     const html = markdownToHtml(markdown);
-    expect(html).toContain('<h1>Hello, World!</h1>');
+    // 見出しにIDが付与されていることを確認
+    expect(html).toContain('<h1 id=');
+    // 見出しのテキストが含まれていることを確認
+    expect(html).toContain('Hello, World!');
+    // アンカーリンクが含まれていることを確認
+    expect(html).toContain('class="heading-anchor"');
+    expect(html).toContain('material-symbols-outlined');
   });
 
   it('should convert markdown paragraph to HTML', () => {

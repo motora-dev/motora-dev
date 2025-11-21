@@ -16,7 +16,7 @@ export class GetArticleHandler implements IQueryHandler<GetArticleQuery> {
       updatedAt: article.updatedAt,
       title: article.title,
       tags: article.tags,
-      content: article.content,
+      description: article.description ?? '',
     };
   }
 }

@@ -1,12 +1,13 @@
 'server-only';
 import { ERROR_CODE } from '@monorepo/error-code';
 import { parse } from 'cookie';
-import ky, { HTTPError, Input } from 'ky';
 import { cookies } from 'next/headers';
 
 import { ApiErrorPayload } from './api-error';
 import { ApiResponse, FailureResponse, SuccessResponse } from './api-response';
 import { getGoogleAuth } from './google-auth';
+
+const API_BASE_URL = process.env.API_URL || 'http://localhost:4000';
 
 /**
  * NestJS APIからのSet-CookieヘッダーをNext.jsのcookieストアに中継します。
@@ -34,107 +35,156 @@ async function proxySetCookie(headers: Headers) {
   }
 }
 
-// kyのインスタンスを作成
-export const api = ky.create({
-  // `baseUrl` は `prefixUrl` になります
-  prefixUrl: process.env.API_URL || 'http://localhost:4000',
-  headers: {
-    Accept: 'application/json',
-  },
-  credentials: 'include',
-  hooks: {
-    beforeRequest: [
-      async (request) => {
-        // シングルトンからGoogle Authインスタンスを取得
-        const auth = getGoogleAuth();
-        // IDトークンクライアンスを取得
-        const client = await auth.getIdTokenClient(process.env.API_URL || 'http://localhost:4000');
-        // ヘッダーを取得（Authorization: Bearer {token}が含まれる）
-        const authHeaders = await client.getRequestHeaders();
-        // 取得した認証ヘッダーをリクエストに設定する
-        authHeaders.forEach((value, key) => {
-          request.headers.set(key, value);
-        });
+/**
+ * Google認証ヘッダーを取得します。
+ */
+async function getAuthHeaders(): Promise<HeadersInit> {
+  const auth = getGoogleAuth();
+  const client = await auth.getIdTokenClient(API_BASE_URL);
+  const authHeaders = await client.getRequestHeaders();
+  return Object.fromEntries(authHeaders.entries());
+}
 
-        // Next.jsのheadersからCookieを取得
-        const cookieStore = await cookies();
-        const cookieHeader = cookieStore
-          .getAll()
-          .map((cookie) => {
-            // Cookieの値が非ASCII文字を含む場合に備えてエンコード
-            // ただし、すでにエンコードされている可能性もあるため、安全に処理
-            const encodedValue = encodeURIComponent(cookie.value);
-            return `${cookie.name}=${encodedValue}`;
-          })
-          .join('; ');
+/**
+ * CookieヘッダーとCSRFトークンヘッダーを取得します。
+ */
+async function getCookieHeaders(): Promise<HeadersInit> {
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((cookie) => {
+      const encodedValue = encodeURIComponent(cookie.value);
+      return `${cookie.name}=${encodedValue}`;
+    })
+    .join('; ');
 
-        if (cookieHeader) {
-          request.headers.set('Cookie', cookieHeader);
-        }
+  const csrfToken = cookieStore.get('XSRF-TOKEN')?.value;
 
-        // CSRFトークンをCookieから取得してヘッダーに設定
-        const csrfToken = cookieStore.get('XSRF-TOKEN')?.value;
-        if (csrfToken) {
-          request.headers.set('x-xsrf-token', csrfToken);
-        }
-      },
-    ],
-    afterResponse: [
-      async (_request, _options, response) => {
-        await proxySetCookie(response.headers);
-        return response;
-      },
-    ],
-  },
-});
+  return {
+    ...(cookieHeader && { Cookie: cookieHeader }),
+    ...(csrfToken && { 'x-xsrf-token': csrfToken }),
+  };
+}
 
 async function createSuccessResponse<T>(response: Response): Promise<SuccessResponse<T>> {
   const data = (await response.json()) as T;
   return { isSuccess: true, status: response.status, data };
 }
 
-async function createFailureResponse(error: unknown): Promise<FailureResponse> {
-  if (error instanceof HTTPError) {
-    const errorBody = await error.response.json().catch(() => ({ message: error.response.statusText }));
-    const apiError: ApiErrorPayload = {
-      errorCode: errorBody.errorCode,
-      message: errorBody.message || ERROR_CODE.INTERNAL_SERVER_ERROR.message,
-      statusCode: error.response.status,
-    };
-    return { isSuccess: false, status: apiError.statusCode, error: apiError };
-  }
-  // その他の予期せぬエラー
+async function createFailureResponse(status: number, errorBody?: any): Promise<FailureResponse> {
   const apiError: ApiErrorPayload = {
-    errorCode: ERROR_CODE.INTERNAL_SERVER_ERROR.code,
-    message: ERROR_CODE.INTERNAL_SERVER_ERROR.message,
-    statusCode: ERROR_CODE.INTERNAL_SERVER_ERROR.statusCode,
+    errorCode: errorBody?.errorCode || ERROR_CODE.INTERNAL_SERVER_ERROR.code,
+    message: errorBody?.message || ERROR_CODE.INTERNAL_SERVER_ERROR.message,
+    statusCode: status,
   };
   return { isSuccess: false, status: apiError.statusCode, error: apiError };
 }
 
-export async function get<T>(url: Input): Promise<ApiResponse<T>> {
+export async function get<T>(
+  url: string,
+  options?: { revalidate?: number; tags?: string[]; stateless?: boolean },
+): Promise<ApiResponse<T>> {
   try {
-    const response = await api.get(url);
-    return createSuccessResponse(response);
+    const cookieHeaders = await getCookieHeaders();
+
+    const response = await fetch(`${API_BASE_URL}/${url}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        ...cookieHeaders,
+      },
+      credentials: 'include',
+      next: {
+        revalidate: options?.revalidate,
+        tags: options?.tags,
+      },
+    } as RequestInit);
+
+    // statelessの場合はSet-Cookieヘッダーを処理しない
+    if (!options?.stateless) {
+      await proxySetCookie(response.headers);
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      return createFailureResponse(response.status, errorBody);
+    }
+
+    return createSuccessResponse<T>(response);
   } catch (error) {
-    return createFailureResponse(error);
+    console.error('Fetch error:', error);
+    return createFailureResponse(500);
   }
 }
 
-export async function post<T>(url: Input, json?: unknown): Promise<ApiResponse<T>> {
+export async function post<T>(
+  url: string,
+  json?: unknown,
+  options?: { revalidate?: number; tags?: string[] },
+): Promise<ApiResponse<T>> {
   try {
-    const response = await api.post(url, { json });
-    return createSuccessResponse(response);
+    const authHeaders = await getAuthHeaders();
+    const cookieHeaders = await getCookieHeaders();
+
+    const response = await fetch(`${API_BASE_URL}/${url}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...authHeaders,
+        ...cookieHeaders,
+      },
+      credentials: 'include',
+      body: JSON.stringify(json),
+      cache: 'no-store',
+    });
+
+    await proxySetCookie(response.headers);
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      return createFailureResponse(response.status, errorBody);
+    }
+
+    return createSuccessResponse<T>(response);
   } catch (error) {
-    return createFailureResponse(error);
+    console.error('Fetch error:', error);
+    return createFailureResponse(500);
   }
 }
 
-export async function put<T>(url: Input, json?: unknown): Promise<ApiResponse<T>> {
+export async function put<T>(
+  url: string,
+  json?: unknown,
+  options?: { revalidate?: number; tags?: string[] },
+): Promise<ApiResponse<T>> {
   try {
-    const response = await api.put(url, { json });
-    return createSuccessResponse(response);
+    const authHeaders = await getAuthHeaders();
+    const cookieHeaders = await getCookieHeaders();
+
+    const response = await fetch(`${API_BASE_URL}/${url}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...authHeaders,
+        ...cookieHeaders,
+      },
+      credentials: 'include',
+      body: JSON.stringify(json),
+      cache: 'no-store',
+    });
+
+    await proxySetCookie(response.headers);
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      return createFailureResponse(response.status, errorBody);
+    }
+
+    return createSuccessResponse<T>(response);
   } catch (error) {
-    return createFailureResponse(error);
+    console.error('Fetch error:', error);
+    return createFailureResponse(500);
   }
 }

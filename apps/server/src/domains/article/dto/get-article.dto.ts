@@ -8,5 +8,5 @@ export class GetArticleResponse {
   updatedAt: Date;
   title: string;
   tags: string[];
-  content: string;
+  description: string;
 }

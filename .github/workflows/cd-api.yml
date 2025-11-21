@@ -1,0 +1,67 @@
+name: Deploy API Server
+
+on:
+  push:
+    branches: [develop, main]
+    paths:
+      - 'apps/server/**'
+      - 'packages/**'
+      - 'Dockerfile'
+      - '.github/workflows/cd-api.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    environment: ${{ github.ref_name }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          token_format: 'access_token'
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and Push Docker Image
+        run: |
+          gcloud builds submit . --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} --suppress-logs
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ secrets.SERVICE_NAME }}
+          region: ${{ vars.REGION }}
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
+          flags: '--allow-unauthenticated'
+          env_vars: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DIRECT_URL=${{ secrets.DIRECT_URL }}
+            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}
+            DOMAIN=${{ secrets.DOMAIN }}
+            COOKIE_DOMAIN=${{ secrets.COOKIE_DOMAIN }}
+            BASIC_AUTH_USER=${{ secrets.BASIC_AUTH_USER }}
+            BASIC_AUTH_PASSWORD=${{ secrets.BASIC_AUTH_PASSWORD }}
+            ALLOWED_EMAILS=${{ secrets.ALLOWED_EMAILS }}
+            SEED_USER_ID=${{ secrets.SEED_USER_ID }}

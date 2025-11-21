@@ -27,7 +27,12 @@ describe('Error Code Definitions', () => {
 
   it('should have a valid format (E-ddd-ddd-ddd-ddd)', () => {
     const errorCodeRegex = /^E-\d{3}-\d{3}-\d{3}-\d{3}$/;
-    Object.values(ERROR_CODE).forEach((errorObject) => {
+    Object.entries(ERROR_CODE).forEach(([key, errorObject]) => {
+      // SYSTEM_ERRORは特別な形式なのでスキップ
+      if (key === 'SYSTEM_ERROR') {
+        expect(errorObject.code).toBe('E-999');
+        return;
+      }
       expect(errorObject.code).toMatch(errorCodeRegex);
     });
   });

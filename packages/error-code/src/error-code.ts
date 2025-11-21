@@ -23,11 +23,13 @@ const createErrorCodeFactory = (domain: DomainCode) => {
 };
 
 // --- ドメインごとのファクトリを生成 ---
+const commonError = createErrorCodeFactory(DOMAIN.common);
 const authError = createErrorCodeFactory(DOMAIN.auth);
-const mediaError = createErrorCodeFactory(DOMAIN.media);
 const articleError = createErrorCodeFactory(DOMAIN.article);
 const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit);
-const commonError = createErrorCodeFactory(DOMAIN.common);
+const articlePageError = createErrorCodeFactory(DOMAIN.articlePage);
+const mediaError = createErrorCodeFactory(DOMAIN.media);
+const userError = createErrorCodeFactory(DOMAIN.user);
 
 export const ERROR_CODE = {
   // System
@@ -46,19 +48,23 @@ export const ERROR_CODE = {
   NO_BEARER_TOKEN: authError(STATUS.unauthorized, ENTITY.token, MESSAGES.NO_BEARER_TOKEN),
   INVALID_TOKEN: authError(STATUS.unauthorized, ENTITY.token, MESSAGES.INVALID_TOKEN),
   UNAUTHORIZED: authError(STATUS.unauthorized, ENTITY.user, MESSAGES.UNAUTHORIZED),
+  FORBIDDEN_EMAIL_ACCESS: authError(STATUS.forbidden, ENTITY.user, MESSAGES.FORBIDDEN_EMAIL_ACCESS),
+
+  // User
+  USER_NOT_FOUND: userError(STATUS.notFound, ENTITY.user, MESSAGES.USER_NOT_FOUND),
 
   // Media
   MEDIA_FILE_EXTENSION_MISSING: mediaError(STATUS.badRequest, ENTITY.media, MESSAGES.MEDIA_FILE_EXTENSION_MISSING),
 
   // Storage
-  SIGNED_DOWNLOAD_URL_CREATION_FAILED: commonError(
+  SIGNED_DOWNLOAD_URL_CREATION_FAILED: mediaError(
     STATUS.serverError,
-    ENTITY.common,
+    ENTITY.media,
     MESSAGES.SIGNED_DOWNLOAD_URL_CREATION_FAILED,
   ),
   SIGNED_UPLOAD_URL_CREATION_FAILED: commonError(
     STATUS.serverError,
-    ENTITY.common,
+    ENTITY.media,
     MESSAGES.SIGNED_UPLOAD_URL_CREATION_FAILED,
   ),
 
@@ -66,6 +72,10 @@ export const ERROR_CODE = {
   ARTICLE_NOT_FOUND: articleError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
   ARTICLE_EDIT_NOT_FOUND: articleEditError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
   ARTICLE_EDIT_FORBIDDEN: articleEditError(STATUS.forbidden, ENTITY.article, MESSAGES.ARTICLE_EDIT_FORBIDDEN),
+
+  // Page
+  ARTICLE_NOT_FOUND_FOR_PAGE: articlePageError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
+  PAGE_NOT_FOUND: articlePageError(STATUS.notFound, ENTITY.page, MESSAGES.PAGE_NOT_FOUND),
 } as const;
 
 // --- 型定義 ---

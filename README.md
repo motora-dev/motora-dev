@@ -1,6 +1,6 @@
-# motora-dev - Turborepo Monorepo with Next.js and NestJS
+# もとら's dev - Turborepo Monorepo with Next.js and NestJS
 
-このプロジェクトは、TurborepoでNext.jsとNestJSを統合したモダンなモノレポジトリです。
+このプロジェクトは、TurborepoでNext.jsとNestJSを統合したモダンなモノレポジトリです。技術ブログ「もとら's dev」のソースコードです。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-24.11.0-green.svg)](https://nodejs.org/)

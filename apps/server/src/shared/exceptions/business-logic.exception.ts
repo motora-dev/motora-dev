@@ -1,25 +1,20 @@
-import { type ErrorCodeObject } from '@monorepo/error-code';
+import { ErrorCode, type ErrorCodeObject } from '@monorepo/error-code';
 
 /**
  * アプリケーション固有のビジネスロジックエラーを表すカスタム例外クラス。
  * HTTP層に依存せず、ドメイン/サービス層で利用されることを想定している。
  */
 export class BusinessLogicError extends Error {
-  /**
-   * エラーコードパッケージで定義された、エラーに関するすべての情報を持つオブジェクト。
-   */
-  public readonly errorObject: ErrorCodeObject;
+  public readonly errorCode: ErrorCode;
+  public readonly statusCode: number;
 
   /**
    * @param errorObject エラーコードパッケージで定義されたエラーオブジェクト
    * @param cause オプション。エラーの原因となった元の例外
    */
-  constructor(
-    errorObject: ErrorCodeObject,
-    public readonly cause?: unknown,
-  ) {
+  constructor(errorObject: ErrorCodeObject, message?: string) {
     // Errorクラスのコンストラクタにデフォルトメッセージを渡す
-    super(errorObject.message);
+    super(message || errorObject.message);
 
     // V8（Node.jsのエンジン）でスタックトレースを正しくキャプチャするためのおまじない
     if (Error.captureStackTrace) {
@@ -27,6 +22,7 @@ export class BusinessLogicError extends Error {
     }
 
     this.name = 'BusinessLogicError';
-    this.errorObject = errorObject;
+    this.errorCode = errorObject.code;
+    this.statusCode = errorObject.statusCode;
   }
 }

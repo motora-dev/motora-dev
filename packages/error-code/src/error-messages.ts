@@ -9,6 +9,10 @@ export const MESSAGES = {
   NO_BEARER_TOKEN: 'No bearer token provided',
   INVALID_TOKEN: 'Invalid token',
   UNAUTHORIZED: 'Unauthorized',
+  FORBIDDEN_EMAIL_ACCESS: 'This email address is not allowed to access this application',
+
+  // User
+  USER_NOT_FOUND: 'User not found',
 
   // Media
   MEDIA_FILE_EXTENSION_MISSING: 'File extension is missing',
@@ -20,6 +24,9 @@ export const MESSAGES = {
   // Article
   ARTICLE_NOT_FOUND: 'Article not found',
   ARTICLE_EDIT_FORBIDDEN: 'You are not the owner of this article',
+
+  // Page
+  PAGE_NOT_FOUND: 'Page not found',
 };
 
 export type ErrorMessages = (typeof MESSAGES)[keyof typeof MESSAGES];
