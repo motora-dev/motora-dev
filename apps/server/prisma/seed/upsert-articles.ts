@@ -74,24 +74,21 @@ function getArticleFolders(articlesDir: string): string[] {
 async function main() {
   console.log('記事投入処理を開始します...');
 
-  // 環境変数からユーザーIDを取得
-  const userIdStr = process.env.SEED_USER_ID;
-  if (!userIdStr) {
-    throw new Error('環境変数 SEED_USER_ID が設定されていません');
-  }
-  const userId = parseInt(userIdStr, 10);
-  if (isNaN(userId)) {
-    throw new Error('環境変数 SEED_USER_ID は数値である必要があります');
+  // 環境変数からユーザーPublic IDを取得
+  const userPublicId = process.env.SEED_USER_PUBLIC_ID;
+  if (!userPublicId) {
+    throw new Error('環境変数 SEED_USER_PUBLIC_ID が設定されていません');
   }
 
   // ユーザーの存在確認
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { publicId: userPublicId },
   });
   if (!user) {
-    throw new Error(`ユーザーID ${userId} が見つかりません`);
+    throw new Error(`ユーザー (PublicID: ${userPublicId}) が見つかりません`);
   }
-  console.log(`ユーザー: ${user.email} (ID: ${userId})`);
+  const userId = user.id;
+  console.log(`ユーザーの存在を確認しました (PublicID: ${userPublicId})`);
 
   // 記事フォルダのパス
   const articlesDir = join(__dirname, '../assets/articles');
