@@ -17,8 +17,11 @@ export function Providers({ children }: { children: ReactNode }) {
   const handleApiError = (error: unknown): boolean => {
     if (error instanceof ApiError) {
       const status = error.statusCode;
+      // 401の場合はリダイレクトせず、必要に応じてエラー表示を行うか何もしない
       if (status === 401) {
-        router.push('/login');
+        // 管理者機能などの保護されたルートでのみログイン画面への遷移が必要な場合は
+        // 個別のコンポーネントやガード処理で対応する方針とするため、
+        // ここでのグローバルなリダイレクトは行わない。
         return true;
       }
       if (status === 403 || status === 404) {
