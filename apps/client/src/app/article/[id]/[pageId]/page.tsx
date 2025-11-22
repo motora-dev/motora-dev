@@ -1,10 +1,41 @@
 import { extractTableOfContents, markdownToHtml } from '@monorepo/markdown';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 import { getPage, getPages } from '$domains/article-page/api';
 import { isSuccessResponse } from '$shared/api';
 import { highlightHtml } from '$shared/ui/highlighter/highlight-server';
 import { PageLayout } from '../_components/page-layout';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; pageId: string }>;
+}): Promise<Metadata> {
+  const { id: articleId, pageId } = await params;
+  const pageResponse = await getPage(articleId, pageId);
+
+  if (!isSuccessResponse(pageResponse)) {
+    return {
+      title: 'ページが見つかりません',
+    };
+  }
+
+  const { title, content } = pageResponse.data;
+  // 本文の最初の100文字をdescriptionとして使用（Markdown記号除去などは簡易的）
+  const description = content.slice(0, 120).replace(/[#*`\[\]]/g, '') + '...';
+
+  return {
+    title: `${title} | もとら's dev`,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:4200'}/article/${articleId}/${pageId}`,
+    },
+  };
+}
 
 export default async function ArticlePagePage({ params }: { params: Promise<{ id: string; pageId: string }> }) {
   const { id: articleId, pageId } = await params;

@@ -1,6 +1,13 @@
+import { Metadata } from 'next';
+
 import { getArticleList } from '$domains/article-list/api/get-article-list.api';
 import { ArticleCard } from '$domains/article-list/components/article-card';
 import { isSuccessResponse } from '$shared/api';
+
+export const metadata: Metadata = {
+  title: "もとら's dev | 記事一覧",
+  description: 'もとらによる技術ブログ。Web開発、NestJS、Next.jsなどの技術記事を発信しています。',
+};
 
 export default async function HomePage() {
   const response = await getArticleList();
