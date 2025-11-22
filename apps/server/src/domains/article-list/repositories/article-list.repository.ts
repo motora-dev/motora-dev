@@ -11,7 +11,7 @@ export class ArticleListRepository {
   async getArticleList(): Promise<Article[]> {
     return await this.prisma.article.findMany({
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
     });
   }

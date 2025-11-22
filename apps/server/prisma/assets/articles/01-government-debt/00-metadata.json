@@ -1,6 +1,6 @@
 {
   "publicId": "ccj55e9quzgsw3z444y76y65",
-  "title": "国債発行の仕組み",
+  "title": "国債発行の正体",
   "description": "世界一わかりやすい国債発行の仕組み",
   "tags": [
     "経済",
@@ -17,7 +17,7 @@
     {
       "publicId": "bo76obi1ve13o7o5ohmqync0",
       "file": "02-government-debt-bookkeeping.md",
-      "level": 1,
+      "level": 2,
       "order": 2
     },
     {
