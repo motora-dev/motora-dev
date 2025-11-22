@@ -24,7 +24,7 @@ export function PageLayout({ articleId, pageId, pages, page, toc }: PageLayoutPr
       <PageSidebar articleId={articleId} pages={pages} currentPageId={pageId} />
 
       {/* メインコンテンツ */}
-      <main className="min-w-0">
+      <main className="min-w-0 pb-16">
         <PageContent page={page} />
         <PageNavigation articleId={articleId} pages={pages} currentPageId={pageId} />
       </main>
