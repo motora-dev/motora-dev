@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="./markdown-it-texmath.d.ts" />
 import katex from 'katex';
 import anchor from 'markdown-it-anchor';
 import texmath from 'markdown-it-texmath';
