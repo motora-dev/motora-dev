@@ -21,7 +21,9 @@ export async function generateMetadata({
     };
   }
 
-  const { title, description } = pageResponse.data;
+  const { title, description, tags } = pageResponse.data;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:4200';
+  const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(title)}&tags=${encodeURIComponent(tags.join(','))}`;
 
   return {
     title: `${title} | もとら's dev`,
@@ -30,7 +32,14 @@ export async function generateMetadata({
       title,
       description,
       type: 'article',
-      url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:4200'}/article/${articleId}/${pageId}`,
+      url: `${baseUrl}/article/${articleId}/${pageId}`,
+      images: [ogImageUrl],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
     },
   };
 }

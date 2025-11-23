@@ -2,7 +2,7 @@ import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable } from '@nestjs/common';
 
 import { BusinessLogicError } from '$exceptions';
-import type { Page } from '$prisma/client';
+import type { Article, Page } from '$prisma/client';
 import { ArticlePageRepository } from '../repositories';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class ArticlePageService {
     return await this.repository.getPagesByArticleId(article.id);
   }
 
-  async getPage(articleId: string, pageId: string): Promise<Page> {
+  async getPage(articleId: string, pageId: string): Promise<{ page: Page; article: Article }> {
     const article = await this.repository.getArticleByPublicId(articleId);
 
     if (!article) {
@@ -32,6 +32,6 @@ export class ArticlePageService {
       throw new BusinessLogicError(ERROR_CODE.PAGE_NOT_FOUND);
     }
 
-    return page;
+    return { page, article };
   }
 }

@@ -9,7 +9,7 @@ export class GetPageHandler implements IQueryHandler<GetPageQuery> {
   constructor(private readonly articlePageService: ArticlePageService) {}
 
   async execute(query: GetPageQuery): Promise<GetPageResponse> {
-    const page = await this.articlePageService.getPage(query.articleId, query.pageId);
+    const { page, article } = await this.articlePageService.getPage(query.articleId, query.pageId);
 
     return {
       id: page.publicId,
@@ -20,6 +20,7 @@ export class GetPageHandler implements IQueryHandler<GetPageQuery> {
       content: page.content,
       level: page.level,
       order: page.order,
+      tags: article.tags,
     };
   }
 }

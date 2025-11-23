@@ -25,6 +25,7 @@ export const PageResponseSchema = z
     content: z.string(),
     level: z.number(),
     order: z.number(),
+    tags: z.array(z.string()),
   })
   .strict();
 

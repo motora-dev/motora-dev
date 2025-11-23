@@ -12,4 +12,5 @@ export class GetPageResponse {
   content: string;
   level: number;
   order: number;
+  tags: string[];
 }
