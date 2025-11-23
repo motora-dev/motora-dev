@@ -2,9 +2,8 @@ import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable } from '@nestjs/common';
 
 import { BusinessLogicError } from '$exceptions';
+import type { Article } from '$prisma/client';
 import { ArticleRepository } from '../repositories';
-
-import type { Article } from '@prisma/client';
 
 @Injectable()
 export class ArticleService {

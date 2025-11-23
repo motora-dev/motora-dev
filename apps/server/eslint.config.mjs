@@ -27,7 +27,7 @@ export default [
           pathGroups: [
             {
               pattern:
-                '{$adapters,$decorators,$exceptions,$filters,$guards,$interceptors,$utils,$domains/**,$modules/**,$shared/**}',
+                '{$adapters,$decorators,$exceptions,$filters,$guards,$interceptors,$utils,$domains/**,$modules/**,$shared/**,$prisma/client}',
               group: 'internal',
             },
           ],

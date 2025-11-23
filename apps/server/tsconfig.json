@@ -1,6 +1,6 @@
 {
   "extends": "@monorepo/typescript-config",
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "prisma/seed/**/*.ts"],
   "exclude": [".trubo", "coverage", "dist", "node_modules"],
   "compilerOptions": {
     "module": "CommonJS",
@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
+      "$prisma/client": ["./src/generated/client/client.ts"],
       "$adapters": ["src/shared/adapters"],
       "$decorators": ["src/shared/decorators"],
       "$domains/*": ["./src/domains/*"],

@@ -1,11 +1,16 @@
 /// <reference types="node" />
+import 'dotenv/config';
 import { createId } from '@paralleldrive/cuid2';
-import { PrismaClient, ArticleStatus } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import matter from 'gray-matter';
 import { join } from 'path';
 
-const prisma = new PrismaClient();
+import { PrismaClient, ArticleStatus } from '$prisma/client';
+
+const connectionString = process.env.DATABASE_URL;
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 // 公開IDを生成する関数（既存のgeneratePublicIdと同じ実装）
 const generatePublicId = (): string => {

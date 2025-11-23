@@ -19,7 +19,7 @@
     "lint:eslint:fix": "pnpm lint:eslint --fix",
     "test": "jest",
     "test:coverage": "COLLECT_COVERAGE=true jest",
-    "seed": "ts-node prisma/seed/upsert-articles.ts"
+    "seed": "ts-node -r tsconfig-paths/register prisma/seed/upsert-articles.ts"
   },
   "dependencies": {
     "@monorepo/error-code": "workspace:*",
@@ -31,13 +31,16 @@
     "@nestjs/platform-express": "catalog:",
     "@nestjs/throttler": "^6.0.0",
     "@paralleldrive/cuid2": "^3.0.4",
+    "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "catalog:",
+    "@prisma/client-runtime-utils": "^7.0.0",
     "@supabase/supabase-js": "catalog:",
     "cookie-parser": "^1.4.7",
     "csrf-csrf": "^4.0.3",
     "express-session": "^1.18.2",
     "google-auth-library": "catalog:",
     "gray-matter": "^4.0.3",
+    "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "catalog:"
   },
@@ -52,13 +55,13 @@
     "@types/express-session": "^1.18.2",
     "@types/jest": "^30.0.0",
     "@types/supertest": "^6.0.2",
+    "dotenv": "^17.2.3",
     "jest": "catalog:",
     "jest-mock-extended": "^4.0.0",
     "prisma": "catalog:",
     "source-map-support": "^0.5.21",
     "supertest": "^7.1.0",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0"
+    "ts-node": "^10.9.2"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 
+import type { User } from '$prisma/client';
 import { AuthRepository } from '../repositories/auth.repository';
 
 @Injectable()

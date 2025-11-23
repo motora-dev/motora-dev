@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MediaType } from '@prisma/client';
 
 import { PrismaAdapter } from '$adapters';
+import { MediaType } from '$prisma/client';
 import { generatePublicId } from '$utils';
 
 @Injectable()

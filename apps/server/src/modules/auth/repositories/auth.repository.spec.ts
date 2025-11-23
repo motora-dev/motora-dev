@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { PrismaAdapter } from '$adapters';
+import type { User } from '$prisma/client';
 import { AuthRepository } from './auth.repository';
-
-import type { User } from '@prisma/client';
 
 describe('AuthRepository', () => {
   let repository: AuthRepository;

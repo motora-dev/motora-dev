@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaAdapter } from '$adapters';
-
-import type { Article } from '@prisma/client';
+import type { Article } from '$prisma/client';
 
 @Injectable()
 export class ArticleEditRepository {
