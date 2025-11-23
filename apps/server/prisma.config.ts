@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
@@ -7,6 +8,6 @@ export default defineConfig({
     seed: 'ts-node -r tsconfig-paths/register prisma/seed/upsert-articles.ts',
   },
   datasource: {
-    url: env('DATABASE_URL'),
+    url: env('DIRECT_URL'),
   },
 });
