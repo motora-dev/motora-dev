@@ -1,11 +1,16 @@
 /// <reference types="node" />
+import 'dotenv/config';
 import { createId } from '@paralleldrive/cuid2';
-import { PrismaClient, ArticleStatus } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import matter from 'gray-matter';
 import { join } from 'path';
 
-const prisma = new PrismaClient();
+import { PrismaClient, ArticleStatus } from '$prisma/client';
+
+const connectionString = process.env.DATABASE_URL;
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 // 公開IDを生成する関数（既存のgeneratePublicIdと同じ実装）
 const generatePublicId = (): string => {
@@ -30,6 +35,7 @@ interface ArticleMetadata {
 // ページのfrontmatter型定義
 interface PageFrontmatter {
   title: string;
+  description?: string;
 }
 
 // 記事フォルダからメタデータとページを読み込む
@@ -48,9 +54,18 @@ function loadArticle(articleFolderPath: string) {
     const { data, content } = matter(fileContent);
     const frontmatter = data as PageFrontmatter;
 
+    // descriptionがない場合はcontentの最初の120文字から生成
+    const description =
+      frontmatter.description ||
+      content
+        .trim()
+        .slice(0, 120)
+        .replace(/[#*`[\]]/g, '') + '...';
+
     return {
       publicId: pageInfo.publicId,
       title: frontmatter.title || pageInfo.file,
+      description,
       content: content.trim(),
       level: pageInfo.level,
       order: pageInfo.order,
@@ -147,6 +162,7 @@ async function main() {
           where: { publicId: pageData.publicId },
           update: {
             title: pageData.title,
+            description: pageData.description,
             content: pageData.content,
             level: pageData.level,
             order: pageData.order,
@@ -155,6 +171,7 @@ async function main() {
           create: {
             publicId: pageData.publicId,
             title: pageData.title,
+            description: pageData.description,
             content: pageData.content,
             level: pageData.level,
             order: pageData.order,

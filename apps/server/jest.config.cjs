@@ -20,6 +20,7 @@ module.exports = {
   testEnvironment: 'node',
   moduleNameMapper: {
     '^@paralleldrive/cuid2$': '<rootDir>/test/__mocks__/@paralleldrive/cuid2.ts',
+    '^\\$prisma/client$': '<rootDir>/src/generated/client/client.ts',
     '^\\$adapters$': '<rootDir>/src/shared/adapters',
     '^\\$decorators$': '<rootDir>/src/shared/decorators',
     '^\\$domains/(.*)$': '<rootDir>/src/domains/$1',

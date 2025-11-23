@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ArticleStatus } from '@prisma/client';
 
 import { PrismaAdapter } from '$adapters';
+import type { Article } from '$prisma/client';
+import { ArticleStatus } from '$prisma/client';
 import { generatePublicId } from '$utils';
-
-import type { Article } from '@prisma/client';
 
 @Injectable()
 export class ArticleCreateRepository {
