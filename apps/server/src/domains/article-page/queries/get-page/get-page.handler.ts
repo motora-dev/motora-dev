@@ -16,6 +16,7 @@ export class GetPageHandler implements IQueryHandler<GetPageQuery> {
       createdAt: page.createdAt,
       updatedAt: page.updatedAt,
       title: page.title,
+      description: page.description,
       content: page.content,
       level: page.level,
       order: page.order,

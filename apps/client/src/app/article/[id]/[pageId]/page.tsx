@@ -21,9 +21,7 @@ export async function generateMetadata({
     };
   }
 
-  const { title, content } = pageResponse.data;
-  // 本文の最初の100文字をdescriptionとして使用（Markdown記号除去などは簡易的）
-  const description = content.slice(0, 120).replace(/[#*`\[\]]/g, '') + '...';
+  const { title, description } = pageResponse.data;
 
   return {
     title: `${title} | もとら's dev`,
