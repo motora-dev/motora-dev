@@ -53,8 +53,7 @@ jobs:
           service: ${{ secrets.SERVICE_NAME }}
           region: ${{ vars.REGION }}
           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
-          flags: '--allow-unauthenticated'
-          service_account: ${{ secrets.SERVICE_NAME }}@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+          flags: '--allow-unauthenticated --service-account ${{ secrets.RUN_SERVICE_ACCOUNT }}'
           secrets: |
             DATABASE_URL=database-url:latest
             SUPABASE_URL=supabase-url:latest
