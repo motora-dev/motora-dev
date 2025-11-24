@@ -1,0 +1,66 @@
+name: Deploy API Server (Preview)
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize]
+    paths:
+      - 'apps/server/**'
+      - 'packages/**'
+      - 'Dockerfile'
+      - '.github/workflows/cd-api-preview.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+
+    environment: preview
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          token_format: 'access_token'
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and Push Docker Image
+        run: |
+          gcloud builds submit . --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} --suppress-logs
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ secrets.SERVICE_NAME }}
+          region: ${{ vars.REGION }}
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
+          flags: '--allow-unauthenticated'
+          secrets: |
+            DATABASE_URL=database-url:latest
+            SUPABASE_URL=supabase-url:latest
+            SUPABASE_SERVICE_ROLE_KEY=supabase-service-role-key:latest
+            CORS_ORIGINS=cors-origins:latest
+            DOMAIN=domain:latest
+            COOKIE_DOMAIN=cookie-domain:latest
+            BASIC_AUTH_USER=basic-auth-user:latest
+            BASIC_AUTH_PASSWORD=basic-auth-password:latest
+            ALLOWED_EMAILS=allowed-emails:latest
