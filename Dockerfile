@@ -48,6 +48,8 @@ COPY --from=builder /app/packages/error-code/dist ./packages/error-code/dist
 COPY --from=builder /app/packages/error-code/node_modules ./packages/error-code/node_modules
 COPY --from=builder /app/packages/error-code/package.json ./packages/error-code/package.json
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
+# Remove any package.json that might have been copied to dist (e.g. from generated client) to prevent ESM/CJS conflicts
+RUN find ./apps/server/dist -name "package.json" -delete
 COPY --from=builder /app/apps/server/node_modules ./apps/server/node_modules
 COPY --from=builder /app/apps/server/package.json ./apps/server/
 COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
