@@ -4,7 +4,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "prepare": "prisma generate",
+    "prepare": "prisma generate && echo '{\"type\": \"module\"}' > src/generated/client/package.json",
     "clean": "find . -type d \\( -name \".turbo\" -o -name \"dist\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
     "build": "nest build --path tsconfig.build.json",
     "start": "nest start --debug --watch --path tsconfig.debug.json --debug=0.0.0.0:9230",
