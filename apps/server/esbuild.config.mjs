@@ -26,7 +26,7 @@ const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.js
 const externalPackages = [
   ...Object.keys(packageJson.dependencies || {}),
   ...Object.keys(packageJson.devDependencies || {}),
-];
+].filter((pkg) => !pkg.startsWith('@monorepo/')); // モノレポ内のパッケージはバンドルに含める
 
 /** @type {esbuild.BuildOptions} */
 const config = {
