@@ -1,6 +1,7 @@
 import { CallHandler, ExecutionContext } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of, throwError } from 'rxjs';
+import { vi, type MockInstance } from 'vitest';
 
 import { LoggingInterceptor } from './logging.interceptor';
 
@@ -10,7 +11,7 @@ describe('LoggingInterceptor', () => {
   let mockCallHandler: CallHandler;
   let mockRequest: any;
   let mockResponse: any;
-  let consoleLogSpy: jest.SpyInstance;
+  let consoleLogSpy: MockInstance;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,19 +46,19 @@ describe('LoggingInterceptor', () => {
 
     // Mock ExecutionContext
     mockExecutionContext = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn().mockReturnValue(mockRequest),
-        getResponse: jest.fn().mockReturnValue(mockResponse),
+      switchToHttp: vi.fn().mockReturnValue({
+        getRequest: vi.fn().mockReturnValue(mockRequest),
+        getResponse: vi.fn().mockReturnValue(mockResponse),
       }),
     } as any;
 
     // Mock CallHandler
     mockCallHandler = {
-      handle: jest.fn().mockReturnValue(of('test-response')),
+      handle: vi.fn().mockReturnValue(of('test-response')),
     };
 
     // Spy on console.log
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -69,122 +70,127 @@ describe('LoggingInterceptor', () => {
   });
 
   describe('intercept', () => {
-    it('should log request and response on successful execution', (done) => {
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: (result) => {
-          expect(result).toBe('test-response');
-          expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+    it('should log request and response on successful execution', () =>
+      new Promise<void>((done) => {
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          next: (result) => {
+            expect(result).toBe('test-response');
+            expect(consoleLogSpy).toHaveBeenCalledTimes(2);
 
-          // Check request log
-          const requestLog = JSON.parse(consoleLogSpy.mock.calls[0][0]);
-          expect(requestLog.level).toBe('INFO');
-          expect(requestLog.message).toBe('Request received');
-          expect(requestLog.requestId).toBe('test-request-id');
-          expect(requestLog.endpoint).toBe('/test/endpoint');
-          expect(requestLog.method).toBe('GET');
-          expect(requestLog.ip).toBe('127.0.0.1');
-          expect(requestLog.userAgent).toBe('test-agent');
+            // Check request log
+            const requestLog = JSON.parse(consoleLogSpy.mock.calls[0][0]);
+            expect(requestLog.level).toBe('INFO');
+            expect(requestLog.message).toBe('Request received');
+            expect(requestLog.requestId).toBe('test-request-id');
+            expect(requestLog.endpoint).toBe('/test/endpoint');
+            expect(requestLog.method).toBe('GET');
+            expect(requestLog.ip).toBe('127.0.0.1');
+            expect(requestLog.userAgent).toBe('test-agent');
 
-          // Check response log
-          const responseLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(responseLog.level).toBe('INFO');
-          expect(responseLog.message).toBe('Request completed successfully');
-          expect(responseLog.requestId).toBe('test-request-id');
-          expect(responseLog.userId).toBe('test-user-id');
-          expect(responseLog.endpoint).toBe('/test/endpoint');
-          expect(responseLog.method).toBe('GET');
-          expect(responseLog.statusCode).toBe(200);
+            // Check response log
+            const responseLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(responseLog.level).toBe('INFO');
+            expect(responseLog.message).toBe('Request completed successfully');
+            expect(responseLog.requestId).toBe('test-request-id');
+            expect(responseLog.userId).toBe('test-user-id');
+            expect(responseLog.endpoint).toBe('/test/endpoint');
+            expect(responseLog.method).toBe('GET');
+            expect(responseLog.statusCode).toBe(200);
 
-          done();
-        },
-      });
-    });
+            done();
+          },
+        });
+      }));
 
-    it('should log request and error on failed execution', (done) => {
-      const testError = {
-        status: 400,
-        message: 'Bad Request',
-        stack: 'Error stack trace',
-      };
+    it('should log request and error on failed execution', () =>
+      new Promise<void>((done) => {
+        const testError = {
+          status: 400,
+          message: 'Bad Request',
+          stack: 'Error stack trace',
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: (error) => {
-          expect(error).toBe(testError);
-          expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: (error) => {
+            expect(error).toBe(testError);
+            expect(consoleLogSpy).toHaveBeenCalledTimes(2);
 
-          // Check request log
-          const requestLog = JSON.parse(consoleLogSpy.mock.calls[0][0]);
-          expect(requestLog.level).toBe('INFO');
-          expect(requestLog.message).toBe('Request received');
+            // Check request log
+            const requestLog = JSON.parse(consoleLogSpy.mock.calls[0][0]);
+            expect(requestLog.level).toBe('INFO');
+            expect(requestLog.message).toBe('Request received');
 
-          // Check error log
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.level).toBe('ERROR');
-          expect(errorLog.message).toBe('Request failed with status 400');
-          expect(errorLog.requestId).toBe('test-request-id');
-          expect(errorLog.userId).toBe('test-user-id');
-          expect(errorLog.endpoint).toBe('/test/endpoint');
-          expect(errorLog.method).toBe('GET');
-          expect(errorLog.statusCode).toBe(400);
-          expect(errorLog.error).toBe('Bad Request');
-          expect(errorLog.stack).toBe('Error stack trace');
+            // Check error log
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.level).toBe('ERROR');
+            expect(errorLog.message).toBe('Request failed with status 400');
+            expect(errorLog.requestId).toBe('test-request-id');
+            expect(errorLog.userId).toBe('test-user-id');
+            expect(errorLog.endpoint).toBe('/test/endpoint');
+            expect(errorLog.method).toBe('GET');
+            expect(errorLog.statusCode).toBe(400);
+            expect(errorLog.error).toBe('Bad Request');
+            expect(errorLog.stack).toBe('Error stack trace');
 
-          done();
-        },
-      });
-    });
+            done();
+          },
+        });
+      }));
 
-    it('should handle error without status code', (done) => {
-      const testError = {
-        message: 'Internal Server Error',
-      };
+    it('should handle error without status code', () =>
+      new Promise<void>((done) => {
+        const testError = {
+          message: 'Internal Server Error',
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.statusCode).toBe(500);
-          expect(errorLog.error).toBe('Internal Server Error');
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.statusCode).toBe(500);
+            expect(errorLog.error).toBe('Internal Server Error');
+            done();
+          },
+        });
+      }));
 
-    it('should handle error with statusCode instead of status', (done) => {
-      const testError = {
-        statusCode: 404,
-        message: 'Not Found',
-      };
+    it('should handle error with statusCode instead of status', () =>
+      new Promise<void>((done) => {
+        const testError = {
+          statusCode: 404,
+          message: 'Not Found',
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.statusCode).toBe(404);
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.statusCode).toBe(404);
+            done();
+          },
+        });
+      }));
 
-    it('should handle error without message', (done) => {
-      const testError = {
-        status: 500,
-      };
+    it('should handle error without message', () =>
+      new Promise<void>((done) => {
+        const testError = {
+          status: 500,
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.error).toBe('Unknown error occurred');
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.error).toBe('Unknown error occurred');
+            done();
+          },
+        });
+      }));
 
     it('should handle request without originalUrl', () => {
       mockRequest.originalUrl = undefined;
@@ -245,63 +251,66 @@ describe('LoggingInterceptor', () => {
       expect(responseLog.userId).toBeUndefined();
     });
 
-    it('should handle error logging without user', (done) => {
-      mockRequest.user = undefined;
-      const testError = {
-        status: 500,
-        message: 'Internal Server Error',
-        stack: 'Error stack trace',
-      };
+    it('should handle error logging without user', () =>
+      new Promise<void>((done) => {
+        mockRequest.user = undefined;
+        const testError = {
+          status: 500,
+          message: 'Internal Server Error',
+          stack: 'Error stack trace',
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.userId).toBeUndefined();
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.userId).toBeUndefined();
+            done();
+          },
+        });
+      }));
 
-    it('should handle error logging with user but without id', (done) => {
-      mockRequest.user = {}; // user exists but has no id property
-      const testError = {
-        status: 500,
-        message: 'Internal Server Error',
-        stack: 'Error stack trace',
-      };
+    it('should handle error logging with user but without id', () =>
+      new Promise<void>((done) => {
+        mockRequest.user = {}; // user exists but has no id property
+        const testError = {
+          status: 500,
+          message: 'Internal Server Error',
+          stack: 'Error stack trace',
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.userId).toBeUndefined();
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.userId).toBeUndefined();
+            done();
+          },
+        });
+      }));
 
-    it('should handle error logging with user having undefined id', (done) => {
-      mockRequest.user = { id: undefined }; // user exists but id is explicitly undefined
-      const testError = {
-        status: 500,
-        message: 'Internal Server Error',
-        stack: 'Error stack trace',
-      };
-      mockRequest.originalUrl = undefined;
-      mockRequest.url = '/fallback/url';
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+    it('should handle error logging with user having undefined id', () =>
+      new Promise<void>((done) => {
+        mockRequest.user = { id: undefined }; // user exists but id is explicitly undefined
+        const testError = {
+          status: 500,
+          message: 'Internal Server Error',
+          stack: 'Error stack trace',
+        };
+        mockRequest.originalUrl = undefined;
+        mockRequest.url = '/fallback/url';
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.userId).toBeUndefined();
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.userId).toBeUndefined();
+            done();
+          },
+        });
+      }));
 
     it('should handle response without statusCode', () => {
       mockResponse.statusCode = undefined;
@@ -321,24 +330,25 @@ describe('LoggingInterceptor', () => {
       expect(responseLog.userId).toBeUndefined();
     });
 
-    it('should handle error logging with null user', (done) => {
-      mockRequest.user = null;
-      const testError = {
-        status: 500,
-        message: 'Internal Server Error',
-        stack: 'Error stack trace',
-      };
+    it('should handle error logging with null user', () =>
+      new Promise<void>((done) => {
+        mockRequest.user = null;
+        const testError = {
+          status: 500,
+          message: 'Internal Server Error',
+          stack: 'Error stack trace',
+        };
 
-      mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => testError));
+        mockCallHandler.handle = vi.fn().mockReturnValue(throwError(() => testError));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        error: () => {
-          const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
-          expect(errorLog.userId).toBeUndefined();
-          done();
-        },
-      });
-    });
+        interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+          error: () => {
+            const errorLog = JSON.parse(consoleLogSpy.mock.calls[1][0]);
+            expect(errorLog.userId).toBeUndefined();
+            done();
+          },
+        });
+      }));
 
     it('should handle response with user but without id', () => {
       mockRequest.user = {}; // user exists but has no id property

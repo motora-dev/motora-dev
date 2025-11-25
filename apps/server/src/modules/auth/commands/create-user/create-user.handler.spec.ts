@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { AuthService } from '$modules/auth/services/auth.service';
 import { CreateUserCommand } from './create-user.command';
@@ -6,7 +6,6 @@ import { CreateUserFromGoogleHandler } from './create-user.handler';
 
 describe('CreateUserFromGoogleHandler', () => {
   let handler: CreateUserFromGoogleHandler;
-  let authService: AuthService;
 
   const mockUser = {
     id: 1,
@@ -23,20 +22,15 @@ describe('CreateUserFromGoogleHandler', () => {
   };
 
   const mockAuthService = {
-    findOrCreateUser: jest.fn().mockResolvedValue(mockUser),
-  };
+    findOrCreateUser: vi.fn().mockResolvedValue(mockUser),
+  } as unknown as AuthService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [CreateUserFromGoogleHandler, { provide: AuthService, useValue: mockAuthService }],
-    }).compile();
-
-    handler = module.get<CreateUserFromGoogleHandler>(CreateUserFromGoogleHandler);
-    authService = module.get<AuthService>(AuthService);
+  beforeEach(() => {
+    handler = new CreateUserFromGoogleHandler(mockAuthService);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -46,7 +40,7 @@ describe('CreateUserFromGoogleHandler', () => {
   describe('execute', () => {
     it('should process CreateUserFromGoogle command', async () => {
       // Mock AuthService response
-      mockAuthService.findOrCreateUser.mockResolvedValue(mockUser);
+      vi.mocked(mockAuthService.findOrCreateUser).mockResolvedValue(mockUser as any);
 
       // Create command
       const googleId = 'test-google-id';
@@ -57,20 +51,20 @@ describe('CreateUserFromGoogleHandler', () => {
       await handler.execute(command);
 
       // Verify service was called with correct googleId and googleEmail
-      expect(authService.findOrCreateUser).toHaveBeenCalledWith('google', googleId, googleEmail);
+      expect(mockAuthService.findOrCreateUser).toHaveBeenCalledWith('google', googleId, googleEmail);
     });
 
     it('should handle error from auth service', async () => {
       // Mockエラーを設定
       const error = new Error('Google認証エラー');
-      mockAuthService.findOrCreateUser.mockRejectedValue(error);
+      vi.mocked(mockAuthService.findOrCreateUser).mockRejectedValue(error);
 
       // コマンド作成
       const command = new CreateUserCommand('google', 'invalid-google-id', 'invalid@gmail.com');
 
       // ハンドラーの実行とエラー検証
       await expect(handler.execute(command)).rejects.toThrow('Google認証エラー');
-      expect(authService.findOrCreateUser).toHaveBeenCalledWith('google', 'invalid-google-id', 'invalid@gmail.com');
+      expect(mockAuthService.findOrCreateUser).toHaveBeenCalledWith('google', 'invalid-google-id', 'invalid@gmail.com');
     });
   });
 });

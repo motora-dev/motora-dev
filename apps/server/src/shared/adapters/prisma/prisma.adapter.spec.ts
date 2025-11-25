@@ -1,15 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { vi } from 'vitest';
 
-import { PrismaClient } from '$prisma/client';
 import { PrismaAdapter } from './prisma.adapter';
 
 describe('PrismaAdapter', () => {
   let adapter: PrismaAdapter;
-  let prismaMock: DeepMockProxy<PrismaClient>;
+  let prismaMock: any;
 
   beforeEach(async () => {
-    prismaMock = mockDeep<PrismaClient>();
+    prismaMock = {
+      $connect: vi.fn(),
+      $disconnect: vi.fn(),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [

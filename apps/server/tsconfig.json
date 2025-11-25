@@ -1,7 +1,6 @@
 {
   "extends": "@monorepo/typescript-config",
-  "include": ["src/**/*.ts", "prisma/seed/**/*.ts"],
-  "exclude": [".trubo", "coverage", "dist", "node_modules"],
+  "exclude": [".turbo", "coverage", "dist", "node_modules"],
   "compilerOptions": {
     "module": "esnext",
     "baseUrl": ".",
@@ -22,7 +21,7 @@
       "$modules/*": ["src/modules/*"],
       "$shared/*": ["src/shared/*"],
       "$utils": ["src/shared/utils"]
-    },
-    "types": ["node", "jest"]
-  }
+    }
+  },
+  "references": [{ "path": "./tsconfig.build.json" }, { "path": "./tsconfig.spec.json" }]
 }

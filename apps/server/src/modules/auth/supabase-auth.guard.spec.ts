@@ -1,14 +1,13 @@
 import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { vi, type MockInstance } from 'vitest';
 
 import { BusinessLogicError } from '$exceptions';
 import { AuthRepository } from '$modules/auth/repositories/auth.repository';
 
 // ESMモードでのモック設定
-const mockCreateServerSupabase = jest.fn();
-// @ts-expect-error jest.unstable_mockModule is available in ESM mode
-jest.unstable_mockModule('$adapters', () => ({
+const mockCreateServerSupabase = vi.fn();
+vi.mock('$adapters', () => ({
   createServerSupabase: mockCreateServerSupabase,
 }));
 
@@ -21,31 +20,25 @@ describe('SupabaseAuthGuard', () => {
   let mockSupabase: any;
   let mockRequest: any;
   let mockResponse: any;
-  let consoleLogSpy: jest.SpyInstance;
+  let consoleLogSpy: MockInstance;
 
   const mockAuthRepository = {
-    getUserByProvider: jest.fn(),
-    findUserBySupabaseId: jest.fn(),
-    createUser: jest.fn(),
-    updateUser: jest.fn(),
-  };
+    getUserByProvider: vi.fn(),
+    findUserBySupabaseId: vi.fn(),
+    createUser: vi.fn(),
+    updateUser: vi.fn(),
+  } as unknown as AuthRepository;
 
   const mockConfigService = {
-    get: jest.fn().mockReturnValue('development'),
-  };
+    get: vi.fn().mockReturnValue('development'),
+  } as unknown as ConfigService;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // console.logの出力を抑制
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SupabaseAuthGuard,
-        { provide: AuthRepository, useValue: mockAuthRepository },
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
-    }).compile();
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    guard = module.get<InstanceType<typeof SupabaseAuthGuard>>(SupabaseAuthGuard);
+    // 直接インスタンス化
+    guard = new SupabaseAuthGuard(mockAuthRepository, mockConfigService);
 
     // モックの準備
     mockRequest = {
@@ -55,20 +48,20 @@ describe('SupabaseAuthGuard', () => {
     };
 
     mockResponse = {
-      cookie: jest.fn(),
+      cookie: vi.fn(),
     };
 
     mockExecutionContext = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn().mockReturnValue(mockRequest),
-        getResponse: jest.fn().mockReturnValue(mockResponse),
+      switchToHttp: vi.fn().mockReturnValue({
+        getRequest: vi.fn().mockReturnValue(mockRequest),
+        getResponse: vi.fn().mockReturnValue(mockResponse),
       }),
     } as unknown as ExecutionContext;
 
     mockSupabase = {
       auth: {
-        getUser: jest.fn(),
-        refreshSession: jest.fn(),
+        getUser: vi.fn(),
+        refreshSession: vi.fn(),
       },
     };
 
@@ -77,7 +70,7 @@ describe('SupabaseAuthGuard', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     consoleLogSpy.mockRestore();
   });
 
@@ -126,7 +119,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -163,7 +156,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     mockSupabase.auth.refreshSession.mockResolvedValue({
       data: {
@@ -220,7 +213,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     // sessionがnullのケースをテスト
     mockSupabase.auth.refreshSession.mockResolvedValue({
@@ -274,7 +267,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     // expires_inがundefinedのケースをテスト
     mockSupabase.auth.refreshSession.mockResolvedValue({
@@ -362,7 +355,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -388,7 +381,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(null); // User not found
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(null); // User not found
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -419,7 +412,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -448,7 +441,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser);
+    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 

@@ -3,6 +3,7 @@
   "include": ["src/**/*.ts"],
   "exclude": [".trubo", "coverage", "dist", "node_modules", "src/**/*spec.ts"],
   "compilerOptions": {
+    "composite": true,
     "removeComments": true,
     "sourceMap": false,
     "types": ["node"]
