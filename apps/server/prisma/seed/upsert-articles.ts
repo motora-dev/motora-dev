@@ -1,12 +1,15 @@
 /// <reference types="node" />
 import 'dotenv/config';
+import { PrismaClient, ArticleStatus } from '$prisma/client';
 import { createId } from '@paralleldrive/cuid2';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import matter from 'gray-matter';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-import { PrismaClient, ArticleStatus } from '$prisma/client';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const connectionString = process.env.DATABASE_URL;
 const adapter = new PrismaPg({ connectionString });
