@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "dist",
-    "module": "CommonJS", // これを追加
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "types": ["node", "jest"]
   }
 }
