@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
 import { BusinessLogicError } from '$exceptions';
-
-import type { Article } from '@prisma/client';
+import type { Article } from '$prisma/client';
 
 @Injectable()
 export class ArticleEditService {

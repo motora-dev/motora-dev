@@ -21,9 +21,11 @@ export const PageResponseSchema = z
     createdAt: z.union([z.string(), z.date()]).transform((value) => (value instanceof Date ? value : new Date(value))),
     updatedAt: z.union([z.string(), z.date()]).transform((value) => (value instanceof Date ? value : new Date(value))),
     title: z.string(),
+    description: z.string(),
     content: z.string(),
     level: z.number(),
     order: z.number(),
+    tags: z.array(z.string()),
   })
   .strict();
 

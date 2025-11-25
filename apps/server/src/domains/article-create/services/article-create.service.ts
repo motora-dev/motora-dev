@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import type { Article } from '$prisma/client';
 import { CreateArticleResponseDto } from '../dto';
 import { ArticleCreateRepository } from '../repositories';
-
-import type { Article } from '@prisma/client';
 
 @Injectable()
 export class ArticleCreateService {

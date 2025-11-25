@@ -16,6 +16,8 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
 
+    environment: ${{ github.base_ref || github.ref_name }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,3 +48,5 @@ jobs:
 
       - name: Run Build
         run: pnpm build
+        env:
+          API_URL: ${{ secrets.API_URL }}

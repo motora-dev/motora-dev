@@ -2,14 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma-client"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -79,10 +78,11 @@ model Page {
   articleId Int
   article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
-  title     String
-  content   String    @db.Text
-  level     Int       // 階層レベル (1 or 2)
-  order     Int       // 全体通しの表示順序
+  title       String
+  description String    @db.Text
+  content     String    @db.Text
+  level       Int       // 階層レベル (1 or 2)
+  order       Int       // 全体通しの表示順序
 
   @@index([articleId])
 }

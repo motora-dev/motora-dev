@@ -1,9 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { PrismaAdapter } from '$adapters';
+import type { User } from '$prisma/client';
 import { AuthRepository } from './auth.repository';
-
-import type { User } from '@prisma/client';
 
 describe('AuthRepository', () => {
   let repository: AuthRepository;
@@ -18,28 +17,24 @@ describe('AuthRepository', () => {
     updatedAt: new Date('2023-01-01'),
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     mockPrismaAdapter = {
       user: {
-        findUnique: jest.fn(),
-        upsert: jest.fn(),
+        findUnique: vi.fn(),
+        upsert: vi.fn(),
       },
       account: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        create: jest.fn(),
+        findUnique: vi.fn(),
+        findFirst: vi.fn(),
+        create: vi.fn(),
       },
     };
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthRepository, { provide: PrismaAdapter, useValue: mockPrismaAdapter }],
-    }).compile();
-
-    repository = module.get<AuthRepository>(AuthRepository);
+    repository = new AuthRepository(mockPrismaAdapter as unknown as PrismaAdapter);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -72,9 +67,7 @@ describe('AuthRepository', () => {
 
   describe('getUserByProvider', () => {
     it('should use account relation and return user when found', async () => {
-      mockPrismaAdapter.account = {
-        findUnique: jest.fn().mockResolvedValue({ user: mockUser }),
-      };
+      mockPrismaAdapter.account.findUnique.mockResolvedValue({ user: mockUser });
 
       const result = await repository.getUserByProvider('google', 'google_123');
 
@@ -86,9 +79,7 @@ describe('AuthRepository', () => {
     });
 
     it('should return null when not found', async () => {
-      mockPrismaAdapter.account = {
-        findUnique: jest.fn().mockResolvedValue(null),
-      };
+      mockPrismaAdapter.account.findUnique.mockResolvedValue(null);
 
       const result = await repository.getUserByProvider('google', 'non_existent_id');
       expect(result).toBeNull();
@@ -97,14 +88,9 @@ describe('AuthRepository', () => {
 
   describe('findOrCreateUser', () => {
     it('should link to existing user by email via account and return user', async () => {
-      mockPrismaAdapter.account = {
-        findUnique: jest.fn().mockResolvedValue(null),
-        findFirst: jest.fn().mockResolvedValue({ user: mockUser, userId: mockUser.id }),
-        create: jest.fn().mockResolvedValue({}),
-      };
-      mockPrismaAdapter.user = {
-        upsert: jest.fn(),
-      };
+      mockPrismaAdapter.account.findUnique.mockResolvedValue(null);
+      mockPrismaAdapter.account.findFirst.mockResolvedValue({ user: mockUser, userId: mockUser.id });
+      mockPrismaAdapter.account.create.mockResolvedValue({});
 
       const result = await repository.findOrCreateUser('google', 'sub', 'test@gmail.com');
       expect(result).toEqual(mockUser);
@@ -112,13 +98,9 @@ describe('AuthRepository', () => {
 
     it('should upsert user by email when not linked yet', async () => {
       const upserted = { ...mockUser } as User;
-      mockPrismaAdapter.account = {
-        findUnique: jest.fn().mockResolvedValue(null),
-        findFirst: jest.fn().mockResolvedValue(null),
-      };
-      mockPrismaAdapter.user = {
-        upsert: jest.fn().mockResolvedValue(upserted),
-      };
+      mockPrismaAdapter.account.findUnique.mockResolvedValue(null);
+      mockPrismaAdapter.account.findFirst.mockResolvedValue(null);
+      mockPrismaAdapter.user.upsert.mockResolvedValue(upserted);
 
       const result = await repository.findOrCreateUser('google', 'sub', 'test@gmail.com');
       expect(mockPrismaAdapter.user.upsert).toHaveBeenCalled();

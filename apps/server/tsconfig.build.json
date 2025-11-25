@@ -3,6 +3,9 @@
   "include": ["src/**/*.ts"],
   "exclude": [".trubo", "coverage", "dist", "node_modules", "src/**/*spec.ts"],
   "compilerOptions": {
+    "outDir": "./dist",
+    "composite": true,
+    "rootDir": "src",
     "removeComments": true,
     "sourceMap": false,
     "types": ["node"]

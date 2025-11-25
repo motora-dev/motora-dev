@@ -3,7 +3,7 @@ import { CookieSettingsButton } from './cookie-settings-button';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー - もとら's dev",
+  title: "プライバシーポリシー | もとら's dev",
   description: "もとら's dev のプライバシーポリシー",
 };
 

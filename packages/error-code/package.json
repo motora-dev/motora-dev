@@ -2,8 +2,9 @@
   "name": "@monorepo/error-code",
   "version": "0.0.0",
   "private": true,
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "scripts": {
     "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"dist\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
     "prebuild": "rm -rf dist",
