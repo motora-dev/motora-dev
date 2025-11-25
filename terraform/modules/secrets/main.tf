@@ -1,22 +1,24 @@
-# Example secrets management using Google Secret Manager
-# This is optional but recommended for production environments
+# Secrets management using Google Secret Manager
 
-resource "google_secret_manager_secret" "database_url" {
-  secret_id = "database-url-${var.environment}"
-  project   = var.project_id
-
-  labels = {
-    environment = var.environment
-    managed_by  = "terraform"
-  }
-
-  replication {
-    auto {}
-  }
+# Define list of secrets to create
+locals {
+  secrets = [
+    "database-url",
+    "supabase-url",
+    "supabase-service-role-key",
+    "cors-origins",
+    "domain",
+    "cookie-domain",
+    "basic-auth-user",
+    "basic-auth-password",
+    "allowed-emails"
+  ]
 }
 
-resource "google_secret_manager_secret" "supabase_key" {
-  secret_id = "supabase-key-${var.environment}"
+resource "google_secret_manager_secret" "secrets" {
+  for_each = toset(local.secrets)
+
+  secret_id = each.value
   project   = var.project_id
 
   labels = {
@@ -30,16 +32,11 @@ resource "google_secret_manager_secret" "supabase_key" {
 }
 
 # Grant Cloud Run service account access to secrets
-resource "google_secret_manager_secret_iam_member" "cloud_run_database_url" {
-  project   = var.project_id
-  secret_id = google_secret_manager_secret.database_url.secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${var.cloud_run_service_account_email}"
-}
+resource "google_secret_manager_secret_iam_member" "cloud_run_secrets" {
+  for_each = toset(local.secrets)
 
-resource "google_secret_manager_secret_iam_member" "cloud_run_supabase_key" {
   project   = var.project_id
-  secret_id = google_secret_manager_secret.supabase_key.secret_id
+  secret_id = google_secret_manager_secret.secrets[each.value].secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${var.cloud_run_service_account_email}"
 }

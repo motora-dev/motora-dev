@@ -1,11 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { AuthService } from './auth.service';
 import { AuthRepository } from '../repositories/auth.repository';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let repository: AuthRepository;
 
   const mockUser = {
     id: 2,
@@ -16,20 +15,15 @@ describe('AuthService', () => {
   } as any;
 
   const mockAuthRepository = {
-    findOrCreateUser: jest.fn(),
-  } as any;
+    findOrCreateUser: vi.fn(),
+  } as unknown as AuthRepository;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, { provide: AuthRepository, useValue: mockAuthRepository }],
-    }).compile();
-
-    service = module.get<AuthService>(AuthService);
-    repository = module.get<AuthRepository>(AuthRepository);
+  beforeEach(() => {
+    service = new AuthService(mockAuthRepository);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -38,19 +32,19 @@ describe('AuthService', () => {
 
   describe('findOrCreateUser', () => {
     it('should delegate to repository', async () => {
-      mockAuthRepository.findOrCreateUser.mockResolvedValue(mockUser);
+      vi.mocked(mockAuthRepository.findOrCreateUser).mockResolvedValue(mockUser);
       const result = await service.findOrCreateUser('google', 'test-google-id', 'test@gmail.com');
-      expect(repository.findOrCreateUser).toHaveBeenCalledWith('google', 'test-google-id', 'test@gmail.com');
+      expect(mockAuthRepository.findOrCreateUser).toHaveBeenCalledWith('google', 'test-google-id', 'test@gmail.com');
       expect(result).toEqual(mockUser);
     });
 
     it('should propagate errors', async () => {
       const error = new Error('データベースエラー');
-      mockAuthRepository.findOrCreateUser.mockRejectedValue(error);
+      vi.mocked(mockAuthRepository.findOrCreateUser).mockRejectedValue(error);
       await expect(service.findOrCreateUser('google', 'test-google-id', 'test@gmail.com')).rejects.toThrow(
         'データベースエラー',
       );
-      expect(repository.findOrCreateUser).toHaveBeenCalledWith('google', 'test-google-id', 'test@gmail.com');
+      expect(mockAuthRepository.findOrCreateUser).toHaveBeenCalledWith('google', 'test-google-id', 'test@gmail.com');
     });
   });
 });

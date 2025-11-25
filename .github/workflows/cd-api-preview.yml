@@ -1,25 +1,26 @@
-name: Deploy API Server
+name: Deploy API Server (Preview)
 
 on:
-  push:
-    branches: [develop, main]
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize]
     paths:
       - 'apps/server/**'
       - 'packages/**'
       - 'Dockerfile'
-      - '.github/workflows/cd-api.yml'
+      - '.github/workflows/cd-api-preview.yml'
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Preview
     runs-on: ubuntu-latest
 
-    environment: ${{ github.ref_name }}
+    environment: preview
 
     permissions:
       id-token: write

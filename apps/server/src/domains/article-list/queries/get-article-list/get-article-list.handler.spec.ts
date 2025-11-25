@@ -1,23 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { GetArticleListHandler } from './get-article-list.handler';
 import { ArticleListService } from '../../services';
 
 describe('GetArticleListHandler', () => {
   let handler: GetArticleListHandler;
-  let service: jest.Mocked<ArticleListService>;
 
-  beforeEach(async () => {
-    const mockService = {
-      getArticleList: jest.fn(),
-    };
+  const mockService = {
+    getArticleList: vi.fn(),
+  } as unknown as ArticleListService;
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [GetArticleListHandler, { provide: ArticleListService, useValue: mockService }],
-    }).compile();
+  beforeEach(() => {
+    handler = new GetArticleListHandler(mockService);
+  });
 
-    handler = module.get<GetArticleListHandler>(GetArticleListHandler);
-    service = module.get(ArticleListService);
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -36,11 +34,11 @@ describe('GetArticleListHandler', () => {
       ],
     };
 
-    service.getArticleList.mockResolvedValue(mockResult);
+    vi.mocked(mockService.getArticleList).mockResolvedValue(mockResult);
 
     const result = await handler.execute();
 
     expect(result).toEqual(mockResult);
-    expect(service.getArticleList).toHaveBeenCalled();
+    expect(mockService.getArticleList).toHaveBeenCalled();
   });
 });

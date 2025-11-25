@@ -1,12 +1,11 @@
 import { QueryBus } from '@nestjs/cqrs';
-import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { ArticleController } from './article.controller';
 import { GetArticleQuery } from './queries';
 
 describe('ArticleController', () => {
   let controller: ArticleController;
-  let queryBus: jest.Mocked<QueryBus>;
 
   const mockGetArticleResponse = {
     id: 'article-id-1',
@@ -24,18 +23,16 @@ describe('ArticleController', () => {
     },
   };
 
-  beforeEach(async () => {
-    const mockQueryBus = {
-      execute: jest.fn(),
-    };
+  const mockQueryBus = {
+    execute: vi.fn(),
+  } as unknown as QueryBus;
 
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [ArticleController],
-      providers: [{ provide: QueryBus, useValue: mockQueryBus }],
-    }).compile();
+  beforeEach(() => {
+    controller = new ArticleController(mockQueryBus);
+  });
 
-    controller = module.get<ArticleController>(ArticleController);
-    queryBus = module.get(QueryBus);
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -44,24 +41,24 @@ describe('ArticleController', () => {
 
   describe('getArticle', () => {
     it('should return article data', async () => {
-      queryBus.execute.mockResolvedValue(mockGetArticleResponse);
+      vi.mocked(mockQueryBus.execute).mockResolvedValue(mockGetArticleResponse);
 
       const result = await controller.getArticle('article-id-1');
 
       expect(result).toEqual(mockGetArticleResponse);
-      expect(queryBus.execute).toHaveBeenCalledWith(new GetArticleQuery('article-id-1'));
+      expect(mockQueryBus.execute).toHaveBeenCalledWith(new GetArticleQuery('article-id-1'));
     });
   });
 
   describe('error handling', () => {
     it('should propagate errors from getArticle', async () => {
-      queryBus.execute.mockRejectedValue(new Error('Article not found'));
+      vi.mocked(mockQueryBus.execute).mockRejectedValue(new Error('Article not found'));
 
       await expect(controller.getArticle('nonexistent')).rejects.toThrow('Article not found');
     });
 
     it('should handle null response from getArticle', async () => {
-      queryBus.execute.mockResolvedValue(null);
+      vi.mocked(mockQueryBus.execute).mockResolvedValue(null);
 
       const result = await controller.getArticle('article-id-1');
 

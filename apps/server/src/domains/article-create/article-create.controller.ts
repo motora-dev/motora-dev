@@ -1,10 +1,11 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { Request } from 'express';
 
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
 import { CreateArticleCommand } from './commands';
 import { CreateArticleResponseDto } from './dto';
+
+import type { Request } from 'express';
 
 @Controller('article')
 @UseGuards(SupabaseAuthGuard)

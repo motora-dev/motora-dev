@@ -51,6 +51,59 @@ module "wif" {
   depends_on = [module.iam]
 }
 
+# Secrets module
+module "secrets" {
+  source = "./modules/secrets"
+
+  project_id                    = var.project_id
+  environment                   = var.environment
+  cloud_run_service_account_email = module.iam.cloud_run_service_account_email
+
+  depends_on = [module.iam]
+}
+
+# Standard secrets definition
+locals {
+  standard_secrets = {
+    DATABASE_URL = {
+      secret_name = "database-url"
+      version     = "latest"
+    }
+    SUPABASE_URL = {
+      secret_name = "supabase-url"
+      version     = "latest"
+    }
+    SUPABASE_SERVICE_ROLE_KEY = {
+      secret_name = "supabase-service-role-key"
+      version     = "latest"
+    }
+    CORS_ORIGINS = {
+      secret_name = "cors-origins"
+      version     = "latest"
+    }
+    DOMAIN = {
+      secret_name = "domain"
+      version     = "latest"
+    }
+    COOKIE_DOMAIN = {
+      secret_name = "cookie-domain"
+      version     = "latest"
+    }
+    BASIC_AUTH_USER = {
+      secret_name = "basic-auth-user"
+      version     = "latest"
+    }
+    BASIC_AUTH_PASSWORD = {
+      secret_name = "basic-auth-password"
+      version     = "latest"
+    }
+    ALLOWED_EMAILS = {
+      secret_name = "allowed-emails"
+      version     = "latest"
+    }
+  }
+}
+
 # Cloud Run module (optional - can be managed via GitHub Actions)
 # Uncomment to manage Cloud Run service via Terraform
 # module "cloud_run" {
@@ -69,7 +122,8 @@ module "wif" {
 #   memory_limit                 = var.memory_limit
 #   allow_unauthenticated        = var.allow_unauthenticated
 #   env_vars                     = var.env_vars
-#   secret_env_vars              = var.secret_env_vars
+#   # Merge standard secrets with any environment-specific secrets provided via variables
+#   secret_env_vars              = merge(local.standard_secrets, var.secret_env_vars)
 #
-#   depends_on = [google_project_service.apis]
+#   depends_on = [google_project_service.apis, module.secrets]
 # }

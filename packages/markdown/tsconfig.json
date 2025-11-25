@@ -4,7 +4,8 @@
   "exclude": [".turbo", "coverage", "node_modules"],
   "compilerOptions": {
     "rootDir": ".",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "types": ["node", "jest"]
   }
 }

@@ -15,7 +15,8 @@
         "DATABASE_URL",
         "CORS_ORIGINS",
         "PORT",
-        "SESSION_SECRET_TOKEN"
+        "SESSION_SECRET_TOKEN",
+        "COLLECT_COVERAGE"
       ]
     },
     "seed": {

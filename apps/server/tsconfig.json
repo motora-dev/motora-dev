@@ -1,17 +1,15 @@
 {
   "extends": "@monorepo/typescript-config",
-  "include": ["src/**/*.ts", "prisma/seed/**/*.ts"],
-  "exclude": [".trubo", "coverage", "dist", "node_modules"],
   "compilerOptions": {
-    "module": "CommonJS",
-    "baseUrl": ".",
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "baseUrl": ".",
+    "moduleResolution": "bundler",
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "$prisma/client": ["src/generated/client/client"],
+      "$prisma/client": ["src/generated/prisma-client/client"],
       "$adapters": ["src/shared/adapters"],
       "$decorators": ["src/shared/decorators"],
       "$domains/*": ["src/domains/*"],
@@ -22,7 +20,7 @@
       "$modules/*": ["src/modules/*"],
       "$shared/*": ["src/shared/*"],
       "$utils": ["src/shared/utils"]
-    },
-    "types": ["node", "jest"]
-  }
+    }
+  },
+  "references": [{ "path": "./tsconfig.build.json" }, { "path": "./tsconfig.spec.json" }]
 }

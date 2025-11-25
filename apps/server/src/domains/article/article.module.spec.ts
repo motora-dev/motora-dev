@@ -1,5 +1,6 @@
 import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { PrismaAdapterModule, SupabaseStorageAdapter } from '$adapters';
 import { ArticleController } from './article.controller';
@@ -12,10 +13,10 @@ describe('ArticleModule', () => {
   let module: TestingModule;
 
   const mockSupabaseStorageAdapter = {
-    getArticleContent: jest.fn(),
-    deleteArticle: jest.fn(),
-    getDownloadUrl: jest.fn(),
-    generateFilePath: jest.fn(),
+    getArticleContent: vi.fn(),
+    deleteArticle: vi.fn(),
+    getDownloadUrl: vi.fn(),
+    generateFilePath: vi.fn(),
   };
 
   beforeEach(async () => {

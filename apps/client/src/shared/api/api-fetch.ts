@@ -85,7 +85,7 @@ export async function get<T>(
   options?: { revalidate?: number; tags?: string[]; stateless?: boolean },
 ): Promise<ApiResponse<T>> {
   try {
-    const cookieHeaders = await getCookieHeaders();
+    const cookieHeaders = options?.stateless ? {} : await getCookieHeaders();
 
     const response = await fetch(`${API_BASE_URL}/${url}`, {
       method: 'GET',
@@ -117,11 +117,7 @@ export async function get<T>(
   }
 }
 
-export async function post<T>(
-  url: string,
-  json?: unknown,
-  options?: { revalidate?: number; tags?: string[] },
-): Promise<ApiResponse<T>> {
+export async function post<T>(url: string, json?: unknown): Promise<ApiResponse<T>> {
   try {
     const authHeaders = await getAuthHeaders();
     const cookieHeaders = await getCookieHeaders();
@@ -153,11 +149,7 @@ export async function post<T>(
   }
 }
 
-export async function put<T>(
-  url: string,
-  json?: unknown,
-  options?: { revalidate?: number; tags?: string[] },
-): Promise<ApiResponse<T>> {
+export async function put<T>(url: string, json?: unknown): Promise<ApiResponse<T>> {
   try {
     const authHeaders = await getAuthHeaders();
     const cookieHeaders = await getCookieHeaders();

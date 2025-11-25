@@ -8,13 +8,13 @@ import { baseConfig } from '@monorepo/eslint-config';
 export default [
   ...baseConfig,
   {
-    ignores: ['eslint.config.mjs', 'jest.config.cjs'],
+    ignores: ['esbuild.config.mjs', 'eslint.config.mjs'],
   },
   {
     files: ['src/**/*.ts', 'src/**/*.spec.ts'],
     languageOptions: {
       parserOptions: {
-        project: true,
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
