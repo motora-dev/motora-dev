@@ -2,7 +2,7 @@
   "name": "@monorepo/server",
   "version": "0.0.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "prepare": "prisma generate",
     "clean": "find . -type d \\( -name \".turbo\" -o -name \"dist\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
@@ -18,7 +18,7 @@
     "lint:fix": "pnpm lint:eslint:fix",
     "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
     "lint:eslint:fix": "pnpm lint:eslint --fix",
-    "test": "jest",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "test:coverage": "COLLECT_COVERAGE=true jest",
     "seed": "ts-node -r tsconfig-paths/register prisma/seed/upsert-articles.ts"
   },

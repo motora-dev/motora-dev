@@ -3,10 +3,10 @@
   "include": ["src/**/*.ts", "prisma/seed/**/*.ts"],
   "exclude": [".trubo", "coverage", "dist", "node_modules"],
   "compilerOptions": {
-    "module": "NodeNext",
+    "module": "esnext",
     "baseUrl": ".",
     "outDir": "./dist",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "bundler",
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "skipLibCheck": true,

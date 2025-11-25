@@ -2,18 +2,21 @@ import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import * as supabaseFactory from '$adapters';
 import { BusinessLogicError } from '$exceptions';
 import { AuthRepository } from '$modules/auth/repositories/auth.repository';
-import { SupabaseAuthGuard } from './supabase-auth.guard';
 
-// Mock $adapters to avoid redefining properties on the actual module
-jest.mock('$adapters', () => ({
-  createServerSupabase: jest.fn(),
+// ESMモードでのモック設定
+const mockCreateServerSupabase = jest.fn();
+// @ts-expect-error jest.unstable_mockModule is available in ESM mode
+jest.unstable_mockModule('$adapters', () => ({
+  createServerSupabase: mockCreateServerSupabase,
 }));
 
+// 動的インポート（モック設定後に実行）
+const { SupabaseAuthGuard } = await import('./supabase-auth.guard');
+
 describe('SupabaseAuthGuard', () => {
-  let guard: SupabaseAuthGuard;
+  let guard: InstanceType<typeof SupabaseAuthGuard>;
   let mockExecutionContext: ExecutionContext;
   let mockSupabase: any;
   let mockRequest: any;
@@ -42,7 +45,7 @@ describe('SupabaseAuthGuard', () => {
       ],
     }).compile();
 
-    guard = module.get<SupabaseAuthGuard>(SupabaseAuthGuard);
+    guard = module.get<InstanceType<typeof SupabaseAuthGuard>>(SupabaseAuthGuard);
 
     // モックの準備
     mockRequest = {
@@ -69,9 +72,8 @@ describe('SupabaseAuthGuard', () => {
       },
     };
 
-    // use defineProperty only once; if already mocked, just set mock implementation
-    // If already mocked elsewhere, just override implementation
-    (supabaseFactory as any).createServerSupabase.mockReturnValue(mockSupabase);
+    // モック関数の戻り値を設定
+    mockCreateServerSupabase.mockReturnValue(mockSupabase);
   });
 
   afterEach(() => {
