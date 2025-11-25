@@ -33,7 +33,7 @@ const config = {
   entryPoints: [path.resolve(dirname, 'src/main.ts')],
   bundle: true,
   platform: 'node',
-  target: 'node20',
+  target: 'node24',
   outfile: path.resolve(dirname, 'dist/main.js'),
   format: 'esm',
   sourcemap: true,
