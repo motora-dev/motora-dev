@@ -1,6 +1,7 @@
 {
   "extends": "@monorepo/typescript-config",
   "compilerOptions": {
+    "outDir": "./dist",
     "module": "esnext",
     "baseUrl": ".",
     "moduleResolution": "bundler",
@@ -9,16 +10,16 @@
     "skipLibCheck": true,
     "paths": {
       "$prisma/client": ["src/generated/prisma-client/client"],
-      "$adapters": ["src/shared/adapters/index"],
-      "$decorators": ["src/shared/decorators/index"],
+      "$adapters": ["src/shared/adapters"],
+      "$decorators": ["src/shared/decorators"],
       "$domains/*": ["src/domains/*"],
-      "$exceptions": ["src/shared/exceptions/index"],
-      "$filters": ["src/shared/filters/index"],
-      "$guards": ["src/shared/guards/index"],
-      "$interceptors": ["src/shared/interceptors/index"],
+      "$exceptions": ["src/shared/exceptions"],
+      "$filters": ["src/shared/filters"],
+      "$guards": ["src/shared/guards"],
+      "$interceptors": ["src/shared/interceptors"],
       "$modules/*": ["src/modules/*"],
       "$shared/*": ["src/shared/*"],
-      "$utils": ["src/shared/utils/index"]
+      "$utils": ["src/shared/utils"]
     }
   },
   "references": [{ "path": "./tsconfig.build.json" }, { "path": "./tsconfig.spec.json" }]
