@@ -3,15 +3,15 @@
   "include": ["src/**/*.ts", "prisma/seed/**/*.ts"],
   "exclude": [".trubo", "coverage", "dist", "node_modules"],
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "NodeNext",
     "baseUrl": ".",
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "$prisma/client": ["src/generated/client/client"],
+      "$prisma/client": ["src/generated/prisma-client/client"],
       "$adapters": ["src/shared/adapters"],
       "$decorators": ["src/shared/decorators"],
       "$domains/*": ["src/domains/*"],
