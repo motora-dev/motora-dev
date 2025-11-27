@@ -1,0 +1,54 @@
+{
+  "publicId": "ustqhseah6apihgwgjnsugn8",
+  "title": "2025年のエンジニアキャリア論",
+  "description": "日本のエンジニアキャリアにおける5つの主要選択肢（コンサルティングファーム、SIer、WEB系・自社開発、フリーランス、SES・派遣）について、それぞれの特徴、メリット・デメリット、向いている人を客観的に解説します。",
+  "tags": [
+    "キャリア",
+    "エンジニア"
+  ],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "publicId": "eroitdqpqnculomtnoq10qrg",
+      "file": "01-overview.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "publicId": "hlys145f8qi0f033lzu02ash",
+      "file": "02-consulting.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "publicId": "gh586ix24g416w1v7hre36vm",
+      "file": "03-sier.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "publicId": "qvl1zbl8gx1hypyfhur2txfo",
+      "file": "04-web-inhouse.md",
+      "level": 1,
+      "order": 4
+    },
+    {
+      "publicId": "nw0qvn415q2ykkf0w4g9wfs8",
+      "file": "05-freelance.md",
+      "level": 1,
+      "order": 5
+    },
+    {
+      "publicId": "b67yjfvui9ltloxksy5ahsyq",
+      "file": "06-ses-outsourcing.md",
+      "level": 1,
+      "order": 6
+    },
+    {
+      "publicId": "s5iw7506102zkguutcicwhqn",
+      "file": "07-additional-perspectives.md",
+      "level": 1,
+      "order": 7
+    }
+  ]
+}
