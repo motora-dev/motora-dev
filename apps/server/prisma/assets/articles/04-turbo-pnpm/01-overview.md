@@ -26,7 +26,6 @@ description: Turborepo + pnpm を使用したモダンなモノレポテンプ�
 ```
 turbo-pnpm/
 ├── apps/
-│   ├── dummy/              # ダミーパッケージ（Turborepo の制約回避用）
 │   └── server/             # NestJS サーバー
 ├── packages/
 │   ├── eslint-config/      # 共有 ESLint 設定
@@ -44,7 +43,6 @@ turbo-pnpm/
 アプリケーションパッケージを配置するディレクトリです。
 
 - **server/** - NestJS を使用したサンプルサーバー
-- **dummy/** - Turborepo の制約回避用ダミーパッケージ（後述）
 
 ### packages/
 
@@ -102,28 +100,6 @@ turbo-pnpm/
 2. **CI との一貫性** - ローカル開発と CI で同じコマンドを使用することで、「ローカルでは通るのに CI で落ちる」問題を防止します。
 
 3. **新規メンバーの学習コスト削減** - コマンドが統一されているため、どのパッケージでも同じ方法で開発できます。
-
-## Turborepo の制約と回避策
-
-### apps/ に複数パッケージが必要
-
-Turborepo には、`apps/` ディレクトリに 1 つしかパッケージがない場合、`recursive_turbo_invocations` エラーが発生するという制約があります。
-
-このため、テンプレートでは `apps/dummy` というダミーパッケージを配置しています。
-
-```json
-// apps/dummy/package.json
-{
-  "name": "@monorepo/dummy",
-  "scripts": {
-    "build": "echo 'No build for dummy package'",
-    "lint": "echo 'No lint for dummy package'"
-    // ... 他のスクリプトも同様
-  }
-}
-```
-
-新しいアプリを追加する場合は、`apps/dummy` を削除できます。
 
 ## 次のステップ
 

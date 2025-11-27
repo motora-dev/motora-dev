@@ -227,7 +227,6 @@ Turborepo は依存関係を分析し、可能な限りタスクを並列実行�
  │  @monorepo/eslint-config:lint    (parallel)                 │
  │  @monorepo/typescript-config:lint (parallel)                │
  │  @monorepo/server:lint           (parallel)                 │
- │  @monorepo/dummy:lint            (parallel)                 │
  └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -237,51 +236,6 @@ Turborepo は依存関係を分析し、可能な限りタスクを並列実行�
  │  @monorepo/server:test           (after lint)               │
  └─────────────────────────────────────────────────────────────┘
 ```
-
-## ダミーパッケージについて
-
-### Turborepo の制約
-
-Turborepo には、`apps/` ディレクトリに 1 つしかパッケージがない場合、`recursive_turbo_invocations` エラーが発生するという制約があります。
-
-```
-Error: recursive_turbo_invocations
-```
-
-### 回避策
-
-`apps/dummy` というダミーパッケージを配置します。
-
-```json
-{
-  "name": "@monorepo/dummy",
-  "scripts": {
-    "build": "echo 'No build for dummy package'",
-    "lint": "echo 'No lint for dummy package'",
-    "format": "echo 'No format for dummy package'",
-    "tsc": "echo 'No tsc for dummy package'",
-    "test": "echo 'No test for dummy package'"
-  }
-}
-```
-
-各スクリプトは `echo` で何もしないように実装されています。
-
-### ダミーパッケージの turbo.json
-
-```json
-{
-  "$schema": "https://turborepo.org/schema.json",
-  "extends": ["//"],
-  "tasks": {
-    "build": {
-      "cache": true
-    }
-  }
-}
-```
-
-新しいアプリを追加する場合は、`apps/dummy` を削除できます。
 
 ## まとめ
 
