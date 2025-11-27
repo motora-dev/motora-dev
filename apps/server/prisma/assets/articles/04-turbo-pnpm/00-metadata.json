@@ -1,0 +1,48 @@
+{
+  "publicId": "i7d0139poja6m1s2mfksg5l1",
+  "title": "Turborepo + pnpm モノレポ構築ガイド",
+  "description": "最小構成でモダンなモノレポを構築する方法。Volta、pnpm Catalogs、ESLint Flat Config、TypeScript Project References、Turborepo によるタスク管理と CI/CD まで、実践的なテンプレートを解説します。",
+  "tags": [
+    "Turborepo",
+    "pnpm"
+  ],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "publicId": "ghjdf4ne28yjyxda107ys232",
+      "file": "01-overview.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "publicId": "jkvh4sib10wuesdyckr4p2fh",
+      "file": "02-volta.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "publicId": "rwtfbr6b8k36hi8u11s9plc0",
+      "file": "03-pnpm-workspace.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "publicId": "gmumteuslqi41ughybtq8p0o",
+      "file": "04-shared-config.md",
+      "level": 1,
+      "order": 4
+    },
+    {
+      "publicId": "h1o5rdlg9kufp4xhutfaqdgs",
+      "file": "05-turborepo.md",
+      "level": 1,
+      "order": 5
+    },
+    {
+      "publicId": "lt0y299d0y57k0h6ed3wml54",
+      "file": "06-github-actions.md",
+      "level": 1,
+      "order": 6
+    }
+  ]
+}
