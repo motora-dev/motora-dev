@@ -97,7 +97,7 @@ jobs:
 
       - name: Generate Prisma Client
         working-directory: apps/content
-        run: pnpm prisma build
+        run: pnpm prisma generate
 
       - name: Seed Articles
         working-directory: apps/content
