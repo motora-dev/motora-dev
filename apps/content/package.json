@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "prisma generate",
     "lint": "eslint scripts --config eslint.config.mjs --max-warnings 0",
     "format": "prettier --check \"scripts/**/*.ts\"",
     "format:fix": "prettier --write \"scripts/**/*.ts\"",
