@@ -14,7 +14,7 @@ export default async function HomePage() {
 
   if (!isSuccessResponse(response)) {
     return (
-      <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="min-h-screen max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="mb-8 md:mb-10 lg:mb-12">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">記事一覧</h1>
           <p className="text-base md:text-lg lg:text-xl text-gray-600">技術記事やチュートリアルを掲載しています</p>
@@ -29,7 +29,7 @@ export default async function HomePage() {
   const { articleList } = response.data;
 
   return (
-    <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <main className="min-h-screen max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       <div className="mb-8 md:mb-10 lg:mb-12">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">記事一覧</h1>
         <p className="text-base md:text-lg lg:text-xl text-gray-600">技術記事やチュートリアルを掲載しています</p>
@@ -40,7 +40,7 @@ export default async function HomePage() {
           <p className="text-base md:text-lg text-gray-600">記事がありません</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="flex flex-col gap-4">
           {articleList.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
