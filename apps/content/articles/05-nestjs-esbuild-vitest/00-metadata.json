@@ -1,0 +1,50 @@
+{
+  "publicId": "jkah04byk33ke0fjiqh7ihkj",
+  "title": "NestJS + esbuild + Vitest 高速開発環境ガイド",
+  "description": "Prisma 7.x の ESModule 標準化で NestJS ビルドに困っている方へ。esbuild + SWC による解決策から、Vitest による高速テスト、モダンな TypeScript/ESLint 設定、Vertical Slice Architecture まで、モダンな開発環境を構築するテンプレートを解説します。",
+  "tags": [
+    "NestJS",
+    "esbuild",
+    "Vitest",
+    "Prisma"
+  ],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "publicId": "k6cclwusg7xvilr5n7grsxom",
+      "file": "01-overview.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "publicId": "wepxv0a1k3mj3cb5tm4su2zn",
+      "file": "02-prisma-esmodule-problem.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "publicId": "lf987iq9xj7nbkuj6ywgr1g4",
+      "file": "03-esbuild-swc-build.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "publicId": "dbflv1h8fvb5krjcm2hp8f38",
+      "file": "04-vitest-swc-test.md",
+      "level": 1,
+      "order": 4
+    },
+    {
+      "publicId": "mt47fs272akoshkyedpywr56",
+      "file": "05-typescript-eslint-config.md",
+      "level": 1,
+      "order": 5
+    },
+    {
+      "publicId": "tgkussdd7a863e38ax4hv9g9",
+      "file": "06-architecture.md",
+      "level": 1,
+      "order": 6
+    }
+  ]
+}
