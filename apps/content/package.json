@@ -1,0 +1,27 @@
+{
+  "name": "@monorepo/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint scripts --config eslint.config.mjs --max-warnings 0",
+    "format": "prettier --check \"scripts/**/*.ts\"",
+    "format:fix": "prettier --write \"scripts/**/*.ts\"",
+    "db:pull": "prisma db pull",
+    "seed": "tsx scripts/upsert-articles.ts"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^3.0.4",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "catalog:",
+    "gray-matter": "^4.0.3",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@monorepo/eslint-config": "workspace:*",
+    "@monorepo/typescript-config": "workspace:*",
+    "dotenv": "^17.2.3",
+    "prisma": "catalog:",
+    "tsx": "^4.20.6"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "seed": {
+      "cache": false,
+      "env": ["SEED_USER_PUBLIC_ID"]
+    }
+  }
+}
