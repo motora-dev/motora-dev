@@ -1,11 +1,12 @@
 /// <reference types="node" />
 import 'dotenv/config';
-import { PrismaClient, ArticleStatus } from '$prisma/client';
+
 import { createId } from '@paralleldrive/cuid2';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient, ArticleStatus } from '@prisma/client';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import matter from 'gray-matter';
-import { join, dirname } from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -109,7 +110,7 @@ async function main() {
   console.log(`ユーザーの存在を確認しました (PublicID: ${userPublicId})`);
 
   // 記事フォルダのパス
-  const articlesDir = join(__dirname, '../assets/articles');
+  const articlesDir = join(__dirname, '../articles');
   const articleFolders = getArticleFolders(articlesDir);
 
   console.log(`${articleFolders.length}個の記事フォルダを検出しました`);
@@ -179,6 +180,7 @@ async function main() {
             level: pageData.level,
             order: pageData.order,
             articleId: article.id,
+            updatedAt: new Date(),
           },
         });
         console.log(`  ページを作成/更新しました: ${page.title} (order: ${page.order}, level: ${page.level})`);

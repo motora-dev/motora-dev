@@ -3,10 +3,8 @@
   "tasks": {
     "build": {
       "outputs": [".next/**", "!.next/cache/**"],
-      "env": ["NEST_API_BASE"]
+      "env": ["API_URL", "GOOGLE_APPLICATION_CREDENTIALS_JSON"]
     },
-    "lint": {
-      "env": ["NEST_API_BASE"]
-    }
+    "lint": {}
   }
 }
