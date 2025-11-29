@@ -145,7 +145,6 @@ jobs:
           files: |
             apps/server/**
             packages/**
-            apps/server/prisma/**
 
       - name: Setup pnpm
         if: steps.changed-files.outputs.any_changed == 'true'

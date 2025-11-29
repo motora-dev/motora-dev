@@ -6,8 +6,8 @@ on:
       - main
       - develop
     paths:
-      - 'apps/server/prisma/migrations/**'
-      - 'apps/server/prisma/schema.prisma'
+      - 'packages/database/prisma/migrations/**'
+      - 'packages/database/prisma/schema.prisma'
       - 'apps/content/articles/**'
       - '.github/workflows/cd-database.yml'
   workflow_dispatch:
@@ -41,10 +41,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma Client
-        working-directory: apps/server
-        run: pnpm prisma generate
-
       - name: Debug Network Connectivity
         env:
           DB_URL: ${{ secrets.DIRECT_URL }}
@@ -64,7 +60,7 @@ jobs:
           fi
 
       - name: Apply Migrations
-        working-directory: apps/server
+        working-directory: packages/database
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
@@ -94,10 +90,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        working-directory: apps/content
-        run: pnpm prisma generate
 
       - name: Seed Articles
         working-directory: apps/content

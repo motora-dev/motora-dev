@@ -1,9 +1,9 @@
 /// <reference types="node" />
 import 'dotenv/config';
 
+import { ArticleStatus, PrismaClient } from '@monorepo/database/client';
 import { createId } from '@paralleldrive/cuid2';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { ArticleStatus, PrismaClient } from '@monorepo/database/client';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import matter from 'gray-matter';
 import { dirname, join } from 'path';
