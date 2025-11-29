@@ -5,7 +5,7 @@ description: Turborepo + pnpm を使用したモダンなモノレポテンプ�
 
 本シリーズでは、**Turborepo + pnpm** を使用したモダンなモノレポのテンプレートを解説します。
 
-テンプレートリポジトリ: [GitHub - turbo-pnpm](https://github.com/your-username/turbo-pnpm)
+テンプレートリポジトリ: [GitHub - turbo-pnpm](https://github.com/motora-dev/turbo-pnpm)
 
 ## 特徴
 
