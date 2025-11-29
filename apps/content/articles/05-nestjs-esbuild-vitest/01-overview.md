@@ -5,7 +5,7 @@ description: NestJS + esbuild + Vitest を使用した高速開発環境テン�
 
 本シリーズでは、**NestJS + esbuild + Vitest** を使用した高速開発環境のモノレポテンプレートを解説します。
 
-テンプレートリポジトリ: [GitHub - nestjs-esbuild-vitest](https://github.com/your-username/nestjs-esbuild-vitest)
+テンプレートリポジトリ: [GitHub - nestjs-esbuild-vitest](https://github.com/motora-dev/nestjs-esbuild-vitest)
 
 ## こんな方へ
 
@@ -21,15 +21,15 @@ Prisma 7.x 以降の ESModule 標準化により、従来の NestJS ビルド環
 
 このテンプレートは、以下の特徴を持つモダンな開発環境を提供します。
 
-| 機能                    | 説明                                         |
-| ----------------------- | -------------------------------------------- |
-| **esbuild + SWC**       | NestJS のデコレーターに対応した超高速ビルド  |
-| **Vitest**              | SWC を使った高速なユニット/E2E テスト        |
-| **Prisma**              | ESModule 対応の型安全な ORM                  |
-| **Turborepo**           | 高速なビルドシステムとキャッシング           |
-| **pnpm Catalogs**       | 依存関係のバージョンを一元管理               |
-| **ESLint Flat Config**  | 最新の ESLint 設定形式 + アーキテクチャ検証  |
-| **GitHub Actions CI**   | 自動テスト・ビルド                           |
+| 機能                   | 説明                                        |
+| ---------------------- | ------------------------------------------- |
+| **esbuild + SWC**      | NestJS のデコレーターに対応した超高速ビルド |
+| **Vitest**             | SWC を使った高速なユニット/E2E テスト       |
+| **Prisma**             | ESModule 対応の型安全な ORM                 |
+| **Turborepo**          | 高速なビルドシステムとキャッシング          |
+| **pnpm Catalogs**      | 依存関係のバージョンを一元管理              |
+| **ESLint Flat Config** | 最新の ESLint 設定形式 + アーキテクチャ検証 |
+| **GitHub Actions CI**  | 自動テスト・ビルド                          |
 
 ## 開発体験の改善
 
@@ -94,4 +94,3 @@ pnpm check-all
 3. **Vitest + SWC テスト環境** - 高速なテスト環境の構築
 4. **TypeScript / ESLint 設定** - モダンな設定ファイルの解説
 5. **アーキテクチャ設計** - Vertical Slice Architecture と CQRS
-

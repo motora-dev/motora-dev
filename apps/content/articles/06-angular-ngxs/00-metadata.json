@@ -1,0 +1,38 @@
+{
+  "title": "Angular 21 + NGXS モダンフロントエンド開発ガイド",
+  "description": "Angular 21のZoneless変更検知、NGXSによる状態管理、shadcn/uiスタイルのUIコンポーネント、Storybook、RxAngular + ISRまで、モダンなAngular開発環境を構築するテンプレートを解説します。",
+  "tags": ["Angular", "NGXS", "RxAngular", "Tailwind CSS"],
+  "status": "PUBLIC",
+  "pages": [
+    {
+      "file": "01-overview.md",
+      "level": 1,
+      "order": 1
+    },
+    {
+      "file": "02-zoneless-angular.md",
+      "level": 1,
+      "order": 2
+    },
+    {
+      "file": "03-ngxs-facade.md",
+      "level": 1,
+      "order": 3
+    },
+    {
+      "file": "04-ui-storybook.md",
+      "level": 1,
+      "order": 4
+    },
+    {
+      "file": "05-rxangular-ssr.md",
+      "level": 1,
+      "order": 5
+    },
+    {
+      "file": "06-architecture.md",
+      "level": 1,
+      "order": 6
+    }
+  ]
+}
