@@ -1,17 +1,28 @@
-import { vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { GetArticleListHandler } from './get-article-list.handler';
 import { ArticleListService } from '../../services';
 
 describe('GetArticleListHandler', () => {
   let handler: GetArticleListHandler;
+  let mockService: any;
 
-  const mockService = {
-    getArticleList: vi.fn(),
-  } as unknown as ArticleListService;
+  beforeEach(async () => {
+    mockService = {
+      getArticleList: vi.fn(),
+    };
 
-  beforeEach(() => {
-    handler = new GetArticleListHandler(mockService);
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        GetArticleListHandler,
+        {
+          provide: ArticleListService,
+          useValue: mockService,
+        },
+      ],
+    }).compile();
+
+    handler = module.get<GetArticleListHandler>(GetArticleListHandler);
   });
 
   afterEach(() => {
@@ -34,7 +45,7 @@ describe('GetArticleListHandler', () => {
       ],
     };
 
-    vi.mocked(mockService.getArticleList).mockResolvedValue(mockResult);
+    mockService.getArticleList.mockResolvedValue(mockResult);
 
     const result = await handler.execute();
 

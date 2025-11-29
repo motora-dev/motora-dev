@@ -1,5 +1,5 @@
 import * as esbuild from 'esbuild';
-import { esbuildDecorators } from '@anatine/esbuild-decorators';
+import * as swc from '@swc/core';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,24 +9,48 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const isWatch = process.argv.includes('--watch');
 const isDebug = process.argv.includes('--debug');
 
-// パスエイリアス（tsconfig.jsonと同期）
-const alias = {
-  '$prisma/client': path.resolve(dirname, 'src/generated/prisma-client/client.ts'),
-  $adapters: path.resolve(dirname, 'src/shared/adapters'),
-  $decorators: path.resolve(dirname, 'src/shared/decorators'),
-  $exceptions: path.resolve(dirname, 'src/shared/exceptions'),
-  $filters: path.resolve(dirname, 'src/shared/filters'),
-  $guards: path.resolve(dirname, 'src/shared/guards'),
-  $interceptors: path.resolve(dirname, 'src/shared/interceptors'),
-  $utils: path.resolve(dirname, 'src/shared/utils'),
-};
-
 // package.jsonからdependenciesを読み取り、外部化するパッケージを取得
 const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.json'), 'utf-8'));
 const externalPackages = [
   ...Object.keys(packageJson.dependencies || {}),
   ...Object.keys(packageJson.devDependencies || {}),
+  '@prisma/client',
 ].filter((pkg) => !pkg.startsWith('@monorepo/')); // モノレポ内のパッケージはバンドルに含める
+
+/**
+ * SWCを使ってデコレーターをサポートするesbuildプラグイン
+ * @returns {esbuild.Plugin}
+ */
+function swcPlugin() {
+  return {
+    name: 'swc-decorator',
+    setup(build) {
+      build.onLoad({ filter: /\.ts$/ }, async (args) => {
+        const source = await fs.promises.readFile(args.path, 'utf8');
+        const result = await swc.transform(source, {
+          filename: args.path,
+          sourceMaps: isWatch,
+          jsc: {
+            parser: {
+              syntax: 'typescript',
+              decorators: true,
+            },
+            transform: {
+              legacyDecorator: true,
+              decoratorMetadata: true,
+            },
+            target: 'es2023',
+            keepClassNames: true,
+          },
+        });
+        return {
+          contents: result.code,
+          loader: 'js',
+        };
+      });
+    },
+  };
+}
 
 /** @type {esbuild.BuildOptions} */
 const config = {
@@ -36,19 +60,14 @@ const config = {
   target: 'node24',
   outfile: path.resolve(dirname, 'dist/main.js'),
   format: 'esm',
-  sourcemap: true,
-  alias,
+  sourcemap: isWatch, // 開発時のみsourcemap生成
   // node_modulesのパッケージは外部化（バンドルしない）
   external: externalPackages,
   // バナーでreflect-metadataをインポート
   banner: {
     js: "import 'reflect-metadata';",
   },
-  plugins: [
-    esbuildDecorators({
-      tsconfig: path.resolve(dirname, 'tsconfig.json'),
-    }),
-  ],
+  plugins: [swcPlugin()],
   logLevel: 'info',
 };
 

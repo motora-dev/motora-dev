@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaAdapter } from '$adapters';
-import type { User } from '$prisma/client';
 import { generatePublicId } from '$utils';
+
+import type { User } from '@monorepo/database/client';
 
 @Injectable()
 export class AuthRepository {

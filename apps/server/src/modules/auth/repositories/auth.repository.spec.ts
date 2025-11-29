@@ -1,8 +1,9 @@
-import { vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { PrismaAdapter } from '$adapters';
-import type { User } from '$prisma/client';
 import { AuthRepository } from './auth.repository';
+
+import type { User } from '@monorepo/database/client';
 
 describe('AuthRepository', () => {
   let repository: AuthRepository;
@@ -17,7 +18,7 @@ describe('AuthRepository', () => {
     updatedAt: new Date('2023-01-01'),
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockPrismaAdapter = {
       user: {
         findUnique: vi.fn(),
@@ -30,7 +31,17 @@ describe('AuthRepository', () => {
       },
     };
 
-    repository = new AuthRepository(mockPrismaAdapter as unknown as PrismaAdapter);
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuthRepository,
+        {
+          provide: PrismaAdapter,
+          useValue: mockPrismaAdapter,
+        },
+      ],
+    }).compile();
+
+    repository = module.get<AuthRepository>(AuthRepository);
   });
 
   afterEach(() => {

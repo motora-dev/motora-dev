@@ -1,11 +1,12 @@
 import { QueryBus } from '@nestjs/cqrs';
-import { vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { ArticleListController } from './article-list.controller';
 import { GetArticleListQuery } from './queries';
 
 describe('ArticleListController', () => {
   let controller: ArticleListController;
+  let queryBus: QueryBus;
 
   const mockGetArticleListResponse = {
     articleList: [
@@ -24,12 +25,21 @@ describe('ArticleListController', () => {
     ],
   };
 
-  const mockQueryBus = {
-    execute: vi.fn().mockResolvedValue(mockGetArticleListResponse),
-  } as unknown as QueryBus;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ArticleListController],
+      providers: [
+        {
+          provide: QueryBus,
+          useValue: {
+            execute: vi.fn().mockResolvedValue(mockGetArticleListResponse),
+          },
+        },
+      ],
+    }).compile();
 
-  beforeEach(() => {
-    controller = new ArticleListController(mockQueryBus);
+    controller = module.get<ArticleListController>(ArticleListController);
+    queryBus = module.get<QueryBus>(QueryBus);
   });
 
   afterEach(() => {
@@ -45,7 +55,7 @@ describe('ArticleListController', () => {
       const result = await controller.getArticleList();
 
       expect(result).toEqual(mockGetArticleListResponse);
-      expect(mockQueryBus.execute).toHaveBeenCalledWith(new GetArticleListQuery());
+      expect(queryBus.execute).toHaveBeenCalledWith(new GetArticleListQuery());
     });
   });
 });

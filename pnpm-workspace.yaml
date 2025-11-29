@@ -5,6 +5,7 @@ packages:
 versions:
   '@tanstack/react-form': &tanstack-react-form 1.23.7
   '@tanstack/react-query': &tanstack-react-query 5.90.7
+  esbuild: &esbuild 0.27.0
   eslint: &eslint 9.39.1
   google-auth-library: &google-auth-library 10.5.0
   husky: &husky 9.1.7
@@ -17,14 +18,17 @@ versions:
   prettier: &prettier 3.6.2
   prisma: &prisma 7.0.0
   react: &react 19.2.0
+  rimraf: &rimraf 6.1.2
   rxjs: &rxjs 7.8.2
   storybook: &storybook 10.0.6
   stylelint: &stylelint 16.25.0
   supabase: &supabase 2.80.0
+  swc: &swc 1.15.3
   tailwindcss: &tailwindcss 4.1.17
   tiptap: &tiptap 3.10.4
   turbo: &turbo 2.6.0
   typescript: &typescript 5.9.3
+  unplugin-swc: &unplugin-swc 1.5.9
   vitest: &vitest 4.0.8
   zod: &zod 4.1.12
   zustand: &zustand 5.0.8
@@ -39,6 +43,7 @@ catalog:
   '@storybook/addon-vitest': *storybook
   '@storybook/nextjs-vite': *storybook
   '@supabase/supabase-js': *supabase
+  '@swc/core': *swc
   '@tailwindcss/postcss': *tailwindcss
   '@tanstack/react-form': *tanstack-react-form
   '@tanstack/react-query': *tanstack-react-query
@@ -53,6 +58,7 @@ catalog:
   '@vitest/browser': *vitest
   '@vitest/browser-playwright': *vitest
   '@vitest/coverage-v8': *vitest
+  esbuild: *esbuild
   eslint: *eslint
   google-auth-library: *google-auth-library
   husky: *husky
@@ -65,12 +71,14 @@ catalog:
   prisma: *prisma
   react: *react
   react-dom: *react
+  rimraf: *rimraf
   rxjs: *rxjs
   storybook: *storybook
   stylelint: *stylelint
   tailwindcss: *tailwindcss
   turbo: *turbo
   typescript: *typescript
+  unplugin-swc: *unplugin-swc
   vitest: *vitest
   zod: *zod
   zustand: *zustand

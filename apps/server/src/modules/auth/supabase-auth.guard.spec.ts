@@ -1,18 +1,23 @@
 import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 import { vi, type MockInstance } from 'vitest';
 
 import { BusinessLogicError } from '$exceptions';
-import { AuthRepository } from '$modules/auth/repositories/auth.repository';
+import { AuthRepository } from './repositories/auth.repository';
 
 // ESMモードでのモック設定
-const mockCreateServerSupabase = vi.fn();
-vi.mock('$adapters', () => ({
-  createServerSupabase: mockCreateServerSupabase,
-}));
+vi.mock('$adapters', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('$adapters')>();
+  return {
+    ...actual,
+    createServerSupabase: vi.fn(),
+  };
+});
 
 // 動的インポート（モック設定後に実行）
 const { SupabaseAuthGuard } = await import('./supabase-auth.guard');
+const { createServerSupabase } = await import('$adapters');
 
 describe('SupabaseAuthGuard', () => {
   let guard: InstanceType<typeof SupabaseAuthGuard>;
@@ -21,24 +26,36 @@ describe('SupabaseAuthGuard', () => {
   let mockRequest: any;
   let mockResponse: any;
   let consoleLogSpy: MockInstance;
+  let mockAuthRepository: any;
 
-  const mockAuthRepository = {
-    getUserByProvider: vi.fn(),
-    findUserBySupabaseId: vi.fn(),
-    createUser: vi.fn(),
-    updateUser: vi.fn(),
-  } as unknown as AuthRepository;
-
-  const mockConfigService = {
-    get: vi.fn().mockReturnValue('development'),
-  } as unknown as ConfigService;
-
-  beforeEach(() => {
+  beforeEach(async () => {
     // console.logの出力を抑制
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    // 直接インスタンス化
-    guard = new SupabaseAuthGuard(mockAuthRepository, mockConfigService);
+    mockAuthRepository = {
+      getUserByProvider: vi.fn(),
+      findUserBySupabaseId: vi.fn(),
+      createUser: vi.fn(),
+      updateUser: vi.fn(),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        SupabaseAuthGuard,
+        {
+          provide: AuthRepository,
+          useValue: mockAuthRepository,
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: vi.fn().mockReturnValue('development'),
+          },
+        },
+      ],
+    }).compile();
+
+    guard = module.get<InstanceType<typeof SupabaseAuthGuard>>(SupabaseAuthGuard);
 
     // モックの準備
     mockRequest = {
@@ -66,7 +83,7 @@ describe('SupabaseAuthGuard', () => {
     };
 
     // モック関数の戻り値を設定
-    mockCreateServerSupabase.mockReturnValue(mockSupabase);
+    vi.mocked(createServerSupabase).mockReturnValue(mockSupabase);
   });
 
   afterEach(() => {
@@ -119,7 +136,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -156,7 +173,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     mockSupabase.auth.refreshSession.mockResolvedValue({
       data: {
@@ -213,7 +230,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     // sessionがnullのケースをテスト
     mockSupabase.auth.refreshSession.mockResolvedValue({
@@ -267,7 +284,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     // expires_inがundefinedのケースをテスト
     mockSupabase.auth.refreshSession.mockResolvedValue({
@@ -355,7 +372,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -381,7 +398,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(null); // User not found
+    mockAuthRepository.getUserByProvider.mockResolvedValue(null); // User not found
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -412,7 +429,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 
@@ -441,7 +458,7 @@ describe('SupabaseAuthGuard', () => {
       data: { user: mockUser },
       error: null,
     });
-    vi.mocked(mockAuthRepository.getUserByProvider).mockResolvedValue(mockDbUser as any);
+    mockAuthRepository.getUserByProvider.mockResolvedValue(mockDbUser as any);
 
     const result = await guard.canActivate(mockExecutionContext);
 

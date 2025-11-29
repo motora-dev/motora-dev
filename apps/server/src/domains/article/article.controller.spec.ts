@@ -1,11 +1,12 @@
 import { QueryBus } from '@nestjs/cqrs';
-import { vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { ArticleController } from './article.controller';
 import { GetArticleQuery } from './queries';
 
 describe('ArticleController', () => {
   let controller: ArticleController;
+  let queryBus: QueryBus;
 
   const mockGetArticleResponse = {
     id: 'article-id-1',
@@ -23,12 +24,21 @@ describe('ArticleController', () => {
     },
   };
 
-  const mockQueryBus = {
-    execute: vi.fn(),
-  } as unknown as QueryBus;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ArticleController],
+      providers: [
+        {
+          provide: QueryBus,
+          useValue: {
+            execute: vi.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-  beforeEach(() => {
-    controller = new ArticleController(mockQueryBus);
+    controller = module.get<ArticleController>(ArticleController);
+    queryBus = module.get<QueryBus>(QueryBus);
   });
 
   afterEach(() => {
@@ -41,24 +51,24 @@ describe('ArticleController', () => {
 
   describe('getArticle', () => {
     it('should return article data', async () => {
-      vi.mocked(mockQueryBus.execute).mockResolvedValue(mockGetArticleResponse);
+      vi.mocked(queryBus.execute).mockResolvedValue(mockGetArticleResponse);
 
       const result = await controller.getArticle('article-id-1');
 
       expect(result).toEqual(mockGetArticleResponse);
-      expect(mockQueryBus.execute).toHaveBeenCalledWith(new GetArticleQuery('article-id-1'));
+      expect(queryBus.execute).toHaveBeenCalledWith(new GetArticleQuery('article-id-1'));
     });
   });
 
   describe('error handling', () => {
     it('should propagate errors from getArticle', async () => {
-      vi.mocked(mockQueryBus.execute).mockRejectedValue(new Error('Article not found'));
+      vi.mocked(queryBus.execute).mockRejectedValue(new Error('Article not found'));
 
       await expect(controller.getArticle('nonexistent')).rejects.toThrow('Article not found');
     });
 
     it('should handle null response from getArticle', async () => {
-      vi.mocked(mockQueryBus.execute).mockResolvedValue(null);
+      vi.mocked(queryBus.execute).mockResolvedValue(null);
 
       const result = await controller.getArticle('article-id-1');
 

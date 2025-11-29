@@ -4,26 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "prisma generate",
-    "clean": "find . -type d \\( -name \".turbo\" -o -name \"dist\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "clean": "rimraf .tsbuildinfo .turbo coverage dist node_modules",
     "build": "node esbuild.config.mjs",
     "start": "node esbuild.config.mjs --watch --debug",
-    "start:prd": "node ./dist/main.js",
-    "tsc": "pnpm tsc:src && pnpm tsc:spec",
-    "tsc:src": "tsc --noEmit -p tsconfig.build.json",
-    "tsc:spec": "tsc --noEmit -p tsconfig.spec.json",
+    "start:prd": "node dist/main.js",
+    "check-all": "pnpm lint && pnpm format && pnpm tsc && pnpm test",
     "format": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\"",
-    "lint": "pnpm lint:eslint",
-    "lint:fix": "pnpm lint:eslint:fix",
-    "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
-    "lint:eslint:fix": "pnpm lint:eslint --fix",
+    "lint": "eslint \"src/**/*.ts\" --config eslint.config.mjs",
+    "lint:fix": "pnpm lint --fix",
+    "tsc": "pnpm tsc:build && pnpm tsc:test",
+    "tsc:build": "tsc --noEmit --project tsconfig.build.json",
+    "tsc:test": "tsc --noEmit --project tsconfig.spec.json",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "COLLECT_COVERAGE=true vitest run --coverage",
-    "seed": "tsx prisma/seed/upsert-articles.ts"
+    "test:unit": "vitest run --project unit",
+    "test:e2e": "vitest run --project e2e",
+    "test:coverage": "vitest run --project unit --coverage"
   },
   "dependencies": {
+    "@monorepo/database": "workspace:*",
     "@monorepo/error-code": "workspace:*",
     "@nestjs/common": "catalog:",
     "@nestjs/config": "^4.0.2",
@@ -47,29 +46,29 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@anatine/esbuild-decorators": "^0.2.19",
     "@monorepo/eslint-config": "workspace:*",
     "@monorepo/typescript-config": "workspace:*",
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "catalog:",
+    "@swc/core": "catalog:",
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.2",
     "@types/supertest": "^6.0.2",
     "@vitest/coverage-v8": "catalog:",
     "dotenv": "^17.2.3",
-    "esbuild": "^0.27.0",
-    "prisma": "catalog:",
+    "esbuild": "catalog:",
+    "rimraf": "catalog:",
     "source-map-support": "^0.5.21",
     "supertest": "^7.1.0",
     "ts-node": "^10.9.2",
-    "tsc-alias": "^1.8.16",
     "tsx": "^4.20.6",
+    "unplugin-swc": "catalog:",
     "vitest": "catalog:"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
+    "src/**/*.ts": [
       "prettier --write",
       "eslint --fix --config eslint.config.mjs"
     ]
