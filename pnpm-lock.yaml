@@ -384,15 +384,15 @@ importers:
 
   apps/content:
     dependencies:
+      '@monorepo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@paralleldrive/cuid2':
         specifier: ^3.0.4
         version: 3.0.4
       '@prisma/adapter-pg':
         specifier: ^7.0.0
         version: 7.0.0
-      '@prisma/client':
-        specifier: 'catalog:'
-        version: 7.0.0(prisma@7.0.0(@types/react@19.2.2)(magicast@0.3.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))(typescript@5.9.3)
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -409,9 +409,6 @@ importers:
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
-      prisma:
-        specifier: 'catalog:'
-        version: 7.0.0(@types/react@19.2.2)(magicast@0.3.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
       tsx:
         specifier: ^4.20.6
         version: 4.20.6

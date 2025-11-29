@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 import { createId } from '@paralleldrive/cuid2';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient, ArticleStatus } from '@prisma/client';
+import { ArticleStatus, PrismaClient } from '@monorepo/database/client';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import matter from 'gray-matter';
 import { dirname, join } from 'path';
