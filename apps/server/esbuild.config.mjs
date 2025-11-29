@@ -22,6 +22,8 @@ const externalPackages = [
  * @returns {esbuild.Plugin}
  */
 function swcPlugin() {
+  const enableSourceMaps = isWatch || isDebug;
+
   return {
     name: 'swc-decorator',
     setup(build) {
@@ -29,7 +31,7 @@ function swcPlugin() {
         const source = await fs.promises.readFile(args.path, 'utf8');
         const result = await swc.transform(source, {
           filename: args.path,
-          sourceMaps: isWatch,
+          sourceMaps: enableSourceMaps ? 'inline' : false,
           jsc: {
             parser: {
               syntax: 'typescript',
@@ -60,7 +62,7 @@ const config = {
   target: 'node24',
   outfile: path.resolve(dirname, 'dist/main.js'),
   format: 'esm',
-  sourcemap: isWatch, // 開発時のみsourcemap生成
+  sourcemap: isWatch || isDebug, // 開発時・デバッグ時のみsourcemap生成
   // node_modulesのパッケージは外部化（バンドルしない）
   external: externalPackages,
   // バナーでreflect-metadataをインポート
