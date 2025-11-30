@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { FooterComponent, HeaderComponent } from '$components/layouts';
+import { AppFacade } from '$domains/app';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,6 @@ import { FooterComponent, HeaderComponent } from '$components/layouts';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {}
+export class App {
+  private readonly appFacade = inject(AppFacade);
+}

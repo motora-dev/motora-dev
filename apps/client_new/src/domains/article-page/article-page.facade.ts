@@ -88,26 +88,32 @@ export class ArticlePageFacade {
           }
 
           // クライアントサイドでキャッシュがない場合（SPA遷移時）
-          const page: ArticlePage = {
-            id: response.id,
-            createdAt: new Date(response.createdAt),
-            updatedAt: new Date(response.updatedAt),
-            title: response.title,
-            description: response.description,
-            content: response.content,
-            level: response.level,
-            order: response.order,
-            tags: response.tags,
-          };
-          return this.store.dispatch([new SetArticlePage(page), new SetToc([])]);
+          // プリロード済みのライブラリを使ってクライアントでMarkdown変換を実行
+          return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
+            switchMap(({ html, toc }) => {
+              const page: ArticlePage = {
+                id: response.id,
+                createdAt: new Date(response.createdAt),
+                updatedAt: new Date(response.updatedAt),
+                title: response.title,
+                description: response.description,
+                content: html,
+                level: response.level,
+                order: response.order,
+                tags: response.tags,
+              };
+              return this.store.dispatch([new SetArticlePage(page), new SetToc(toc)]);
+            }),
+          );
         }),
       )
       .subscribe();
   }
 
   /**
-   * サーバーサイドでのみ実行されるMarkdown→HTML変換とTOC抽出
-   * 動的インポートにより、クライアントバンドルからhighlight.js等を除外
+   * Markdown→HTML変換とTOC抽出
+   * 動的インポートにより、初期バンドルからhighlight.js等を除外
+   * クライアントではAppFacadeによりアイドル時にプリロード済み
    */
   private async convertMarkdownAndExtractToc(markdown: string): Promise<{ html: string; toc: TocItem[] }> {
     const { markdownToHtml, extractTableOfContents } = await import('@monorepo/markdown');
