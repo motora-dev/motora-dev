@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+@import 'highlight.js/styles/tomorrow-night-blue.css';
+@import 'katex/dist/katex.min.css';
+
+@plugin '@tailwindcss/typography';
 
 /*
  * shadcn/ui CSS Variables (Tailwind v4 compatible)
@@ -40,4 +44,71 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
+}
+
+/* proseのマージンをカスタマイズ */
+.prose > * + * {
+  margin-top: 0.5rem;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  position: relative;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+  scroll-margin-top: 80px; /* ヘッダー分のスクロールオフセット */
+}
+
+.prose p {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose blockquote {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* GitHub風見出しリンクスタイル */
+
+.prose .heading-anchor {
+  position: absolute;
+  left: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  color: var(--color-muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose .heading-anchor:hover {
+  opacity: 1;
+}
+
+.prose .heading-anchor:focus {
+  opacity: 1;
+  outline: none;
+}
+
+.prose h1:hover .heading-anchor,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor,
+.prose h5:hover .heading-anchor,
+.prose h6:hover .heading-anchor {
+  opacity: 1;
 }

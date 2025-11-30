@@ -4,8 +4,18 @@
   "exclude": [".turbo", "coverage", "node_modules", "src/**/*.spec.ts"],
   "compilerOptions": {
     "rootDir": ".",
+    "outDir": "dist",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "noPropertyAccessFromIndexSignature": true,
     "types": ["node"]
-  }
+  },
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

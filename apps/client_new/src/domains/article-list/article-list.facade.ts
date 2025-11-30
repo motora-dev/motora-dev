@@ -5,7 +5,7 @@ import { ArticleListApi } from './api';
 import { Article } from './model';
 import { ArticleListState, SetArticleList } from './store';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ArticleListFacade {
   private readonly store = inject(Store);
   private readonly api = inject(ArticleListApi);

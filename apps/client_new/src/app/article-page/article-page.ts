@@ -5,13 +5,15 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { combineLatest, filter, map, take } from 'rxjs';
 
-import { ArticlePageFacade, ArticlePageItem } from '$domains/article-page';
+import { ArticlePageFacade } from '$domains/article-page/article-page.facade';
+import { ArticlePageItem } from '$domains/article-page/model';
 import { UiFacade } from '$modules/ui';
 
 @Component({
   selector: 'app-article-page',
   standalone: true,
   imports: [AsyncPipe, RouterLink],
+  providers: [ArticlePageFacade],
   templateUrl: './article-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

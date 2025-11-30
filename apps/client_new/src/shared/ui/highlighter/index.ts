@@ -1,0 +1,1 @@
+export { highlightHtml } from './highlighter';

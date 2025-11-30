@@ -4,10 +4,19 @@
   "license": "UNLICENSED",
   "private": true,
   "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"dist\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "prebuild": "rm -rf dist",
+    "build": "pnpm prebuild && tsc --project tsconfig.build.json",
     "tsc": "pnpm tsc:src && pnpm tsc:spec",
     "tsc:src": "tsc --noEmit -p tsconfig.json",
     "tsc:spec": "tsc --noEmit -p tsconfig.spec.json",

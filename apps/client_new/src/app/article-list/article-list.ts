@@ -8,6 +8,7 @@ import { ArticleListFacade } from '$domains/article-list';
   selector: 'app-home',
   standalone: true,
   imports: [AsyncPipe, ArticleCardComponent],
+  providers: [ArticleListFacade],
   templateUrl: './article-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

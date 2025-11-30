@@ -14,22 +14,22 @@ export function createMarkdownSerializer(): MarkdownSerializer {
       ...defaultMarkdownSerializer.nodes,
       // image拡張に対応
       image: (state, node) => {
-        const src = node.attrs.src || '';
-        const alt = node.attrs.alt || '';
+        const src = (node.attrs['src'] as string) || '';
+        const alt = (node.attrs['alt'] as string) || '';
         if (src) {
           state.write(`![${alt}](${src})\n`);
         }
       },
-      hardBreak: defaultMarkdownSerializer.nodes.hard_break,
-      bulletList: defaultMarkdownSerializer.nodes.bullet_list,
-      orderedList: defaultMarkdownSerializer.nodes.ordered_list,
-      listItem: defaultMarkdownSerializer.nodes.list_item,
-      codeBlock: defaultMarkdownSerializer.nodes.code_block,
+      hardBreak: defaultMarkdownSerializer.nodes['hard_break'],
+      bulletList: defaultMarkdownSerializer.nodes['bullet_list'],
+      orderedList: defaultMarkdownSerializer.nodes['ordered_list'],
+      listItem: defaultMarkdownSerializer.nodes['list_item'],
+      codeBlock: defaultMarkdownSerializer.nodes['code_block'],
     },
     {
       ...defaultMarkdownSerializer.marks,
-      bold: defaultMarkdownSerializer.marks.strong,
-      italic: defaultMarkdownSerializer.marks.em,
+      bold: defaultMarkdownSerializer.marks['strong'],
+      italic: defaultMarkdownSerializer.marks['em'],
     },
   );
 }

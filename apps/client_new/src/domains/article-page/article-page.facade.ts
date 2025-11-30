@@ -1,11 +1,13 @@
 import { inject, Injectable } from '@angular/core';
+import { markdownToHtml } from '@monorepo/markdown';
 import { Store } from '@ngxs/store';
 
+import { highlightHtml } from '$shared/ui/highlighter';
 import { ArticlePageApi } from './api';
 import { ArticlePage, ArticlePageItem } from './model';
 import { ArticlePageState, SetArticlePage, SetArticlePageItems } from './store';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ArticlePageFacade {
   private readonly store = inject(Store);
   private readonly api = inject(ArticlePageApi);
@@ -27,13 +29,17 @@ export class ArticlePageFacade {
 
   loadPage(articleId: string, pageId: string): void {
     this.api.getPage(articleId, pageId).subscribe((response) => {
+      // マークダウンをHTMLに変換し、シンタックスハイライトを適用
+      const htmlWithoutHighlight = markdownToHtml(response.content);
+      const html = highlightHtml(htmlWithoutHighlight);
+
       const page: ArticlePage = {
         id: response.id,
         createdAt: new Date(response.createdAt),
         updatedAt: new Date(response.updatedAt),
         title: response.title,
         description: response.description,
-        content: response.content,
+        content: html,
         level: response.level,
         order: response.order,
         tags: response.tags,
