@@ -1,40 +1,129 @@
 # Client Application
 
+**フレームワーク & ビルド:**</br>
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031.svg?logo=angular)](https://angular.dev/)
+[![Angular CDK](https://img.shields.io/badge/Angular_CDK-21-DD0031.svg?logo=angular)](https://material.angular.io/cdk/categories)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6.svg?logo=typescript)](https://www.typescriptlang.org/)
+[![esbuild](https://img.shields.io/badge/esbuild-@angular/build-FFCF00.svg?logo=esbuild)](https://angular.dev/tools/cli/build-system-migration)
+
+**Lint & フォーマット:**</br>
+[![ESLint](https://img.shields.io/badge/ESLint-9.39-4B32C3.svg?logo=eslint)](https://eslint.org/)
+[![Prettier](https://img.shields.io/badge/Prettier-3.7-F7B93E.svg?logo=prettier)](https://prettier.io/)
+
+**SSR:**</br>
+[![SSR](https://img.shields.io/badge/SSR-Enabled-4CAF50.svg)](https://angular.dev/guide/ssr)
+[![ISR](https://img.shields.io/badge/ISR-@rx--angular-E91E63.svg)](https://www.rx-angular.io/docs/isr)
+[![Express](https://img.shields.io/badge/Express-4.21-000000.svg?logo=express)](https://expressjs.com/)
+
+**状態管理 & リアクティブ:**</br>
+[![NGXS](https://img.shields.io/badge/NGXS-20-3F51B5.svg)](https://www.ngxs.io/)
+[![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C.svg?logo=reactivex)](https://rxjs.dev/)
+[![RxAngular](https://img.shields.io/badge/RxAngular-20.1-E91E63.svg)](https://www.rx-angular.io/)
+
+**スタイリング:**</br>
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1-06B6D4.svg?logo=tailwindcss)](https://tailwindcss.com/)
+[![PostCSS](https://img.shields.io/badge/PostCSS-8.5-DD3A0A.svg?logo=postcss)](https://postcss.org/)
+[![CVA](https://img.shields.io/badge/CVA-0.7-7C3AED.svg)](https://cva.style/)
+[![clsx](https://img.shields.io/badge/clsx-2.1-06B6D4.svg)](https://github.com/lukeed/clsx)
+[![tailwind-merge](https://img.shields.io/badge/tailwind--merge-3.4-06B6D4.svg)](https://github.com/dcastil/tailwind-merge)
+
+**テスト & UIカタログ:**</br>
+[![Vite](https://img.shields.io/badge/Vite-7.2-646CFF.svg?logo=vite)](https://vite.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.0-6E9F18.svg?logo=vitest)](https://vitest.dev/)
+[![Testing Library](https://img.shields.io/badge/Testing_Library-18.1-E33332.svg?logo=testinglibrary)](https://testing-library.com/)
+[![jsdom](https://img.shields.io/badge/jsdom-27.2-F7DF1E.svg)](https://github.com/jsdom/jsdom)
+[![Storybook](https://img.shields.io/badge/Storybook-10.1-FF4785.svg?logo=storybook)](https://storybook.js.org/)
+
 Angular 21 + Tailwind CSS 4 + SSR を採用したフロントエンドアプリケーションです。
 
 ## 目次
 
-- [技術スタック](#技術スタック)
+- [設計思想](#設計思想)
+- [開発コマンド](#開発コマンド)
+- [パッケージ管理（pnpm catalog）](#パッケージ管理pnpm-catalog)
 - [ディレクトリ構成](#ディレクトリ構成)
 - [アーキテクチャ](#アーキテクチャ)
 - [配置基準](#配置基準)
 - [状態管理（NGXS）](#状態管理ngxs)
+- [リアクティブパターンの使い分け](#リアクティブパターンの使い分け)
 - [フォーム管理](#フォーム管理)
 - [UI アーキテクチャ](#ui-アーキテクチャ)
-- [リアクティブパターンの使い分け](#リアクティブパターンの使い分け)
 - [パフォーマンス最適化](#パフォーマンス最適化)
-- [Storybook](#storybook)
 - [テスト戦略](#テスト戦略)
-- [開発コマンド](#開発コマンド)
-- [パッケージ管理（pnpm catalog）](#パッケージ管理pnpm-catalog)
-- [設計思想](#設計思想)
+- [Storybook](#storybook)
 
-## 技術スタック
+## 設計思想
 
-| カテゴリ         | 技術                                      |
-| ---------------- | ----------------------------------------- |
-| Framework        | Angular 21 (Zoneless)                     |
-| Build            | Vite (via @angular/build)                 |
-| State Management | NGXS + @ngxs/form-plugin                  |
-| Forms            | Reactive Forms + Validators               |
-| UI Components    | shadcn/ui アプローチ（Angular CDK + cva） |
-| Styling          | Tailwind CSS 4                            |
-| Accessibility    | @angular/cdk/a11y, @angular/aria          |
-| Reactive         | @rx-angular/template, @rx-angular/isr     |
-| SSR              | Angular SSR + ISR                         |
-| UI Catalog       | Storybook 10                              |
-| Testing          | Vitest + @testing-library/angular         |
-| Linting          | ESLint + Prettier                         |
+### なぜこの構成か
+
+1. **アルファベット順の一貫性**: `app → components → domains → modules → shared` の順で視覚的に整理
+2. **Vertical Slice**: 各ページが独立したスライスとして完結し、凝集度が高い
+3. **DDD境界の意識**: ページ固有のものはページ内に、共有するものだけが上位レイヤーに昇格
+4. **shadcn/uiアプローチ**: `shared/ui/` にUIプリミティブを配置し、コピー＆カスタマイズ可能な構成
+5. **Facade パターン**: Store へのアクセスを抽象化し、コンポーネントとの結合度を下げる
+
+### Angular公式スタイルガイドとの差異
+
+本構成はAngular公式スタイルガイドの推奨（機能ごとのディレクトリ構成）とは一部異なります。これは設計原則（Clean Architecture / Vertical Slice）を優先した意図的な選択です。
+
+チームメンバーはこのREADMEを参照し、配置基準を理解した上で開発を行ってください。
+
+## 開発コマンド
+
+```bash
+# 開発サーバー起動
+pnpm start
+
+# ビルド
+pnpm build
+
+# SSR サーバー起動
+pnpm serve:ssr:client
+
+# テスト
+pnpm test
+
+# Lint
+pnpm lint
+
+# Storybook 起動
+pnpm storybook
+
+# Storybook ビルド
+pnpm build-storybook
+```
+
+## パッケージ管理（pnpm catalog）
+
+バージョンを `pnpm-workspace.yaml` で一元管理し、モノレポ全体で統一します。
+
+### 設定例
+
+```yaml
+# pnpm-workspace.yaml
+versions:
+  angular: &angular 21.0.0
+  ngxs: &ngxs 20.1.0
+
+catalog:
+  '@angular/core': *angular
+  '@ngxs/store': *ngxs
+```
+
+```json
+// package.json
+{
+  "dependencies": {
+    "@angular/core": "catalog:",
+    "@ngxs/store": "catalog:"
+  }
+}
+```
+
+### バージョンアップ手順
+
+1. `pnpm-workspace.yaml` のバージョンを変更
+2. `pnpm install` で全パッケージ一括更新
 
 ## ディレクトリ構成
 
@@ -124,26 +213,162 @@ import { InputFieldComponent } from '$components/input-field';
 
 ## 状態管理（NGXS）
 
-### Facade パターン
-
-domains/ では **Facade パターン** を採用し、Store へのアクセスを抽象化しています。
+### ドメイン構造
 
 ```
 domains/{domain}/
+├── api/
+│   ├── {domain}.api.ts          # API呼び出し（内部）
+│   ├── {domain}.response.ts     # APIレスポンス型（内部）
+│   └── index.ts
+├── model/
+│   ├── {domain}.model.ts        # State/UI用モデル（公開）
+│   └── index.ts
 ├── store/
-│   ├── {domain}.state.ts    # State 定義 + Selector
-│   └── {domain}.actions.ts  # Action 定義
-├── {domain}.facade.ts       # Store アクセスの抽象化
-└── index.ts                 # エクスポート
+│   ├── {domain}.state.ts        # State定義 + Selector（内部）
+│   ├── {domain}.actions.ts      # Action定義（内部）
+│   └── index.ts
+├── {domain}.facade.ts           # API呼び出し + Store操作（公開）
+└── index.ts                     # model と facade のみエクスポート
 ```
 
-```typescript
-// 使用例（コンポーネントから）
-private readonly facade = inject(HomeFacade);
-readonly count$ = this.facade.count$;
+### 設計原則
 
-increment(): void {
-  this.facade.increment();
+#### 1. app/ と domains/ の命名統一
+
+`app/` のページディレクトリと `domains/` のドメインディレクトリは **同じ名前**で統一します。
+
+```
+app/
+  article-list/     ← 記事一覧ページ
+  article-page/     ← 記事詳細ページ
+
+domains/
+  article-list/     ← 記事一覧ドメイン
+  article-page/     ← 記事詳細ドメイン
+```
+
+また、ドメイン内のファイル名・型名も統一します。
+
+```
+domains/article-page/
+  api/article-page.api.ts           # ArticlePageApi
+  api/article-page.response.ts      # ArticlePageResponse
+  model/article-page.model.ts       # ArticlePage, ArticlePageItem
+  store/article-page.actions.ts     # SetArticlePage, SetArticlePageItems
+  store/article-page.state.ts       # ArticlePageState
+  article-page.facade.ts            # ArticlePageFacade
+```
+
+**メリット:**
+
+- どのページがどのドメインを使うか一目瞭然
+- `ArticlePage` で検索すれば関連ファイルが全てヒット
+- 新しいメンバーも迷わない
+
+#### 2. 公開範囲の制限
+
+`index.ts` では **model と facade のみ**をエクスポートし、`api` と `store` は内部実装として隠蔽します。
+
+```typescript
+// domains/article-list/index.ts
+export * from './model'; // ✅ 公開
+export * from './article-list.facade'; // ✅ 公開
+// api/ と store/ はエクスポートしない
+```
+
+**メリット:**
+
+- 外部から使うべきものが明確
+- 内部実装の変更が外部に影響しない
+- 認知負荷の軽減
+
+#### 3. APIモデルとStateモデルの分離
+
+API レスポンスの型と State で使用する型は別々に定義します。
+
+```typescript
+// api/article-list.response.ts（内部で隠蔽）
+export interface ArticleResponse {
+  id: string;
+  createdAt: string; // APIはstringで返す
+}
+
+// model/article-list.model.ts（外部に公開）
+export interface Article {
+  id: string;
+  createdAt: Date; // アプリ内ではDateで扱う
+}
+```
+
+**メリット:**
+
+- API の形式変更が State/UI 層に影響しない
+- 変換ロジックを Facade に集約
+
+#### 4. Facade パターンによる責務分離
+
+一般的な「State 内で API を呼び出す」パターンではなく、**Facade 内で API 呼び出しと Store 操作を結合**します。
+
+```typescript
+// ❌ State内でAPI呼び出し（密結合）
+@Action(LoadArticleList)
+loadArticleList(ctx) {
+  return this.api.getArticleList().pipe(
+    tap((res) => ctx.dispatch(new LoadArticleListSuccess(res))),
+    catchError((err) => ctx.dispatch(new LoadArticleListFailure(err))),
+  );
+}
+
+// ✅ Facade内でAPI呼び出し + Store操作
+loadArticleList(): void {
+  this.api.getArticleList().subscribe((response) => {
+    const articles: Article[] = response.articleList.map((r) => ({
+      id: r.id,
+      title: r.title,
+      createdAt: new Date(r.createdAt),
+    }));
+    this.store.dispatch(new SetArticleList(articles));
+  });
+}
+```
+
+**メリット:**
+
+- State は純粋なデータ保持のみ（get/set）
+- API と Store の密結合を解消
+- Action 名が対照的で分かりやすい（`getArticleList` / `setArticleList`）
+
+#### 5. エラーハンドリングの共通化
+
+`loading` / `error` 状態は各ドメインでは実装せず、共通処理で対応します。
+
+- **Interceptor**: HTTP エラーをキャッチし、通知ドメインへ連携
+- **通知ドメイン**: Toast 表示などの UI フィードバック
+
+```typescript
+// ❌ 各ドメインで loading/error を管理しない
+interface ArticleListStateModel {
+  articleList: Article[];
+  loading: boolean; // 不要
+  error: string; // 不要
+}
+
+// ✅ データのみ保持
+interface ArticleListStateModel {
+  articleList: Article[];
+}
+```
+
+### Facade の使用例
+
+```typescript
+// コンポーネントから
+private readonly facade = inject(ArticleListFacade);
+readonly articleList$ = this.facade.articleList$;
+
+ngOnInit(): void {
+  this.facade.loadArticleList();
 }
 ```
 
@@ -158,6 +383,20 @@ Reactive Forms と NGXS Store を自動同期：
 ```
 
 State に `textForm` を定義すると、フォームの値が自動的に Store に同期されます。
+
+## リアクティブパターンの使い分け
+
+| スコープ       | 技術                             | 用途                       | 例                       |
+| -------------- | -------------------------------- | -------------------------- | ------------------------ |
+| ローカル状態   | **Signal**                       | コンポーネント内部         | `signal()`, `computed()` |
+| グローバル状態 | **NGXS + `*rxLet`**              | domains連携、大規模データ  | `facade.count$`          |
+| フォーム       | **Reactive Forms + form-plugin** | バリデーション + Store同期 | `ngxsForm`               |
+
+### 使い分けの指針
+
+- **shared/ui/, components/**: 内部実装は Signal を使用
+- **domains との連携**: NGXS Store + `*rxLet` で Observable を描画
+- **フォーム**: Reactive Forms でバリデーション、@ngxs/form-plugin で Store 同期
 
 ## フォーム管理
 
@@ -201,20 +440,6 @@ State に `textForm` を定義すると、フォームの値が自動的に Stor
 - `InputFieldComponent` - Reactive Forms連携、エラー表示
 - このリポジトリ固有のロジックを含む
 
-## リアクティブパターンの使い分け
-
-| スコープ       | 技術                             | 用途                       | 例                       |
-| -------------- | -------------------------------- | -------------------------- | ------------------------ |
-| ローカル状態   | **Signal**                       | コンポーネント内部         | `signal()`, `computed()` |
-| グローバル状態 | **NGXS + `*rxLet`**              | domains連携、大規模データ  | `facade.count$`          |
-| フォーム       | **Reactive Forms + form-plugin** | バリデーション + Store同期 | `ngxsForm`               |
-
-### 使い分けの指針
-
-- **shared/ui/, components/**: 内部実装は Signal を使用
-- **domains との連携**: NGXS Store + `*rxLet` で Observable を描画
-- **フォーム**: Reactive Forms でバリデーション、@ngxs/form-plugin で Store 同期
-
 ## パフォーマンス最適化
 
 ### Zoneless 変更検知
@@ -237,6 +462,25 @@ State に `textForm` を定義すると、フォームの値が自動的に Stor
 // app.routes.ts
 { path: 'home', data: { revalidate: 60 } }  // 60秒ごとに再生成
 ```
+
+## テスト戦略
+
+コンポーネントテストは **Vitest + @testing-library/angular** で実行します。
+
+```bash
+pnpm test           # CI・開発共通
+pnpm test:coverage  # カバレッジ付き
+pnpm test:watch     # ウォッチモード
+```
+
+### 役割分担
+
+| ツール    | 役割                           |
+| --------- | ------------------------------ |
+| Storybook | UIカタログ・ドキュメント       |
+| Vitest    | コンポーネント・ユニットテスト |
+
+> **Note**: `@storybook/addon-vitest` は Angular では未対応のため、テストは Vitest で行います。
 
 ## Storybook
 
@@ -276,95 +520,3 @@ export const Default: Story = {
   args: { variant: 'default' },
 };
 ```
-
-## テスト戦略
-
-コンポーネントテストは **Vitest + @testing-library/angular** で実行します。
-
-```bash
-pnpm test           # CI・開発共通
-pnpm test:watch     # ウォッチモード
-pnpm test:coverage  # カバレッジ付き
-```
-
-### 役割分担
-
-| ツール    | 役割                           |
-| --------- | ------------------------------ |
-| Storybook | UIカタログ・ドキュメント       |
-| Vitest    | コンポーネント・ユニットテスト |
-
-> **Note**: `@storybook/addon-vitest` は Angular では未対応のため、テストは Vitest で行います。
-
-## 開発コマンド
-
-```bash
-# 開発サーバー起動
-pnpm start
-
-# ビルド
-pnpm build
-
-# SSR サーバー起動
-pnpm serve:ssr:client
-
-# テスト
-pnpm test
-
-# Lint
-pnpm lint
-
-# Storybook 起動
-pnpm storybook
-
-# Storybook ビルド
-pnpm build-storybook
-```
-
-## パッケージ管理（pnpm catalog）
-
-バージョンを `pnpm-workspace.yaml` で一元管理し、モノレポ全体で統一します。
-
-### 設定例
-
-```yaml
-# pnpm-workspace.yaml
-versions:
-  angular: &angular 21.0.0
-  ngxs: &ngxs 20.1.0
-
-catalog:
-  '@angular/core': *angular
-  '@ngxs/store': *ngxs
-```
-
-```json
-// package.json
-{
-  "dependencies": {
-    "@angular/core": "catalog:",
-    "@ngxs/store": "catalog:"
-  }
-}
-```
-
-### バージョンアップ手順
-
-1. `pnpm-workspace.yaml` のバージョンを変更
-2. `pnpm install` で全パッケージ一括更新
-
-## 設計思想
-
-### なぜこの構成か
-
-1. **アルファベット順の一貫性**: `app → components → domains → modules → shared` の順で視覚的に整理
-2. **Vertical Slice**: 各ページが独立したスライスとして完結し、凝集度が高い
-3. **DDD境界の意識**: ページ固有のものはページ内に、共有するものだけが上位レイヤーに昇格
-4. **shadcn/uiアプローチ**: `shared/ui/` にUIプリミティブを配置し、コピー＆カスタマイズ可能な構成
-5. **Facade パターン**: Store へのアクセスを抽象化し、コンポーネントとの結合度を下げる
-
-### Angular公式スタイルガイドとの差異
-
-本構成はAngular公式スタイルガイドの推奨（機能ごとのディレクトリ構成）とは一部異なります。これは設計原則（Clean Architecture / Vertical Slice）を優先した意図的な選択です。
-
-チームメンバーはこのREADMEを参照し、配置基準を理解した上で開発を行ってください。
