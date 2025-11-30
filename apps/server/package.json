@@ -62,7 +62,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "unplugin-swc": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vite": "catalog:"
   },
   "lint-staged": {
     "src/**/*.ts": [

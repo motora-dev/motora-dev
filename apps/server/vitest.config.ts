@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
 
+import type { PluginOption } from 'vite';
+
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 const swcPlugin = swc.vite({
@@ -23,7 +25,7 @@ const swcPlugin = swc.vite({
   },
   module: { type: 'es6' },
   minify: false,
-});
+}) as PluginOption;
 
 const resolveAlias = {
   alias: {

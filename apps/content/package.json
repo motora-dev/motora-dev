@@ -12,7 +12,7 @@
   "dependencies": {
     "@monorepo/database": "workspace:*",
     "@paralleldrive/cuid2": "^3.0.4",
-    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/adapter-pg": "catalog:",
     "gray-matter": "^4.0.3",
     "pg": "^8.16.3"
   },
