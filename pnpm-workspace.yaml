@@ -72,7 +72,9 @@ catalog:
   '@ngxs/devtools-plugin': *ngxs
   '@ngxs/form-plugin': *ngxs
   '@ngxs/store': *ngxs
+  '@prisma/adapter-pg': *prisma
   '@prisma/client': *prisma
+  '@prisma/client-runtime-utils': *prisma
   '@rx-angular/cdk': *rx-angular
   '@rx-angular/isr': *rx-angular-isr
   '@rx-angular/template': *rx-angular
