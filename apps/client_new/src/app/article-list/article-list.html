@@ -5,15 +5,13 @@
   </div>
 
   <!-- Article list -->
-  @if ((articleList$ | async)?.length === 0) {
-  <div class="text-center py-16 md:py-20 lg:py-24 bg-gray-50 rounded-lg">
-    <p class="text-base md:text-lg text-gray-600">記事がありません</p>
-  </div>
-  } @else {
-  <div class="flex flex-col gap-4">
-    @for (article of articleList$ | async; track article.id) {
-    <app-article-card [article]="article" />
-    }
-  </div>
-  }
+  <ng-container *rxLet="articleList$; let articles; suspense: loading">
+    <app-article-list-content [articles]="articles" />
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="text-center py-16 md:py-20 lg:py-24">
+      <p class="text-base md:text-lg text-gray-600">読み込み中...</p>
+    </div>
+  </ng-template>
 </main>

@@ -134,8 +134,11 @@ src/
 │   ├── app.config.ts     # アプリケーション設定
 │   ├── app.routes.ts     # ルーティング定義
 │   └── {page}/           # 各ページ（Vertical Slice）
-│       ├── {page}.ts         # ページコンポーネント
-│       └── templates/        # ページ固有のテンプレート
+│       ├── {page}.ts         # 親コンポーネント（Facade、RxLet）
+│       ├── {page}.html       # レイアウト + サブコンポーネント呼び出し
+│       ├── {page}.routes.ts  # ルーティング定義
+│       └── components/       # ページ固有サブコンポーネント
+│           └── {page}-{name}/
 ├── components/       # (c) 複数ページで共有するコンポーネント（Composed UI）
 ├── domains/          # (d) ドメインロジック + 状態管理（NGXS）
 ├── modules/          # (m) app/components/domains間で共有するロジック
@@ -145,6 +148,89 @@ src/
 ├── main.ts
 └── index.html
 ```
+
+### ページコンポーネントの標準パターン
+
+各ページは **親コンポーネント + サブコンポーネント** の構成を標準とします。
+
+```
+app/{page}/
+├── {page}.ts              # 親（Facade提供、RxLet、Input/Output連携）
+├── {page}.html            # レイアウト + サブコンポーネント呼び出し
+├── {page}.routes.ts       # ルーティング定義
+├── index.ts
+└── components/            # ページ固有サブコンポーネント
+    ├── index.ts
+    └── {page}-{name}/
+        ├── {page}-{name}.ts
+        ├── {page}-{name}.html
+        └── index.ts
+```
+
+**責務分離:**
+
+- **親コンポーネント**: Facade の提供、Observable の購読（`*rxLet`）、サブコンポーネントへの Input/Output 連携
+- **サブコンポーネント**: Input で受け取ったデータの表示のみ（Presentational）
+
+**例:**
+
+```typescript
+// 親コンポーネント（article-list.ts）
+@Component({
+  imports: [RxLet, ArticleListContentComponent],
+  providers: [ArticleListFacade],
+})
+export class ArticleListComponent {
+  private readonly facade = inject(ArticleListFacade);
+  readonly articleList$ = this.facade.articleList$;
+}
+```
+
+```html
+<!-- 親テンプレート（article-list.html） -->
+<ng-container *rxLet="articleList$; let articles">
+  <app-article-list-content [articles]="articles" />
+</ng-container>
+```
+
+```typescript
+// サブコンポーネント（article-list-content.ts）
+@Component({ ... })
+export class ArticleListContentComponent {
+  readonly articles = input.required<Article[]>();
+}
+```
+
+### ライフサイクルフック
+
+モダン Angular（`inject()` + Signal）では `ngOnInit` は使用せず、**constructor** で初期化を行います。
+
+```typescript
+// ✅ constructor で初期化
+@Component({ ... })
+export class ArticleListComponent {
+  private readonly facade = inject(ArticleListFacade);
+  readonly articleList$ = this.facade.articleList$;
+
+  constructor() {
+    this.facade.loadArticleList();
+  }
+}
+
+// ❌ ngOnInit は使わない
+export class ArticleListComponent implements OnInit {
+  ngOnInit(): void {
+    this.facade.loadArticleList();
+  }
+}
+```
+
+**理由:**
+
+- `inject()` は constructor injection context で動作
+- Signal inputs (`input()`) は constructor 時点で利用可能
+- `ActivatedRoute.snapshot` も constructor で取得可能
+- コードがシンプルになる
 
 ## アーキテクチャ
 
@@ -367,7 +453,7 @@ interface ArticleListStateModel {
 private readonly facade = inject(ArticleListFacade);
 readonly articleList$ = this.facade.articleList$;
 
-ngOnInit(): void {
+constructor() {
   this.facade.loadArticleList();
 }
 ```
@@ -386,17 +472,19 @@ State に `textForm` を定義すると、フォームの値が自動的に Stor
 
 ## リアクティブパターンの使い分け
 
-| スコープ       | 技術                             | 用途                       | 例                       |
-| -------------- | -------------------------------- | -------------------------- | ------------------------ |
-| ローカル状態   | **Signal**                       | コンポーネント内部         | `signal()`, `computed()` |
-| グローバル状態 | **NGXS + `*rxLet`**              | domains連携、大規模データ  | `facade.count$`          |
-| フォーム       | **Reactive Forms + form-plugin** | バリデーション + Store同期 | `ngxsForm`               |
+| スコープ       | 技術                              | 用途                       | 例                         |
+| -------------- | --------------------------------- | -------------------------- | -------------------------- |
+| ローカル状態   | **Signal**                        | コンポーネント内部         | `signal()`, `computed()`   |
+| グローバル状態 | **NGXS + `*rxLet`**               | domains連携、大規模データ  | `facade.data$` + `*rxLet`  |
+| フォーム       | **Reactive Forms + form-plugin**  | バリデーション + Store同期 | `ngxsForm`                 |
+| テンプレート   | **RxLet**（AsyncPipe は使わない） | Observable の描画          | `*rxLet="data$; let data"` |
 
 ### 使い分けの指針
 
 - **shared/ui/, components/**: 内部実装は Signal を使用
 - **domains との連携**: NGXS Store + `*rxLet` で Observable を描画
 - **フォーム**: Reactive Forms でバリデーション、@ngxs/form-plugin で Store 同期
+- **テンプレートでの Observable**: `AsyncPipe` は使わず、必ず `RxLet` を使用
 
 ## フォーム管理
 
@@ -446,12 +534,43 @@ State に `textForm` を定義すると、フォームの値が自動的に Stor
 
 `provideZonelessChangeDetection()` により Zone.js を使用せず、効率的な変更検知を実現。
 
-### @rx-angular/template
+### @rx-angular/template（RxLet）
 
-`*rxLet` ディレクティブで Observable を効率的に描画。Zoneless 環境で必須。
+Observable をテンプレートで使用する際は `AsyncPipe` ではなく `@rx-angular/template` の `RxLet` を使用します。
+
+**なぜ RxLet を使うか:**
+
+- Zoneless 環境で必須（`AsyncPipe` は Zone.js に依存）
+- 変更検知の効率化（最適なタイミングで `markForCheck()` を呼び出し）
+- SSR との相性が良い
+
+**使用方法:**
+
+```typescript
+import { RxLet } from '@rx-angular/template/let';
+
+@Component({
+  imports: [RxLet],
+})
+export class MyComponent {
+  readonly data$ = this.facade.data$;
+}
+```
 
 ```html
-<div *rxLet="count$; let count">{{ count }}</div>
+<ng-container *rxLet="data$; let data"> {{ data }} </ng-container>
+```
+
+**複数の Observable を扱う場合:**
+
+```html
+<ng-container *rxLet="currentPage$; let page">
+  @if (page) {
+  <ng-container *rxLet="items$; let items">
+    <app-content [page]="page" [items]="items" />
+  </ng-container>
+  }
+</ng-container>
 ```
 
 ### ISR（Incremental Static Regeneration）

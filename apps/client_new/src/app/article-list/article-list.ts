@@ -1,23 +1,23 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RxLet } from '@rx-angular/template/let';
 
-import { ArticleCardComponent } from '$components/article-card';
 import { ArticleListFacade } from '$domains/article-list';
+import { ArticleListContentComponent } from './components';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe, ArticleCardComponent],
+  imports: [RxLet, ArticleListContentComponent],
   providers: [ArticleListFacade],
   templateUrl: './article-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArticleListComponent implements OnInit {
+export class ArticleListComponent {
   private readonly facade = inject(ArticleListFacade);
 
   readonly articleList$ = this.facade.articleList$;
 
-  ngOnInit(): void {
+  constructor() {
     this.facade.loadArticleList();
   }
 }

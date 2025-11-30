@@ -1,23 +1,28 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RxLet } from '@rx-angular/template/let';
 import { combineLatest, filter, map, take } from 'rxjs';
 
 import { ArticlePageFacade } from '$domains/article-page/article-page.facade';
-import { ArticlePageItem, TocItem } from '$domains/article-page/model';
 import { UiFacade } from '$modules/ui';
+import {
+  ArticlePageLeftSidebarComponent,
+  ArticlePageContentComponent,
+  ArticlePageNavigation,
+  ArticlePageRightSidebarComponent,
+} from './components';
 
 @Component({
   selector: 'app-article-page',
   standalone: true,
-  imports: [AsyncPipe, RouterLink],
+  imports: [RxLet, ArticlePageLeftSidebarComponent, ArticlePageContentComponent, ArticlePageRightSidebarComponent],
   providers: [ArticlePageFacade],
   templateUrl: './article-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArticlePageComponent implements OnInit {
+export class ArticlePageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
@@ -37,7 +42,7 @@ export class ArticlePageComponent implements OnInit {
   );
 
   readonly navigation$ = combineLatest([this.pages$, this.route.paramMap]).pipe(
-    map(([pages, params]) => {
+    map(([pages, params]): ArticlePageNavigation => {
       const pageId = params.get('pageId') || '';
       const sortedPages = [...pages].sort((a, b) => a.order - b.order);
       const currentIndex = sortedPages.findIndex((p) => p.id === pageId);
@@ -49,7 +54,7 @@ export class ArticlePageComponent implements OnInit {
     }),
   );
 
-  ngOnInit(): void {
+  constructor() {
     const articleId = this.route.snapshot.paramMap.get('id') || '';
     const pageId = this.route.snapshot.paramMap.get('pageId') || '';
 
@@ -92,20 +97,5 @@ export class ArticlePageComponent implements OnInit {
 
   closeSidebar(): void {
     this.uiFacade.closeSidebar();
-  }
-
-  isCurrentPage(page: ArticlePageItem): boolean {
-    return page.id === this.pageId();
-  }
-
-  getIndentClass(page: ArticlePageItem): string {
-    return page.level === 2 ? 'ml-4' : '';
-  }
-
-  getTocIndentClass(item: TocItem): string {
-    if (item.level === 2) return 'ml-3';
-    if (item.level === 3) return 'ml-6';
-    if (item.level >= 4) return 'ml-9';
-    return '';
   }
 }
