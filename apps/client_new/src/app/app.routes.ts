@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'article/:id',
-    loadComponent: () => import('./article-page').then((m) => m.ArticleDetailComponent),
+    loadComponent: () => import('./article-page').then((m) => m.ArticlePageComponent),
   },
   {
     path: 'article/:id/:pageId',

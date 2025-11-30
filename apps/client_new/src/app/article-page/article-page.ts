@@ -2,8 +2,8 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { combineLatest, map } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { combineLatest, filter, map, take } from 'rxjs';
 
 import { ArticlePageFacade, ArticlePageItem } from '$domains/article-page';
 import { UiFacade } from '$modules/ui';
@@ -17,6 +17,7 @@ import { UiFacade } from '$modules/ui';
 })
 export class ArticlePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly facade = inject(ArticlePageFacade);
   private readonly uiFacade = inject(UiFacade);
@@ -52,12 +53,24 @@ export class ArticlePageComponent implements OnInit {
     this.articleId.set(articleId);
     this.pageId.set(pageId);
 
-    // ページ一覧がまだ読み込まれていなければ読み込む
-    this.facade.pages$.subscribe((pages) => {
-      if (pages.length === 0 && articleId) {
-        this.facade.loadPages(articleId);
-      }
-    });
+    // ページ一覧を読み込む
+    if (articleId) {
+      this.facade.loadPages(articleId);
+    }
+
+    // pageIdがない場合は最初のページにリダイレクト
+    if (articleId && !pageId) {
+      this.facade.pages$
+        .pipe(
+          filter((pages) => pages.length > 0),
+          take(1),
+        )
+        .subscribe((pages) => {
+          const firstPage = pages.reduce((min, page) => (page.order < min.order ? page : min), pages[0]);
+          this.router.navigate(['/article', articleId, firstPage.id], { replaceUrl: true });
+        });
+      return;
+    }
 
     // 現在のページを読み込む
     if (articleId && pageId) {
