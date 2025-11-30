@@ -6,7 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { combineLatest, filter, map, take } from 'rxjs';
 
 import { ArticlePageFacade } from '$domains/article-page/article-page.facade';
-import { ArticlePageItem } from '$domains/article-page/model';
+import { ArticlePageItem, TocItem } from '$domains/article-page/model';
 import { UiFacade } from '$modules/ui';
 
 @Component({
@@ -30,6 +30,7 @@ export class ArticlePageComponent implements OnInit {
 
   readonly pages$ = this.facade.pages$;
   readonly currentPage$ = this.facade.currentPage$;
+  readonly toc$ = this.facade.toc$;
 
   readonly safeHtml$ = this.currentPage$.pipe(
     map((page) => (page ? this.sanitizer.bypassSecurityTrustHtml(page.content) : null)),
@@ -99,5 +100,12 @@ export class ArticlePageComponent implements OnInit {
 
   getIndentClass(page: ArticlePageItem): string {
     return page.level === 2 ? 'ml-4' : '';
+  }
+
+  getTocIndentClass(item: TocItem): string {
+    if (item.level === 2) return 'ml-3';
+    if (item.level === 3) return 'ml-6';
+    if (item.level >= 4) return 'ml-9';
+    return '';
   }
 }

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { ArticlePage, ArticlePageItem } from '../model';
-import { SetArticlePage, SetArticlePageItems } from './article-page.actions';
+import { ArticlePage, ArticlePageItem, TocItem } from '../model';
+import { SetArticlePage, SetArticlePageItems, SetToc } from './article-page.actions';
 
 export interface ArticlePageStateModel {
   pages: ArticlePageItem[];
   currentPage: ArticlePage | null;
+  toc: TocItem[];
 }
 
 @State<ArticlePageStateModel>({
@@ -14,6 +15,7 @@ export interface ArticlePageStateModel {
   defaults: {
     pages: [],
     currentPage: null,
+    toc: [],
   },
 })
 @Injectable()
@@ -28,6 +30,11 @@ export class ArticlePageState {
     return state.currentPage;
   }
 
+  @Selector()
+  static getToc(state: ArticlePageStateModel): TocItem[] {
+    return state.toc;
+  }
+
   @Action(SetArticlePageItems)
   setArticlePageItems(ctx: StateContext<ArticlePageStateModel>, action: SetArticlePageItems) {
     ctx.patchState({ pages: action.pages });
@@ -36,5 +43,10 @@ export class ArticlePageState {
   @Action(SetArticlePage)
   setArticlePage(ctx: StateContext<ArticlePageStateModel>, action: SetArticlePage) {
     ctx.patchState({ currentPage: action.page });
+  }
+
+  @Action(SetToc)
+  setToc(ctx: StateContext<ArticlePageStateModel>, action: SetToc) {
+    ctx.patchState({ toc: action.toc });
   }
 }

@@ -5,6 +5,7 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import { ISRHandler } from '@rx-angular/isr/server';
+import compression from 'compression';
 import express from 'express';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -15,6 +16,9 @@ const indexHtml = existsSync(indexHtmlPath) ? readFileSync(indexHtmlPath, 'utf-8
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+// Enable gzip/brotli compression for all responses
+app.use(compression() as any);
 
 // ISRHandler for caching (only initialize if index.html exists)
 const isr = indexHtml

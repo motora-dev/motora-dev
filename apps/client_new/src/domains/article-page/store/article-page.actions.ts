@@ -1,4 +1,4 @@
-import { ArticlePage, ArticlePageItem } from '../model';
+import { ArticlePage, ArticlePageItem, TocItem } from '../model';
 
 export class SetArticlePageItems {
   static readonly type = '[ArticlePage] Set Items';
@@ -8,4 +8,9 @@ export class SetArticlePageItems {
 export class SetArticlePage {
   static readonly type = '[ArticlePage] Set Page';
   constructor(public readonly page: ArticlePage) {}
+}
+
+export class SetToc {
+  static readonly type = '[ArticlePage] Set TOC';
+  constructor(public readonly toc: TocItem[]) {}
 }
