@@ -12,7 +12,11 @@ import { Article } from '$domains/article-list';
     <article
       class="bg-white rounded-xl shadow-md hover:shadow-xl p-5 md:p-6 relative transition-shadow duration-300 cursor-pointer"
     >
-      <a [routerLink]="['/article', article().id]" class="absolute inset-0 z-10"></a>
+      <a
+        [routerLink]="['/article', article().id]"
+        [attr.aria-label]="article().title + 'を読む'"
+        class="absolute inset-0 z-10"
+      ></a>
       <div class="relative pointer-events-none">
         <h2 class="text-xl md:text-2xl font-bold mb-3 text-gray-900 truncate">
           {{ article().title || '(タイトルなし)' }}
