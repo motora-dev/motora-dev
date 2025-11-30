@@ -33,7 +33,8 @@ export class ArticleDetailComponent implements OnInit {
         )
         .subscribe((pages) => {
           const firstPage = pages.reduce((min, page) => (page.order < min.order ? page : min), pages[0]);
-          this.router.navigate(['/article', articleId, firstPage.id]);
+          // replaceUrl: true で履歴を置き換え、戻るボタンで前のページに戻れるようにする
+          this.router.navigate(['/article', articleId, firstPage.id], { replaceUrl: true });
         });
     }
   }

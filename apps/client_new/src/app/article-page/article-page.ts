@@ -1,10 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { combineLatest, map } from 'rxjs';
 
 import { ArticlePageFacade, ArticlePageItem } from '$domains/article-page';
+import { UiFacade } from '$modules/ui';
 
 @Component({
   selector: 'app-article-page',
@@ -17,10 +19,11 @@ export class ArticlePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly facade = inject(ArticlePageFacade);
+  private readonly uiFacade = inject(UiFacade);
 
   readonly articleId = signal<string>('');
   readonly pageId = signal<string>('');
-  readonly isSidebarOpen = signal(false);
+  readonly isSidebarOpen = toSignal(this.uiFacade.isSidebarOpen$, { initialValue: false });
 
   readonly pages$ = this.facade.pages$;
   readonly currentPage$ = this.facade.currentPage$;
@@ -71,12 +74,8 @@ export class ArticlePageComponent implements OnInit {
     });
   }
 
-  toggleSidebar(): void {
-    this.isSidebarOpen.update((open) => !open);
-  }
-
   closeSidebar(): void {
-    this.isSidebarOpen.set(false);
+    this.uiFacade.closeSidebar();
   }
 
   isCurrentPage(page: ArticlePageItem): boolean {

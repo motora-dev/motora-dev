@@ -18,6 +18,7 @@
       "$components/*": ["src/components/*"],
       "$domains": ["src/domains"],
       "$domains/*": ["src/domains/*"],
+      "$modules": ["src/modules"],
       "$modules/*": ["src/modules/*"],
       "$shared/*": ["src/shared/*"],
       "$shared/ui": ["src/shared/ui"],

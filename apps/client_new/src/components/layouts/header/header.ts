@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
+
+import { UiFacade } from '$modules/ui';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +14,19 @@ import { RouterLink } from '@angular/router';
       <div class="w-full px-4">
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center gap-4 lg:gap-8">
+            <!-- ハンバーガーメニューボタン（モバイルのみ表示、記事詳細ページでのみ表示） -->
+            @if (showMenuButton()) {
+              <button
+                (click)="openSidebar()"
+                class="p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100 lg:hidden"
+                aria-label="メニューを開く"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            }
+
             <a routerLink="/" class="text-xl font-bold text-gray-900 no-underline hover:text-gray-700">
               もとら's dev
             </a>
@@ -23,4 +40,24 @@ import { RouterLink } from '@angular/router';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  private readonly router = inject(Router);
+  private readonly uiFacade = inject(UiFacade);
+
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => (event as NavigationEnd).urlAfterRedirects),
+      startWith(this.router.url),
+    ),
+  );
+
+  readonly showMenuButton = computed(() => {
+    const url = this.currentUrl();
+    return url?.startsWith('/article/') ?? false;
+  });
+
+  openSidebar(): void {
+    this.uiFacade.openSidebar();
+  }
+}

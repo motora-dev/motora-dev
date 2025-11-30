@@ -138,7 +138,7 @@ src/
 │       └── templates/        # ページ固有のテンプレート
 ├── components/       # (c) 複数ページで共有するコンポーネント（Composed UI）
 ├── domains/          # (d) ドメインロジック + 状態管理（NGXS）
-├── modules/          # (m) 機能モジュール（ユースケース） ※将来拡張用
+├── modules/          # (m) app/components/domains間で共有するロジック
 ├── shared/           # (s) 共有リソース
 │   ├── lib/              # ユーティリティ関数
 │   └── ui/               # UIプリミティブ（shadcn/ui相当）
@@ -152,13 +152,13 @@ src/
 
 ### レイヤー構成
 
-| ディレクトリ  | レイヤー              | 責務                                             | 状態     |
-| ------------- | --------------------- | ------------------------------------------------ | -------- |
-| `app/`        | Presentation          | ページ・ルーティング・UI表示                     | 使用中   |
-| `components/` | Presentation (Shared) | 複数ページで共有するUIコンポーネント             | 使用中   |
-| `domains/`    | Domain + Application  | エンティティ・状態管理（NGXS）・ビジネスロジック | 使用中   |
-| `modules/`    | Application           | domains間で共有するユースケース・業務ロジック    | 将来拡張 |
-| `shared/`     | Infrastructure        | ユーティリティ・UIプリミティブ・アダプター       | 使用中   |
+| ディレクトリ  | レイヤー              | 責務                                             | 状態   |
+| ------------- | --------------------- | ------------------------------------------------ | ------ |
+| `app/`        | Presentation          | ページ・ルーティング・UI表示                     | 使用中 |
+| `components/` | Presentation (Shared) | 複数ページで共有するUIコンポーネント             | 使用中 |
+| `domains/`    | Domain + Application  | エンティティ・状態管理（NGXS）・ビジネスロジック | 使用中 |
+| `modules/`    | Application           | app/components/domains間で共有するロジック       | 使用中 |
+| `shared/`     | Infrastructure        | ユーティリティ・UIプリミティブ・アダプター       | 使用中 |
 
 ### 依存関係のルール
 
@@ -174,18 +174,18 @@ app/ ──→ components/ ──→ domains/ ──→ modules/ ──→ share
 
 ### どこに何を置くか
 
-| 対象                        | 配置先                    | 例                                   |
-| --------------------------- | ------------------------- | ------------------------------------ |
-| ルーティング対象のページ    | `app/{page}/`             | `app/home/home.ts`                   |
-| ページ固有のUI部品          | `app/{page}/templates/`   | `app/home/templates/hero-section.ts` |
-| 複数ページで共有するUI      | `components/`             | `components/input-field/`            |
-| Composed UI（ロジック連携） | `components/`             | `components/input-field/`            |
-| 状態管理（NGXS State）      | `domains/{domain}/store/` | `domains/home/store/home.state.ts`   |
-| Facade                      | `domains/{domain}/`       | `domains/home/home.facade.ts`        |
-| ビジネスロジック            | `domains/{domain}/`       | `domains/user/user.service.ts`       |
-| domains間共有ロジック       | `modules/`                | `modules/auth/auth.guard.ts`         |
-| UIプリミティブ（最小単位）  | `shared/ui/`              | `shared/ui/button/button.ts`         |
-| ユーティリティ関数          | `shared/lib/`             | `shared/lib/utils.ts`                |
+| 対象                         | 配置先                    | 例                                   |
+| ---------------------------- | ------------------------- | ------------------------------------ |
+| ルーティング対象のページ     | `app/{page}/`             | `app/home/home.ts`                   |
+| ページ固有のUI部品           | `app/{page}/templates/`   | `app/home/templates/hero-section.ts` |
+| 複数ページで共有するUI       | `components/`             | `components/input-field/`            |
+| Composed UI（ロジック連携）  | `components/`             | `components/input-field/`            |
+| 状態管理（NGXS State）       | `domains/{domain}/store/` | `domains/home/store/home.state.ts`   |
+| Facade                       | `domains/{domain}/`       | `domains/home/home.facade.ts`        |
+| ビジネスロジック             | `domains/{domain}/`       | `domains/user/user.service.ts`       |
+| app/components/domains間共有 | `modules/`                | `modules/ui/ui.facade.ts`            |
+| UIプリミティブ（最小単位）   | `shared/ui/`              | `shared/ui/button/button.ts`         |
+| ユーティリティ関数           | `shared/lib/`             | `shared/lib/utils.ts`                |
 
 ### パスエイリアス
 

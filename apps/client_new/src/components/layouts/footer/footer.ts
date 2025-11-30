@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <footer class="mt-auto bg-white border-t border-gray-200">
-      <div class="max-w-5xl mx-auto py-8 px-4">
+      <div class="max-w-[1280px] mx-auto py-8 px-4">
         <div class="flex flex-col gap-4 items-center">
           <!-- Links -->
           <nav class="flex gap-6 flex-wrap justify-center">
@@ -15,7 +15,14 @@ import { RouterLink } from '@angular/router';
               プライバシーポリシー
             </a>
             <a
-              href="https://github.com/pHo9UBenaA/motora-dev"
+              routerLink="/privacy"
+              fragment="cookie-settings"
+              class="text-gray-600 text-sm no-underline hover:text-gray-900"
+            >
+              Cookie設定
+            </a>
+            <a
+              href="https://github.com/motora-dev/motora-dev"
               target="_blank"
               rel="noopener noreferrer"
               class="text-gray-600 text-sm no-underline hover:text-gray-900 flex items-center gap-1"

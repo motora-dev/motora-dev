@@ -12,6 +12,7 @@ import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { provideStore } from '@ngxs/store';
 
 import { APP_STATES } from '$domains';
+import { MODULE_STATES } from '$modules';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -20,7 +21,11 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
     provideRouter(routes),
-    provideStore(APP_STATES, withNgxsFormPlugin(), withNgxsReduxDevtoolsPlugin({ disabled: !isDevMode() })),
+    provideStore(
+      [...APP_STATES, ...MODULE_STATES],
+      withNgxsFormPlugin(),
+      withNgxsReduxDevtoolsPlugin({ disabled: !isDevMode() }),
+    ),
     provideZonelessChangeDetection(),
   ],
 };
