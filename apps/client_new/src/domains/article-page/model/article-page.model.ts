@@ -1,0 +1,18 @@
+export interface ArticlePageItem {
+  id: string;
+  title: string;
+  level: number;
+  order: number;
+}
+
+export interface ArticlePage {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  title: string;
+  description: string;
+  content: string;
+  level: number;
+  order: number;
+  tags: string[];
+}

@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { combineLatest, map } from 'rxjs';
 
-import { ArticleFacade, PageItem } from '$domains/article';
+import { ArticlePageFacade, ArticlePageItem } from '$domains/article-page';
 
 @Component({
   selector: 'app-article-page',
@@ -13,10 +13,10 @@ import { ArticleFacade, PageItem } from '$domains/article';
   templateUrl: './article-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArticlePageComponent implements OnInit, OnDestroy {
+export class ArticlePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly facade = inject(ArticleFacade);
+  private readonly facade = inject(ArticlePageFacade);
 
   readonly articleId = signal<string>('');
   readonly pageId = signal<string>('');
@@ -24,8 +24,6 @@ export class ArticlePageComponent implements OnInit, OnDestroy {
 
   readonly pages$ = this.facade.pages$;
   readonly currentPage$ = this.facade.currentPage$;
-  readonly loading$ = this.facade.loading$;
-  readonly error$ = this.facade.error$;
 
   readonly safeHtml$ = this.currentPage$.pipe(
     map((page) => (page ? this.sanitizer.bypassSecurityTrustHtml(page.content) : null)),
@@ -73,10 +71,6 @@ export class ArticlePageComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.facade.clear();
-  }
-
   toggleSidebar(): void {
     this.isSidebarOpen.update((open) => !open);
   }
@@ -85,11 +79,11 @@ export class ArticlePageComponent implements OnInit, OnDestroy {
     this.isSidebarOpen.set(false);
   }
 
-  isCurrentPage(page: PageItem): boolean {
+  isCurrentPage(page: ArticlePageItem): boolean {
     return page.id === this.pageId();
   }
 
-  getIndentClass(page: PageItem): string {
+  getIndentClass(page: ArticlePageItem): string {
     return page.level === 2 ? 'ml-4' : '';
   }
 }

@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { ArticleDto } from '$domains/article-list';
+import { Article } from '$domains/article-list';
 
 @Component({
   selector: 'app-article-card',
@@ -34,5 +34,5 @@ import { ArticleDto } from '$domains/article-list';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticleCardComponent {
-  readonly article = input.required<ArticleDto>();
+  readonly article = input.required<Article>();
 }

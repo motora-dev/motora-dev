@@ -1,10 +1,6 @@
-export interface ArticleDto {
+export interface Article {
   id: string;
   title: string | null;
   tags: string[];
-  createdAt: string;
-}
-
-export interface ArticleListDto {
-  articleList: ArticleDto[];
+  createdAt: Date;
 }

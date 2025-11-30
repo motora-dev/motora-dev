@@ -1,13 +1,6 @@
-export class LoadArticleList {
-  static readonly type = '[ArticleList] Load';
-}
+import { Article } from '../model';
 
-export class LoadArticleListSuccess {
-  static readonly type = '[ArticleList] Load Success';
-  constructor(public readonly articleList: import('../model').ArticleDto[]) {}
-}
-
-export class LoadArticleListFailure {
-  static readonly type = '[ArticleList] Load Failure';
-  constructor(public readonly error: string) {}
+export class SetArticleList {
+  static readonly type = '[ArticleList] Set';
+  constructor(public articleList: Article[]) {}
 }

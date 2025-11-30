@@ -1,11 +1,9 @@
 // Re-export from each domain
-export * from './article';
 export * from './article-list';
-export * from './home';
+export * from './article-page';
 
 // Aggregate all NGXS states for store configuration
-import { ArticleState } from './article';
-import { ArticleListState } from './article-list';
-import { HomeState } from './home';
+import { ArticleListState } from './article-list/store';
+import { ArticlePageState } from './article-page/store';
 
-export const APP_STATES = [ArticleState, ArticleListState, HomeState];
+export const APP_STATES = [ArticleListState, ArticlePageState];
