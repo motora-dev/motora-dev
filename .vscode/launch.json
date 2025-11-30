@@ -16,7 +16,7 @@
     {
       "type": "msedge",
       "request": "launch",
-      "name": "Debug Next.js",
+      "name": "Attach to Next.js",
       "url": "http://localhost:3000",
       "port": 9229,
       "webRoot": "${workspaceFolder}/apps/client",
@@ -27,15 +27,15 @@
       "request": "launch",
       "name": "Start Angular",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "--filter=client_new", "start"],
+      "runtimeArgs": ["run", "--filter=client-new", "start"],
       "restart": true,
       "console": "integratedTerminal"
     },
     {
       "type": "msedge",
       "request": "launch",
-      "name": "Debug Angular",
-      "url": "http://localhost:3000",
+      "name": "Attach to Angular",
+      "url": "http://localhost:4200",
       "port": 9229,
       "webRoot": "${workspaceFolder}/apps/client_new",
       "sourceMaps": true
@@ -53,11 +53,11 @@
   "compounds": [
     {
       "name": "Debug Next.js",
-      "configurations": ["Start Next.js", "Debug Next.js", "Debug Server"]
+      "configurations": ["Start Next.js", "Attach to Next.js", "Debug Server"]
     },
     {
       "name": "Debug Angular",
-      "configurations": ["Start Angular", "Debug Angular", "Debug Server"]
+      "configurations": ["Start Angular", "Attach to Angular", "Debug Server"]
     }
   ]
 }
