@@ -17,17 +17,17 @@
     "lint:fix": "pnpm lint:eslint:fix",
     "lint:eslint": "eslint src --config eslint.config.mjs --max-warnings 0",
     "lint:eslint:fix": "pnpm lint:eslint --fix",
-    "test": "jest",
-    "test:coverage": "COLLECT_COVERAGE=true jest"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@monorepo/eslint-config": "workspace:*",
     "@monorepo/typescript-config": "workspace:*",
     "@tiptap/pm": "catalog:",
-    "@types/jest": "^30.0.0",
     "@types/katex": "^0.16.7",
-    "jest": "catalog:",
-    "typescript": "catalog:"
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@types/markdown-it": "^14.0.0",

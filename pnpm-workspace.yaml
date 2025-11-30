@@ -5,42 +5,80 @@ packages:
 versions:
   '@tanstack/react-form': &tanstack-react-form 1.23.7
   '@tanstack/react-query': &tanstack-react-query 5.90.7
+  angular: &angular 21.0.1
+  angular-build: &angular-build 21.0.1
+  angular-cdk: &angular-cdk 21.0.1
+  class-variance-authority: &cva 0.7.1
+  clsx: &clsx 2.1.1
   esbuild: &esbuild 0.27.0
   eslint: &eslint 9.39.1
+  eslint-eslintrc: &eslint-eslintrc 3.3.3
+  eslint-plugin-boundaries: &eslint-plugin-boundaries 5.3.0
+  eslint-plugin-turbo: &eslint-plugin-turbo 2.6.1
   google-auth-library: &google-auth-library 10.5.0
   husky: &husky 9.1.7
   jest: &jest 30.2.0
-  lint-staged: &lint-staged 16.2.6
-  next: &next 16.0.1
-  node: &node 24.9.2
-  nestjs: &nestjs 11.1.8
-  playwright: &playwright 1.56.1
-  prettier: &prettier 3.6.2
-  prisma: &prisma 7.0.0
+  jsdom: &jsdom 27.2.0
+  lint-staged: &lint-staged 16.2.7
+  next: &next 16.0.5
+  node: &node 24.10.1
+  nestjs: &nestjs 11.1.9
+  nestjs-cli: &nestjs-cli 11.0.14
+  ngxs: &ngxs 20.1.0
+  playwright: &playwright 1.57.0
+  postcss: &postcss 8.5.6
+  prettier: &prettier 3.7.3
+  prisma: &prisma 7.0.1
   react: &react 19.2.0
   rimraf: &rimraf 6.1.2
+  rx-angular: &rx-angular 20.1.0
+  rx-angular-isr: &rx-angular-isr 20.0.0
   rxjs: &rxjs 7.8.2
-  storybook: &storybook 10.0.6
-  stylelint: &stylelint 16.25.0
-  supabase: &supabase 2.80.0
+  storybook: &storybook 10.1.2
+  stylelint: &stylelint 16.26.1
+  supabase: &supabase 2.86.0
   swc: &swc 1.15.3
+  tailwind-merge: &tailwind-merge 3.4.0
   tailwindcss: &tailwindcss 4.1.17
-  tiptap: &tiptap 3.10.4
-  turbo: &turbo 2.6.0
+  tiptap: &tiptap 3.11.1
+  turbo: &turbo 2.6.1
   typescript: &typescript 5.9.3
   unplugin-swc: &unplugin-swc 1.5.9
-  vitest: &vitest 4.0.8
-  zod: &zod 4.1.12
-  zustand: &zustand 5.0.8
+  vite: &vite 7.2.4
+  vitest: &vitest 4.0.14
+  zod: &zod 4.1.13
+  zustand: &zustand 5.0.9
 
 catalog:
+  '@angular/build': *angular-build
+  '@angular/cdk': *angular-cdk
+  '@angular/cli': *angular-build
+  '@angular/common': *angular
+  '@angular/compiler': *angular
+  '@angular/compiler-cli': *angular
+  '@angular/core': *angular
+  '@angular/forms': *angular
+  '@angular/platform-browser': *angular
+  '@angular/platform-server': *angular
+  '@angular/router': *angular
+  '@angular/ssr': *angular-build
+  '@eslint/eslintrc': *eslint-eslintrc
+  '@eslint/js': *eslint
+  '@nestjs/cli': *nestjs-cli
   '@nestjs/common': *nestjs
   '@nestjs/core': *nestjs
   '@nestjs/platform-express': *nestjs
   '@nestjs/testing': *nestjs
+  '@ngxs/devtools-plugin': *ngxs
+  '@ngxs/form-plugin': *ngxs
+  '@ngxs/store': *ngxs
   '@prisma/client': *prisma
+  '@rx-angular/cdk': *rx-angular
+  '@rx-angular/isr': *rx-angular-isr
+  '@rx-angular/template': *rx-angular
   '@storybook/addon-a11y': *storybook
   '@storybook/addon-vitest': *storybook
+  '@storybook/angular': *storybook
   '@storybook/nextjs-vite': *storybook
   '@supabase/supabase-js': *supabase
   '@swc/core': *swc
@@ -58,15 +96,22 @@ catalog:
   '@vitest/browser': *vitest
   '@vitest/browser-playwright': *vitest
   '@vitest/coverage-v8': *vitest
+  class-variance-authority: *cva
+  clsx: *clsx
   esbuild: *esbuild
   eslint: *eslint
+  eslint-plugin-boundaries: *eslint-plugin-boundaries
+
+  eslint-plugin-turbo: *eslint-plugin-turbo
   google-auth-library: *google-auth-library
   husky: *husky
   jest: *jest
   jest-environment-jsdom: *jest
+  jsdom: *jsdom
   lint-staged: *lint-staged
   next: *next
   playwright: *playwright
+  postcss: *postcss
   prettier: *prettier
   prisma: *prisma
   react: *react
@@ -75,21 +120,26 @@ catalog:
   rxjs: *rxjs
   storybook: *storybook
   stylelint: *stylelint
+  tailwind-merge: *tailwind-merge
   tailwindcss: *tailwindcss
   turbo: *turbo
   typescript: *typescript
   unplugin-swc: *unplugin-swc
+  vite: *vite
   vitest: *vitest
   zod: *zod
   zustand: *zustand
 
 ignoredBuiltDependencies:
   - '@nestjs/core'
+  - '@parcel/watcher'
   - '@prisma/client'
   - '@prisma/engines'
   - '@swc/core'
   - '@tailwindcss/oxide'
   - esbuild
+  - lmdb
+  - msgpackr-extract
   - prisma
   - sharp
   - unrs-resolver

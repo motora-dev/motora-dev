@@ -2,7 +2,6 @@ import { PrismaClient } from '@monorepo/database/client';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-
 @Injectable()
 export class PrismaAdapter extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {

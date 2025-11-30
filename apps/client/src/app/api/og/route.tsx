@@ -34,80 +34,78 @@ export async function GET(req: NextRequest) {
     const fontData = await loadGoogleFont(text);
 
     return new ImageResponse(
-      (
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          backgroundColor: '#fff',
+          padding: '40px 60px',
+          position: 'relative',
+        }}
+      >
+        {/* 背景装飾 */}
         <div
           style={{
-            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            backgroundColor: '#fff',
-            padding: '40px 60px',
-            position: 'relative',
+            height: '10px',
+            background: 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)',
+          }}
+        />
+
+        {/* タグ */}
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+          {tags.map((tag) => (
+            <div
+              key={tag}
+              style={{
+                fontSize: 20,
+                background: '#eff6ff',
+                color: '#2563eb',
+                padding: '6px 16px',
+                borderRadius: '50px',
+                fontWeight: 600,
+              }}
+            >
+              {tag}
+            </div>
+          ))}
+        </div>
+
+        {/* タイトル */}
+        <div
+          style={{
+            fontSize: 60,
+            fontWeight: 700,
+            color: '#111827',
+            lineHeight: 1.3,
+            wordBreak: 'break-word',
+            maxWidth: '100%',
           }}
         >
-          {/* 背景装飾 */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '10px',
-              background: 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)',
-            }}
-          />
-
-          {/* タグ */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
-            {tags.map((tag) => (
-              <div
-                key={tag}
-                style={{
-                  fontSize: 20,
-                  background: '#eff6ff',
-                  color: '#2563eb',
-                  padding: '6px 16px',
-                  borderRadius: '50px',
-                  fontWeight: 600,
-                }}
-              >
-                {tag}
-              </div>
-            ))}
-          </div>
-
-          {/* タイトル */}
-          <div
-            style={{
-              fontSize: 60,
-              fontWeight: 700,
-              color: '#111827',
-              lineHeight: 1.3,
-              wordBreak: 'break-word',
-              maxWidth: '100%',
-            }}
-          >
-            {title}
-          </div>
-
-          {/* フッター（ブランド名など） */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 40,
-              right: 60,
-              fontSize: 24,
-              color: '#9ca3af',
-              fontWeight: 700,
-            }}
-          >
-            Motora
-          </div>
+          {title}
         </div>
-      ),
+
+        {/* フッター（ブランド名など） */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 40,
+            right: 60,
+            fontSize: 24,
+            color: '#9ca3af',
+            fontWeight: 700,
+          }}
+        >
+          Motora
+        </div>
+      </div>,
       {
         width: 1200,
         height: 630,

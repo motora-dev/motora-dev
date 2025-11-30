@@ -1,0 +1,33 @@
+<main class="min-h-screen max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+  <div class="mb-8 md:mb-10 lg:mb-12">
+    <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">記事一覧</h1>
+    <p class="text-base md:text-lg lg:text-xl text-gray-600">技術記事やチュートリアルを掲載しています</p>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading$ | async) {
+  <div class="text-center py-16 md:py-20 lg:py-24 bg-gray-50 rounded-lg">
+    <p class="text-base md:text-lg text-gray-600">読み込み中...</p>
+  </div>
+  }
+
+  <!-- Error state -->
+  @if ((error$ | async) && !(loading$ | async)) {
+  <div class="text-center py-16 md:py-20 lg:py-24 bg-gray-50 rounded-lg">
+    <p class="text-base md:text-lg text-gray-600">記事の取得に失敗しました</p>
+  </div>
+  }
+
+  <!-- Article list -->
+  @if (!(loading$ | async) && !(error$ | async)) { @if ((articleList$ | async)?.length === 0) {
+  <div class="text-center py-16 md:py-20 lg:py-24 bg-gray-50 rounded-lg">
+    <p class="text-base md:text-lg text-gray-600">記事がありません</p>
+  </div>
+  } @else {
+  <div class="flex flex-col gap-4">
+    @for (article of articleList$ | async; track article.id) {
+    <app-article-card [article]="article" />
+    }
+  </div>
+  } }
+</main>

@@ -3,6 +3,7 @@
   "include": ["src/**/*.spec.ts", "src/**/*.ts"],
   "exclude": ["node_modules", ".turbo", "dist"],
   "compilerOptions": {
-    "types": ["jest", "node"]
+    "target": "ES2023",
+    "types": ["node", "vitest/globals"]
   }
 }

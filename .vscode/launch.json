@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Next.js",
+      "name": "Start Next.js",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["run", "--filter=client", "start"],
       "restart": true,
@@ -16,10 +16,28 @@
     {
       "type": "msedge",
       "request": "launch",
-      "name": "Debug Client",
+      "name": "Debug Next.js",
       "url": "http://localhost:3000",
       "port": 9229,
-      "webRoot": "${workspaceFolder}/packages/client",
+      "webRoot": "${workspaceFolder}/apps/client",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Start Angular",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "--filter=client_new", "start"],
+      "restart": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Debug Angular",
+      "url": "http://localhost:3000",
+      "port": 9229,
+      "webRoot": "${workspaceFolder}/apps/client_new",
       "sourceMaps": true
     },
     {
@@ -34,8 +52,12 @@
   ],
   "compounds": [
     {
-      "name": "Debug",
-      "configurations": ["Debug Next.js", "Debug Client", "Debug Server"]
+      "name": "Debug Next.js",
+      "configurations": ["Start Next.js", "Debug Next.js", "Debug Server"]
+    },
+    {
+      "name": "Debug Angular",
+      "configurations": ["Start Angular", "Debug Angular", "Debug Server"]
     }
   ]
 }

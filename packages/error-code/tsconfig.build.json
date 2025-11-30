@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src/**/*.ts", "index.ts"],
-  "exclude": [".turbo", "coverage", "node_modules", "src/**/*spec.ts"]
+  "exclude": [".turbo", "coverage", "node_modules", "src/**/*spec.ts"],
+  "compilerOptions": {
+    "composite": true
+  }
 }
