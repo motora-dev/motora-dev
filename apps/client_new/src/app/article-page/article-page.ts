@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RxLet } from '@rx-angular/template/let';
+import { RxIf } from '@rx-angular/template/if';
+import { RxPush } from '@rx-angular/template/push';
 import { combineLatest, filter, map, take } from 'rxjs';
 
 import { ArticlePageFacade } from '$domains/article-page/article-page.facade';
@@ -17,7 +18,7 @@ import {
 @Component({
   selector: 'app-article-page',
   standalone: true,
-  imports: [RxLet, ArticlePageLeftSidebarComponent, ArticlePageContentComponent, ArticlePageRightSidebarComponent],
+  imports: [RxIf, RxPush, ArticlePageLeftSidebarComponent, ArticlePageContentComponent, ArticlePageRightSidebarComponent],
   providers: [ArticlePageFacade],
   templateUrl: './article-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

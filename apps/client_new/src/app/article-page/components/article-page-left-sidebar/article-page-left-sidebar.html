@@ -1,6 +1,11 @@
 <!-- Sidebar overlay (mobile only) -->
 @if (isOpen()) {
-<div class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" (click)="onCloseSidebar()" aria-hidden="true"></div>
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+  [unpatch]="['click']"
+  (click)="onCloseSidebar()"
+  aria-hidden="true"
+></div>
 }
 
 <!-- Left sidebar: Page list -->
@@ -14,6 +19,7 @@
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-sm font-semibold text-gray-900">目次</h2>
       <button
+        [unpatch]="['click']"
         (click)="onCloseSidebar()"
         class="lg:hidden p-1 rounded hover:bg-gray-200 transition-colors"
         aria-label="閉じる"
@@ -44,4 +50,3 @@
     </ul>
   </nav>
 </aside>
-

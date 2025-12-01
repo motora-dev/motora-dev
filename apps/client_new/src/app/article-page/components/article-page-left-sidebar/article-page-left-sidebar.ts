@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { RxUnpatch } from '@rx-angular/template/unpatch';
 
 import { ArticlePageItem } from '$domains/article-page/model';
 
 @Component({
   selector: 'app-article-page-left-sidebar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RxUnpatch],
   templateUrl: './article-page-left-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

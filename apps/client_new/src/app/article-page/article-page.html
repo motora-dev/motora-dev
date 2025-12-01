@@ -1,38 +1,28 @@
 <!-- Main content -->
-<ng-container *rxLet="currentPage$; let page; suspense: loading">
-  @if (page) {
+<ng-container *rxIf="currentPage$; let page; suspense: loading">
   <div
     class="w-full min-h-screen max-w-[90rem] mx-auto lg:grid lg:grid-cols-[16rem_1fr] xl:grid-cols-[16rem_1fr_14rem]"
   >
     <!-- Left sidebar: Page list -->
-    <ng-container *rxLet="pages$; let pages">
-      <app-article-page-left-sidebar
-        [pages]="pages"
-        [articleId]="articleId()"
-        [currentPageId]="pageId()"
-        [isOpen]="isSidebarOpen()"
-        (closeSidebar)="closeSidebar()"
-      />
-    </ng-container>
+    <app-article-page-left-sidebar
+      [pages]="pages$ | push"
+      [articleId]="articleId()"
+      [currentPageId]="pageId()"
+      [isOpen]="isSidebarOpen()"
+      (closeSidebar)="closeSidebar()"
+    />
 
     <!-- Main content -->
-    <ng-container *rxLet="safeHtml$; let safeHtml">
-      <ng-container *rxLet="navigation$; let navigation">
-        <app-article-page-content
-          [page]="page"
-          [safeHtml]="safeHtml"
-          [navigation]="navigation"
-          [articleId]="articleId()"
-        />
-      </ng-container>
-    </ng-container>
+    <app-article-page-content
+      [page]="page"
+      [safeHtml]="safeHtml$ | push"
+      [navigation]="navigation$ | push"
+      [articleId]="articleId()"
+    />
 
     <!-- Right sidebar: Table of Contents -->
-    <ng-container *rxLet="toc$; let toc">
-      <app-article-page-right-sidebar [toc]="toc" [articleId]="articleId()" [pageId]="pageId()" />
-    </ng-container>
+    <app-article-page-right-sidebar [toc]="toc$ | push" [articleId]="articleId()" [pageId]="pageId()" />
   </div>
-  }
 </ng-container>
 
 <ng-template #loading>

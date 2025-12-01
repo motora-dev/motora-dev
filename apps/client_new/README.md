@@ -534,42 +534,118 @@ State に `textForm` を定義すると、フォームの値が自動的に Stor
 
 `provideZonelessChangeDetection()` により Zone.js を使用せず、効率的な変更検知を実現。
 
-### @rx-angular/template（RxLet）
+### @rx-angular/template
 
-Observable をテンプレートで使用する際は `AsyncPipe` ではなく `@rx-angular/template` の `RxLet` を使用します。
+Observable をテンプレートで使用する際は `AsyncPipe` ではなく `@rx-angular/template` を使用します。
 
-**なぜ RxLet を使うか:**
+**なぜ rx-angular を使うか:**
 
 - Zoneless 環境で必須（`AsyncPipe` は Zone.js に依存）
 - 変更検知の効率化（最適なタイミングで `markForCheck()` を呼び出し）
 - SSR との相性が良い
 
-**使用方法:**
+#### ディレクティブ・パイプの使い分け
+
+| 機能        | 用途                                         | 例                                           |
+| ----------- | -------------------------------------------- | -------------------------------------------- |
+| `RxLet`     | Observable を変数として展開                  | `*rxLet="data$; let data"`                   |
+| `RxIf`      | Observable の値で条件分岐 + suspense 対応    | `*rxIf="page$; let page; suspense: loading"` |
+| `RxFor`     | Observable 配列のループ（将来用）            | `*rxFor="let item of items$; trackBy: 'id'"` |
+| `RxPush`    | プロパティバインディングで Observable を使用 | `[data]="data$ \| push"`                     |
+| `RxUnpatch` | イベントを Zone.js から除外                  | `<div [unpatch]="['click']" (click)="...">`  |
+
+#### RxIf + RxPush の使用例
 
 ```typescript
-import { RxLet } from '@rx-angular/template/let';
+import { RxIf } from '@rx-angular/template/if';
+import { RxPush } from '@rx-angular/template/push';
 
 @Component({
-  imports: [RxLet],
+  imports: [RxIf, RxPush],
 })
 export class MyComponent {
-  readonly data$ = this.facade.data$;
+  readonly page$ = this.facade.page$;
+  readonly items$ = this.facade.items$;
 }
 ```
 
 ```html
-<ng-container *rxLet="data$; let data"> {{ data }} </ng-container>
+<!-- RxIf: 条件分岐 + suspense -->
+<ng-container *rxIf="page$; let page; suspense: loading">
+  <!-- RxPush: 子コンポーネントへのバインディング -->
+  <app-content [page]="page" [items]="items$ | push" />
+</ng-container>
+
+<ng-template #loading>
+  <p>読み込み中...</p>
+</ng-template>
 ```
 
-**複数の Observable を扱う場合:**
+#### RxUnpatch の使用例
+
+Change Detection が不要なイベント（オーバーレイのクリックなど）に使用します。
 
 ```html
-<ng-container *rxLet="currentPage$; let page">
-  @if (page) {
-  <ng-container *rxLet="items$; let items">
-    <app-content [page]="page" [items]="items" />
-  </ng-container>
-  }
+<!-- unpatch: Zone.js を介さずにイベントを処理 -->
+<div class="overlay" [unpatch]="['click']" (click)="closeSidebar()"></div>
+
+<!-- 複数のイベントを unpatch -->
+<div [unpatch]="['scroll', 'mousemove']" (scroll)="onScroll()">...</div>
+```
+
+```typescript
+import { RxUnpatch } from '@rx-angular/template/unpatch';
+
+@Component({
+  imports: [RxUnpatch],
+})
+export class SidebarComponent { ... }
+```
+
+#### Signal vs Observable の使い分け
+
+| データソース   | 推奨技術                | 理由                                            |
+| -------------- | ----------------------- | ----------------------------------------------- |
+| **Signal**     | 組み込み `@if` / `@for` | Signal はすでに効率的な Change Detection を持つ |
+| **Observable** | RxIf / RxFor / RxPush   | Zone.js を介さず Observable をサブスクライブ    |
+
+**Signal を rx-angular に置き換えない理由:**
+
+1. **Signal はすでに効率的**: Angular Signal は Zone.js に依存しないリアクティブプリミティブ
+2. **rx-angular は Observable 向け**: RxIf/RxFor/RxPush は非同期ストリーム（Observable）を効率的にテンプレートにバインドするために設計
+3. **変換オーバーヘッドを避ける**: Signal を Observable に変換（`toObservable()`）するのは不要な複雑さ
+4. **Angular 17+ の `@if`/`@for` は Signal と最適化**: 組み込みコントロールフローは Signal を意識して設計されている
+
+```typescript
+// ✅ Signal には組み込み @if/@for を使用
+@Component({ ... })
+export class ArticleListContentComponent {
+  readonly articles = input.required<Article[]>();
+}
+```
+
+```html
+<!-- Signal ベース: 組み込み @for で十分 -->
+@for (article of articles(); track article.id) {
+<app-article-card [article]="article" />
+}
+```
+
+```typescript
+// ✅ Observable には rx-angular を使用
+@Component({
+  imports: [RxIf, RxPush],
+})
+export class ArticlePageComponent {
+  readonly page$ = this.facade.page$;
+  readonly items$ = this.facade.items$;
+}
+```
+
+```html
+<!-- Observable ベース: RxIf + RxPush -->
+<ng-container *rxIf="page$; let page">
+  <app-content [items]="items$ | push" />
 </ng-container>
 ```
 
