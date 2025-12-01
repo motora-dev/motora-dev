@@ -20,7 +20,7 @@ export { createMarkdownParser, parseMarkdown } from './src/parser';
 export { createMarkdownSerializer, serializeToMarkdown } from './src/serializer';
 
 // HTML Converter (Markdown → HTML)
-export { markdownToHtml } from './src/html-converter';
+export { markdownToHtml, type MarkdownToHtmlOptions } from './src/html-converter';
 
 // TOC Extractor (Markdown → Table of Contents)
 export { extractTableOfContents, type TocItem } from './src/toc-extractor';

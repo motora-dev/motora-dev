@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <footer class="mt-auto bg-white border-t border-gray-200">
+    <footer class="mt-auto bg-white border-t border-gray-200 min-h-[120px]">
       <div class="max-w-[1280px] mx-auto py-8 px-4">
         <div class="flex flex-col gap-4 items-center">
           <!-- Links -->

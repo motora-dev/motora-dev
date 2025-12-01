@@ -44,7 +44,7 @@ export class ArticlePageFacade {
 
     this.api
       .getPage(articleId, pageId)
-      .pipe(switchMap((response) => this.processPageContent(response, contentKey, tocKey)))
+      .pipe(switchMap((response) => this.processPageContent(response, articleId, pageId, contentKey, tocKey)))
       .subscribe();
   }
 
@@ -56,6 +56,8 @@ export class ArticlePageFacade {
    */
   private processPageContent(
     response: ArticlePageResponse,
+    articleId: string,
+    pageId: string,
     contentKey: StateKey<string>,
     tocKey: StateKey<TocItem[]>,
   ): Observable<void> {
@@ -70,7 +72,7 @@ export class ArticlePageFacade {
 
     // サーバーサイド: HTML変換とTOC抽出を実行してTransferStateに保存
     if (isPlatformServer(this.platformId)) {
-      return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
+      return from(this.convertMarkdownAndExtractToc(response.content, articleId, pageId)).pipe(
         switchMap(({ html, toc }) => {
           this.transferState.set(contentKey, html);
           this.transferState.set(tocKey, toc);
@@ -80,7 +82,7 @@ export class ArticlePageFacade {
     }
 
     // クライアントサイドでキャッシュがない場合（SPA遷移時）
-    return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
+    return from(this.convertMarkdownAndExtractToc(response.content, articleId, pageId)).pipe(
       switchMap(({ html, toc }) => this.dispatchPage(response, html, toc)),
     );
   }
@@ -95,11 +97,15 @@ export class ArticlePageFacade {
    * 動的インポートにより、初期バンドルからhighlight.js等を除外
    * クライアントではAppFacadeによりアイドル時にプリロード済み
    */
-  private async convertMarkdownAndExtractToc(markdown: string): Promise<{ html: string; toc: TocItem[] }> {
+  private async convertMarkdownAndExtractToc(
+    markdown: string,
+    articleId: string,
+    pageId: string,
+  ): Promise<{ html: string; toc: TocItem[] }> {
     const { markdownToHtml, extractTableOfContents } = await import('@monorepo/markdown');
     const { highlightHtml } = await import('$shared/ui/highlighter');
 
-    const htmlWithoutHighlight = markdownToHtml(markdown);
+    const htmlWithoutHighlight = markdownToHtml(markdown, { articleId, pageId });
     const html = highlightHtml(htmlWithoutHighlight);
     const tocRaw = extractTableOfContents(markdown);
 
