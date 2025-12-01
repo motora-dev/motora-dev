@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, input, output, viewChild } from '@angular/core';
 import { RxUnpatch } from '@rx-angular/template/unpatch';
 
 import { TocItem } from '$domains/article-page/model';
@@ -11,12 +11,29 @@ import { TocItem } from '$domains/article-page/model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageRightSidebarComponent {
+  private readonly tocNavRef = viewChild<ElementRef<HTMLElement>>('tocNav');
+
   readonly toc = input.required<TocItem[]>();
   readonly articleId = input.required<string>();
   readonly pageId = input.required<string>();
   readonly activeTocId = input<string | null>(null);
 
   readonly tocClick = output<string>();
+
+  constructor() {
+    effect(() => {
+      const activeId = this.activeTocId();
+      if (activeId && this.tocNavRef()) {
+        this.scrollToActiveItem(activeId);
+      }
+    });
+  }
+
+  private scrollToActiveItem(id: string): void {
+    const navElement = this.tocNavRef()?.nativeElement;
+    const activeElement = navElement?.querySelector(`[data-toc-id="${id}"]`);
+    activeElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 
   getTocIndentClass(item: TocItem): string {
     if (item.level === 2) return 'ml-3';
@@ -52,4 +69,3 @@ export class ArticlePageRightSidebarComponent {
     }
   }
 }
-
