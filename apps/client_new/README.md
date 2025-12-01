@@ -264,8 +264,8 @@ app/ ──→ components/ ──→ domains/ ──→ modules/ ──→ share
 | ---------------------------- | ------------------------- | ------------------------------------ |
 | ルーティング対象のページ     | `app/{page}/`             | `app/home/home.ts`                   |
 | ページ固有のUI部品           | `app/{page}/templates/`   | `app/home/templates/hero-section.ts` |
-| 複数ページで共有するUI       | `components/`             | `components/input-field/`            |
-| Composed UI（ロジック連携）  | `components/`             | `components/input-field/`            |
+| 複数ページで共有するUI       | `components/`             | `components/fields/input-field/`     |
+| Composed UI（ロジック連携）  | `components/`             | `components/fields/input-field/`     |
 | 状態管理（NGXS State）       | `domains/{domain}/store/` | `domains/home/store/home.state.ts`   |
 | Facade                       | `domains/{domain}/`       | `domains/home/home.facade.ts`        |
 | ビジネスロジック             | `domains/{domain}/`       | `domains/user/user.service.ts`       |
@@ -279,7 +279,7 @@ app/ ──→ components/ ──→ domains/ ──→ modules/ ──→ share
 import { ButtonDirective } from '$shared/ui';
 import { cn } from '$shared/lib';
 import { HomeFacade } from '$domains/home';
-import { InputFieldComponent } from '$components/input-field';
+import { InputFieldComponent } from '$components/fields';
 ```
 
 | エイリアス      | パス               |
@@ -693,7 +693,7 @@ pnpm storybook        # http://localhost:6006
 | ---------- | ------------------------- | ------------------- |
 | UI         | `shared/ui/button/`       | ButtonDirective     |
 | UI         | `shared/ui/input/`        | InputDirective      |
-| Components | `components/input-field/` | InputFieldComponent |
+| Components | `components/fields/input-field/` | InputFieldComponent |
 
 ### Stories の書き方
 

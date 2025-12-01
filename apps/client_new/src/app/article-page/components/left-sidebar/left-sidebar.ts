@@ -31,4 +31,3 @@ export class ArticlePageLeftSidebarComponent {
     this.closeSidebar.emit();
   }
 }
-

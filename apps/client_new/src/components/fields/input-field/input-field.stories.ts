@@ -2,7 +2,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { moduleMetadata } from '@storybook/angular';
 
 import { InputFieldComponent } from './input-field';
-import { InputDirective } from '../../shared/ui/input/input';
+import { InputDirective } from '../../../shared/ui/input/input';
 
 import type { Meta, StoryObj } from '@storybook/angular';
 
