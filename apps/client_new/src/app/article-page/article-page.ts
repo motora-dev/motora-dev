@@ -1,3 +1,4 @@
+import { ViewportScroller } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -33,6 +34,7 @@ export class ArticlePageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly viewportScroller = inject(ViewportScroller);
   private readonly facade = inject(ArticlePageFacade);
   private readonly uiFacade = inject(UiFacade);
 
@@ -99,6 +101,7 @@ export class ArticlePageComponent {
       if (newPageId && newPageId !== this.pageId()) {
         this.pageId.set(newPageId);
         this.facade.loadPage(this.articleId(), newPageId);
+        this.viewportScroller.scrollToPosition([0, 0]);
       }
     });
   }
