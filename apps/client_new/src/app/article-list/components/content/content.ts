@@ -7,9 +7,10 @@ import { Article } from '$domains/article-list';
   selector: 'app-article-list-content',
   standalone: true,
   imports: [ArticleCardComponent],
-  templateUrl: './article-list-content.html',
+  templateUrl: './content.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticleListContentComponent {
   readonly articles = input.required<Article[]>();
 }
+

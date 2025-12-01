@@ -7,7 +7,7 @@ import { TocItem } from '$domains/article-page/model';
   selector: 'app-article-page-right-sidebar',
   standalone: true,
   imports: [RxUnpatch],
-  templateUrl: './article-page-right-sidebar.html',
+  templateUrl: './right-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageRightSidebarComponent {
@@ -52,3 +52,4 @@ export class ArticlePageRightSidebarComponent {
     }
   }
 }
+

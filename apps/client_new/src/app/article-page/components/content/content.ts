@@ -28,7 +28,7 @@ export interface ArticlePageNavigation {
   selector: 'app-article-page-content',
   standalone: true,
   imports: [RouterLink, RxUnpatch],
-  templateUrl: './article-page-content.html',
+  templateUrl: './content.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageContentComponent {

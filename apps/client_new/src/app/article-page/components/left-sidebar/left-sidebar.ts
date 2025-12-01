@@ -8,7 +8,7 @@ import { ArticlePageItem } from '$domains/article-page/model';
   selector: 'app-article-page-left-sidebar',
   standalone: true,
   imports: [RouterLink, RxUnpatch],
-  templateUrl: './article-page-left-sidebar.html',
+  templateUrl: './left-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageLeftSidebarComponent {
@@ -31,3 +31,4 @@ export class ArticlePageLeftSidebarComponent {
     this.closeSidebar.emit();
   }
 }
+

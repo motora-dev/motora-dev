@@ -138,7 +138,7 @@ src/
 │       ├── {page}.html       # レイアウト + サブコンポーネント呼び出し
 │       ├── {page}.routes.ts  # ルーティング定義
 │       └── components/       # ページ固有サブコンポーネント
-│           └── {page}-{name}/
+│           └── {name}/
 ├── components/       # (c) 複数ページで共有するコンポーネント（Composed UI）
 ├── domains/          # (d) ドメインロジック + 状態管理（NGXS）
 ├── modules/          # (m) app/components/domains間で共有するロジック
@@ -161,9 +161,9 @@ app/{page}/
 ├── index.ts
 └── components/            # ページ固有サブコンポーネント
     ├── index.ts
-    └── {page}-{name}/
-        ├── {page}-{name}.ts
-        ├── {page}-{name}.html
+    └── {name}/
+        ├── {name}.ts
+        ├── {name}.html
         └── index.ts
 ```
 
