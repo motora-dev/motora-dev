@@ -50,6 +50,10 @@ export default [
               group: 'internal',
             },
             {
+              pattern: '$environments',
+              group: 'internal',
+            },
+            {
               pattern: '$modules',
               group: 'internal',
             },

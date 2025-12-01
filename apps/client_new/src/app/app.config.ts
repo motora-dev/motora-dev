@@ -5,10 +5,13 @@ import { provideRouter } from '@angular/router';
 import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { provideStore } from '@ngxs/store';
 
+import { environment } from '$environments';
+import { API_URL } from '$shared/lib';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: API_URL, useValue: environment.apiUrl },
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),

@@ -1,9 +1,10 @@
 import { isPlatformServer } from '@angular/common';
-import { inject, Injectable, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core';
+import { inject, Injectable, makeStateKey, PLATFORM_ID, StateKey, TransferState } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { from, switchMap } from 'rxjs';
+import { from, Observable, switchMap } from 'rxjs';
 
 import { ArticlePageApi } from './api';
+import { ArticlePageResponse } from './api/article-page.response';
 import { ArticlePage, ArticlePageItem, TocItem } from './model';
 import { ArticlePageState, SetArticlePage, SetArticlePageItems, SetToc } from './store';
 
@@ -43,71 +44,50 @@ export class ArticlePageFacade {
 
     this.api
       .getPage(articleId, pageId)
-      .pipe(
-        switchMap((response) => {
-          // クライアントサイド: TransferStateから変換済みHTML/TOCを取得
-          const cachedContent = this.transferState.get(contentKey, null);
-          const cachedToc = this.transferState.get(tocKey, null);
-          if (cachedContent && cachedToc) {
-            this.transferState.remove(contentKey);
-            this.transferState.remove(tocKey);
-            const page: ArticlePage = {
-              id: response.id,
-              createdAt: new Date(response.createdAt),
-              updatedAt: new Date(response.updatedAt),
-              title: response.title,
-              description: response.description,
-              content: cachedContent,
-              level: response.level,
-              order: response.order,
-              tags: response.tags,
-            };
-            return this.store.dispatch([new SetArticlePage(page), new SetToc(cachedToc)]);
-          }
-
-          // サーバーサイド: HTML変換とTOC抽出を実行してTransferStateに保存
-          if (isPlatformServer(this.platformId)) {
-            return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
-              switchMap(({ html, toc }) => {
-                this.transferState.set(contentKey, html);
-                this.transferState.set(tocKey, toc);
-                const page: ArticlePage = {
-                  id: response.id,
-                  createdAt: new Date(response.createdAt),
-                  updatedAt: new Date(response.updatedAt),
-                  title: response.title,
-                  description: response.description,
-                  content: html,
-                  level: response.level,
-                  order: response.order,
-                  tags: response.tags,
-                };
-                return this.store.dispatch([new SetArticlePage(page), new SetToc(toc)]);
-              }),
-            );
-          }
-
-          // クライアントサイドでキャッシュがない場合（SPA遷移時）
-          // プリロード済みのライブラリを使ってクライアントでMarkdown変換を実行
-          return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
-            switchMap(({ html, toc }) => {
-              const page: ArticlePage = {
-                id: response.id,
-                createdAt: new Date(response.createdAt),
-                updatedAt: new Date(response.updatedAt),
-                title: response.title,
-                description: response.description,
-                content: html,
-                level: response.level,
-                order: response.order,
-                tags: response.tags,
-              };
-              return this.store.dispatch([new SetArticlePage(page), new SetToc(toc)]);
-            }),
-          );
-        }),
-      )
+      .pipe(switchMap((response) => this.processPageContent(response, contentKey, tocKey)))
       .subscribe();
+  }
+
+  /**
+   * ページコンテンツを処理してStoreにディスパッチ
+   * 1. クライアントサイド: TransferStateからキャッシュを取得
+   * 2. サーバーサイド: HTML変換してTransferStateに保存
+   * 3. クライアントサイド（キャッシュなし）: SPA遷移時にクライアントで変換
+   */
+  private processPageContent(
+    response: ArticlePageResponse,
+    contentKey: StateKey<string>,
+    tocKey: StateKey<TocItem[]>,
+  ): Observable<void> {
+    // クライアントサイド: TransferStateから変換済みHTML/TOCを取得
+    const cachedContent = this.transferState.get(contentKey, null);
+    const cachedToc = this.transferState.get(tocKey, null);
+    if (cachedContent && cachedToc) {
+      this.transferState.remove(contentKey);
+      this.transferState.remove(tocKey);
+      return this.dispatchPage(response, cachedContent, cachedToc);
+    }
+
+    // サーバーサイド: HTML変換とTOC抽出を実行してTransferStateに保存
+    if (isPlatformServer(this.platformId)) {
+      return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
+        switchMap(({ html, toc }) => {
+          this.transferState.set(contentKey, html);
+          this.transferState.set(tocKey, toc);
+          return this.dispatchPage(response, html, toc);
+        }),
+      );
+    }
+
+    // クライアントサイドでキャッシュがない場合（SPA遷移時）
+    return from(this.convertMarkdownAndExtractToc(response.content)).pipe(
+      switchMap(({ html, toc }) => this.dispatchPage(response, html, toc)),
+    );
+  }
+
+  private dispatchPage(response: ArticlePageResponse, content: string, toc: TocItem[]): Observable<void> {
+    const page = this.toArticlePage(response, content);
+    return this.store.dispatch([new SetArticlePage(page), new SetToc(toc)]);
   }
 
   /**
@@ -131,5 +111,19 @@ export class ArticlePageFacade {
     }));
 
     return { html, toc };
+  }
+
+  private toArticlePage(response: ArticlePageResponse, content: string): ArticlePage {
+    return {
+      id: response.id,
+      createdAt: new Date(response.createdAt),
+      updatedAt: new Date(response.updatedAt),
+      title: response.title,
+      description: response.description,
+      content,
+      level: response.level,
+      order: response.order,
+      tags: response.tags,
+    };
   }
 }
