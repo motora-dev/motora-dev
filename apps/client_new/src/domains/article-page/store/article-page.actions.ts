@@ -15,7 +15,12 @@ export class SetToc {
   constructor(public readonly toc: TocItem[]) {}
 }
 
-export class SetActiveTocId {
-  static readonly type = '[ArticlePage] Set Active TOC ID';
+export class SetScrollActiveTocId {
+  static readonly type = '[ArticlePage] Set Scroll Active TOC ID';
+  constructor(public readonly id: string | null) {}
+}
+
+export class SetClickedTocId {
+  static readonly type = '[ArticlePage] Set Clicked TOC ID';
   constructor(public readonly id: string | null) {}
 }

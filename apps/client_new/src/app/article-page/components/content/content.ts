@@ -74,31 +74,39 @@ export class ArticlePageContentComponent {
     const tocItems = this.toc();
     if (tocItems.length === 0) return;
 
+    let activeId: string;
+
     // ページ最下部チェック（50px余裕）
     const isAtBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 50;
     if (isAtBottom) {
-      this.facade.setActiveTocId(tocItems[tocItems.length - 1].id);
-      return;
-    }
+      activeId = tocItems[tocItems.length - 1].id;
+    } else {
+      // 通常判定：ヘッダー下を通過した最も下の見出し
+      const headerOffset = 100;
+      const fromTop = window.scrollY + headerOffset;
 
-    // 通常判定：ヘッダー下を通過した最も下の見出し
-    const headerOffset = 100;
-    const fromTop = window.scrollY + headerOffset;
-
-    // 逆順で探索：スクロール位置より上にある最も下の見出しを選択
-    for (let i = tocItems.length - 1; i >= 0; i--) {
-      const element = document.getElementById(tocItems[i].id);
-      if (element) {
-        const elementTop = element.getBoundingClientRect().top + window.scrollY;
-        if (elementTop <= fromTop) {
-          this.facade.setActiveTocId(tocItems[i].id);
-          return;
+      // 逆順で探索：スクロール位置より上にある最も下の見出しを選択
+      activeId = tocItems[0].id; // デフォルト: 最初の見出し
+      for (let i = tocItems.length - 1; i >= 0; i--) {
+        const element = document.getElementById(tocItems[i].id);
+        if (element) {
+          const elementTop = element.getBoundingClientRect().top + window.scrollY;
+          if (elementTop <= fromTop) {
+            activeId = tocItems[i].id;
+            break;
+          }
         }
       }
     }
 
-    // 全ての見出しより上にいる場合は最初の見出し
-    this.facade.setActiveTocId(tocItems[0].id);
+    // スクロール監視で検出されたアクティブIDを更新
+    this.facade.setScrollActiveTocId(activeId);
+
+    // クリックで設定されたIDと一致したらクリア（目的地に到達）
+    const clickedId = this.facade.getClickedTocIdSnapshot();
+    if (clickedId && clickedId === activeId) {
+      this.facade.setClickedTocId(null);
+    }
   }
 
   /**
@@ -138,8 +146,8 @@ export class ArticlePageContentComponent {
       // URLハッシュを更新（replaceStateで履歴を汚さない）
       window.history.replaceState(null, '', `#${headingId}`);
 
-      // アクティブな見出しを更新
-      this.facade.setActiveTocId(headingId);
+      // クリックされた見出しをアクティブに設定
+      this.facade.setClickedTocId(headingId);
     }
   }
 }

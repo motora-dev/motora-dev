@@ -2,13 +2,20 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import { ArticlePage, ArticlePageItem, TocItem } from '../model';
-import { SetActiveTocId, SetArticlePage, SetArticlePageItems, SetToc } from './article-page.actions';
+import {
+  SetArticlePage,
+  SetArticlePageItems,
+  SetClickedTocId,
+  SetScrollActiveTocId,
+  SetToc,
+} from './article-page.actions';
 
 export interface ArticlePageStateModel {
   pages: ArticlePageItem[];
   currentPage: ArticlePage | null;
   toc: TocItem[];
-  activeTocId: string | null;
+  scrollActiveTocId: string | null;
+  clickedTocId: string | null;
 }
 
 @State<ArticlePageStateModel>({
@@ -17,7 +24,8 @@ export interface ArticlePageStateModel {
     pages: [],
     currentPage: null,
     toc: [],
-    activeTocId: null,
+    scrollActiveTocId: null,
+    clickedTocId: null,
   },
 })
 @Injectable()
@@ -39,7 +47,12 @@ export class ArticlePageState {
 
   @Selector()
   static getActiveTocId(state: ArticlePageStateModel): string | null {
-    return state.activeTocId;
+    return state.clickedTocId ?? state.scrollActiveTocId;
+  }
+
+  @Selector()
+  static getClickedTocId(state: ArticlePageStateModel): string | null {
+    return state.clickedTocId;
   }
 
   @Action(SetArticlePageItems)
@@ -57,8 +70,13 @@ export class ArticlePageState {
     ctx.patchState({ toc: action.toc });
   }
 
-  @Action(SetActiveTocId)
-  setActiveTocId(ctx: StateContext<ArticlePageStateModel>, action: SetActiveTocId) {
-    ctx.patchState({ activeTocId: action.id });
+  @Action(SetScrollActiveTocId)
+  setScrollActiveTocId(ctx: StateContext<ArticlePageStateModel>, action: SetScrollActiveTocId) {
+    ctx.patchState({ scrollActiveTocId: action.id });
+  }
+
+  @Action(SetClickedTocId)
+  setClickedTocId(ctx: StateContext<ArticlePageStateModel>, action: SetClickedTocId) {
+    ctx.patchState({ clickedTocId: action.id });
   }
 }

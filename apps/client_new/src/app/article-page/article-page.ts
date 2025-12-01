@@ -108,6 +108,6 @@ export class ArticlePageComponent {
   }
 
   onTocClick(id: string): void {
-    this.facade.setActiveTocId(id);
+    this.facade.setClickedTocId(id);
   }
 }
