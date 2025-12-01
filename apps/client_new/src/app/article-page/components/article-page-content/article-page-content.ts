@@ -12,6 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { RxUnpatch } from '@rx-angular/template/unpatch';
 import { animationFrameScheduler, fromEvent } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
 
@@ -26,7 +27,7 @@ export interface ArticlePageNavigation {
 @Component({
   selector: 'app-article-page-content',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RxUnpatch],
   templateUrl: './article-page-content.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -98,5 +99,47 @@ export class ArticlePageContentComponent {
 
     // 全ての見出しより上にいる場合は最初の見出し
     this.facade.setActiveTocId(tocItems[0].id);
+  }
+
+  /**
+   * コンテンツ内のクリックを処理
+   * 見出しアンカーリンクのクリックをインターセプトし、スムーズスクロールを行う
+   */
+  onContentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    // クリックされた要素または親要素が.heading-anchorリンクか確認
+    const anchor = target.closest('a.heading-anchor') as HTMLAnchorElement | null;
+    if (!anchor) return;
+
+    event.preventDefault();
+
+    // hrefからハッシュ部分を抽出
+    const href = anchor.getAttribute('href');
+    if (!href) return;
+
+    const hashIndex = href.indexOf('#');
+    if (hashIndex === -1) return;
+
+    const headingId = href.slice(hashIndex + 1);
+    const element = document.getElementById(headingId);
+
+    if (element) {
+      // ヘッダーの高さを考慮してスクロール
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+
+      // URLハッシュを更新（replaceStateで履歴を汚さない）
+      window.history.replaceState(null, '', `#${headingId}`);
+
+      // アクティブな見出しを更新
+      this.facade.setActiveTocId(headingId);
+    }
   }
 }
