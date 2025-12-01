@@ -18,7 +18,13 @@ import {
 @Component({
   selector: 'app-article-page',
   standalone: true,
-  imports: [RxIf, RxPush, ArticlePageLeftSidebarComponent, ArticlePageContentComponent, ArticlePageRightSidebarComponent],
+  imports: [
+    RxIf,
+    RxPush,
+    ArticlePageLeftSidebarComponent,
+    ArticlePageContentComponent,
+    ArticlePageRightSidebarComponent,
+  ],
   providers: [ArticlePageFacade],
   templateUrl: './article-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +43,7 @@ export class ArticlePageComponent {
   readonly pages$ = this.facade.pages$;
   readonly currentPage$ = this.facade.currentPage$;
   readonly toc$ = this.facade.toc$;
+  readonly activeTocId$ = this.facade.activeTocId$;
 
   readonly safeHtml$ = this.currentPage$.pipe(
     map((page) => (page ? this.sanitizer.bypassSecurityTrustHtml(page.content) : null)),
@@ -98,5 +105,9 @@ export class ArticlePageComponent {
 
   closeSidebar(): void {
     this.uiFacade.closeSidebar();
+  }
+
+  onTocClick(id: string): void {
+    this.facade.setActiveTocId(id);
   }
 }

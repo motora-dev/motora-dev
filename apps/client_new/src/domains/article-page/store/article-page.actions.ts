@@ -14,3 +14,8 @@ export class SetToc {
   static readonly type = '[ArticlePage] Set TOC';
   constructor(public readonly toc: TocItem[]) {}
 }
+
+export class SetActiveTocId {
+  static readonly type = '[ArticlePage] Set Active TOC ID';
+  constructor(public readonly id: string | null) {}
+}

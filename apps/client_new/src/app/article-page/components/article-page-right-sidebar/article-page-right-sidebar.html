@@ -1,5 +1,5 @@
 <!-- Right sidebar: Table of Contents (見出し目次) -->
-<aside class="hidden xl:block sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto p-4">
+<aside class="hidden lg:block sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto p-4">
   @if (toc().length > 0) {
   <nav aria-label="見出し目次">
     <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">On this page</h2>
@@ -8,8 +8,17 @@
       <li [class]="getTocIndentClass(item)">
         <a
           [href]="'/article/' + articleId() + '/' + pageId() + '#' + item.id"
-          class="block text-sm py-1 text-gray-600 hover:text-gray-900 transition-colors"
+          [unpatch]="['click']"
+          (click)="onTocClick($event, item)"
+          class="block text-sm py-1 px-2 rounded transition-colors"
+          [class.bg-blue-100]="isActive(item)"
+          [class.text-blue-700]="isActive(item)"
+          [class.font-medium]="isActive(item)"
+          [class.text-gray-600]="!isActive(item)"
+          [class.hover:text-gray-900]="!isActive(item)"
+          [class.hover:bg-gray-100]="!isActive(item)"
           [attr.aria-label]="item.text + 'へ移動'"
+          [attr.aria-current]="isActive(item) ? 'true' : null"
         >
           {{ item.text }}
         </a>

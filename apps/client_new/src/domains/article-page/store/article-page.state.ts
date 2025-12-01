@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import { ArticlePage, ArticlePageItem, TocItem } from '../model';
-import { SetArticlePage, SetArticlePageItems, SetToc } from './article-page.actions';
+import { SetActiveTocId, SetArticlePage, SetArticlePageItems, SetToc } from './article-page.actions';
 
 export interface ArticlePageStateModel {
   pages: ArticlePageItem[];
   currentPage: ArticlePage | null;
   toc: TocItem[];
+  activeTocId: string | null;
 }
 
 @State<ArticlePageStateModel>({
@@ -16,6 +17,7 @@ export interface ArticlePageStateModel {
     pages: [],
     currentPage: null,
     toc: [],
+    activeTocId: null,
   },
 })
 @Injectable()
@@ -35,6 +37,11 @@ export class ArticlePageState {
     return state.toc;
   }
 
+  @Selector()
+  static getActiveTocId(state: ArticlePageStateModel): string | null {
+    return state.activeTocId;
+  }
+
   @Action(SetArticlePageItems)
   setArticlePageItems(ctx: StateContext<ArticlePageStateModel>, action: SetArticlePageItems) {
     ctx.patchState({ pages: action.pages });
@@ -48,5 +55,10 @@ export class ArticlePageState {
   @Action(SetToc)
   setToc(ctx: StateContext<ArticlePageStateModel>, action: SetToc) {
     ctx.patchState({ toc: action.toc });
+  }
+
+  @Action(SetActiveTocId)
+  setActiveTocId(ctx: StateContext<ArticlePageStateModel>, action: SetActiveTocId) {
+    ctx.patchState({ activeTocId: action.id });
   }
 }

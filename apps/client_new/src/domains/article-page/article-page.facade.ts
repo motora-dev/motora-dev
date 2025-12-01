@@ -6,7 +6,7 @@ import { from, Observable, switchMap } from 'rxjs';
 import { ArticlePageApi } from './api';
 import { ArticlePageResponse } from './api/article-page.response';
 import { ArticlePage, ArticlePageItem, TocItem } from './model';
-import { ArticlePageState, SetArticlePage, SetArticlePageItems, SetToc } from './store';
+import { ArticlePageState, SetActiveTocId, SetArticlePage, SetArticlePageItems, SetToc } from './store';
 
 // TransferStateのキーを生成する関数
 const makePageContentKey = (articleId: string, pageId: string) =>
@@ -25,6 +25,11 @@ export class ArticlePageFacade {
   readonly pages$ = this.store.select(ArticlePageState.getArticlePageItems);
   readonly currentPage$ = this.store.select(ArticlePageState.getArticlePage);
   readonly toc$ = this.store.select(ArticlePageState.getToc);
+  readonly activeTocId$ = this.store.select(ArticlePageState.getActiveTocId);
+
+  setActiveTocId(id: string | null): void {
+    this.store.dispatch(new SetActiveTocId(id));
+  }
 
   loadPages(articleId: string): void {
     this.api.getPages(articleId).subscribe((response) => {
