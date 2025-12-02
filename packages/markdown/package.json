@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"dist\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "clean": "rimraf .turbo coverage dist node_modules",
     "prebuild": "rm -rf dist",
     "build": "pnpm prebuild && tsc --project tsconfig.build.json",
     "tsc": "pnpm tsc:src && pnpm tsc:spec",
@@ -34,6 +34,7 @@
     "@tiptap/pm": "catalog:",
     "@types/katex": "^0.16.7",
     "@vitest/coverage-v8": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

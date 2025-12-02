@@ -4,7 +4,7 @@
   "scripts": {
     "prepare": "husky || true",
     "clean": "turbo run clean && pnpm run clean:root && pnpm store prune",
-    "clean:root": "find . -type d \\( -name \".turbo\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
+    "clean:root": "rimraf .turbo node_modules",
     "build": "turbo run build",
     "start": "turbo run start",
     "start:prd": "turbo run start:prd",
@@ -24,6 +24,7 @@
     "lint-staged": "catalog:",
     "prettier": "catalog:",
     "husky": "catalog:",
+    "rimraf": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   },

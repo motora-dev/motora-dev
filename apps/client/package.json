@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clean": "find . -type d \\( -name \".next\" -o -name \".turbo\" -o -name \"coverage\" -o -name \"node_modules\" -o -name \"tsconfig.spec.tsbuildinfo\" -o -name \"tsconfig.tsbuildinfo\" \\) -prune -exec rm -rf '{}' +",
+    "clean": "rimraf .next .turbo coverage node_modules tsconfig.spec.tsbuildinfo tsconfig.tsbuildinfo",
     "build": "next build",
     "start": "next dev -p 3000",
     "start:prd": "next start -p 3000",
@@ -90,6 +90,7 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "playwright": "catalog:",
+    "rimraf": "catalog:",
     "storybook": "catalog:",
     "stylelint": "catalog:",
     "stylelint-config-standard": "^39.0.1",

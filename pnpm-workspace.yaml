@@ -47,14 +47,14 @@ versions:
   tailwindcss: &tailwindcss 4.1.17
   tanstack-react-form: &tanstack-react-form 1.26.0
   tanstack-react-query: &tanstack-react-query 5.90.11
-  tiptap: &tiptap 3.11.1
+  tiptap: &tiptap 3.12.0
   turbo: &turbo 2.6.1
   types-react: &types-react 19.2.7
   types-react-dom: &types-react-dom 19.2.3
   typescript: &typescript 5.9.3
   typescript-eslint: &typescript-eslint 8.48.0
   unplugin-swc: &unplugin-swc 1.5.9
-  vite: &vite 7.2.4
+  vite: &vite 7.2.6
   vitest: &vitest 4.0.14
   zod: &zod 4.1.13
   zustand: &zustand 5.0.9
