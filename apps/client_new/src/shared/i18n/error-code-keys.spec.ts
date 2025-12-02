@@ -1,9 +1,8 @@
 import { ERROR_CODE } from '@monorepo/error-code';
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_ERROR_KEY, getErrorCodeKey, isDialogErrorCode } from './error-code-keys';
-
 import jaJson from '$i18n/ja.json';
+import { DEFAULT_ERROR_KEY, getErrorCodeKey, isDialogErrorCode } from './error-code-keys';
 
 /** ページ遷移で処理するステータスコード（ダイアログでは表示しない） */
 const PAGE_NAVIGATE_STATUS_CODES = new Set([401, 403, 404]);

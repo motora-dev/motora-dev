@@ -2,7 +2,7 @@
   "name": "@monorepo/root",
   "private": true,
   "scripts": {
-    "prepare": "husky",
+    "prepare": "husky || true",
     "clean": "turbo run clean && pnpm run clean:root && pnpm store prune",
     "clean:root": "find . -type d \\( -name \".turbo\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
     "build": "turbo run build",

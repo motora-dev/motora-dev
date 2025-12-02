@@ -14,4 +14,3 @@ export const ERROR_ROUTES: Routes = [
     loadComponent: () => import('./not-found/not-found').then((m) => m.NotFoundComponent),
   },
 ];
-

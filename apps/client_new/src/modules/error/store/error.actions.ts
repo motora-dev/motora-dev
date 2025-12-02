@@ -8,4 +8,3 @@ export class ShowError {
 export class ClearError {
   static readonly type = '[Error] Clear Error';
 }
-

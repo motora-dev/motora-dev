@@ -31,4 +31,3 @@ export class ErrorState {
     ctx.patchState({ error: null });
   }
 }
-

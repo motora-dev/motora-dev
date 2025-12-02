@@ -31,4 +31,3 @@ export class SpinnerState {
     ctx.patchState({ loadingCount: Math.max(0, count - 1) });
   }
 }
-

@@ -5,4 +5,3 @@ export class ShowSpinner {
 export class HideSpinner {
   static readonly type = '[Spinner] Hide';
 }
-
