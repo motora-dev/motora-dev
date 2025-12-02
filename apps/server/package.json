@@ -36,6 +36,8 @@
     "@prisma/client": "catalog:",
     "@prisma/client-runtime-utils": "catalog:",
     "@supabase/supabase-js": "catalog:",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
     "cookie-parser": "^1.4.7",
     "csrf-csrf": "^4.0.3",
     "express-session": "^1.18.2",
@@ -62,8 +64,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "unplugin-swc": "catalog:",
-    "vitest": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "lint-staged": {
     "src/**/*.ts": [
