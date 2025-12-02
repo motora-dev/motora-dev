@@ -6,6 +6,7 @@ import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { provideStore } from '@ngxs/store';
 
 import { environment } from '$environments';
+import { SpinnerState } from '$modules/spinner/store/spinner.state';
 import { API_URL } from '$shared/lib';
 import { routes } from './app.routes';
 
@@ -16,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
     provideRouter(routes),
-    provideStore([], withNgxsFormPlugin()),
+    provideStore([SpinnerState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
   ],
 };

@@ -5,13 +5,7 @@
   </div>
 
   <!-- Article list -->
-  <ng-container *rxLet="articleList$; let articles; suspense: loading">
+  <ng-container *rxLet="articleList$; let articles">
     <app-article-list-content [articles]="articles" />
   </ng-container>
-
-  <ng-template #loading>
-    <div class="text-center py-16 md:py-20 lg:py-24">
-      <p class="text-base md:text-lg text-gray-600">読み込み中...</p>
-    </div>
-  </ng-template>
 </main>

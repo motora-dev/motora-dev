@@ -3,6 +3,7 @@ import { inject, Injectable, makeStateKey, PLATFORM_ID, StateKey, TransferState 
 import { Store } from '@ngxs/store';
 import { from, Observable, switchMap } from 'rxjs';
 
+import { SpinnerFacade } from '$modules/spinner';
 import { ArticlePageApi } from './api';
 import { ArticlePageResponse } from './api/article-page.response';
 import { ArticlePage, ArticlePageItem, TocItem } from './model';
@@ -28,6 +29,7 @@ export class ArticlePageFacade {
   private readonly transferState = inject(TransferState);
   private readonly store = inject(Store);
   private readonly api = inject(ArticlePageApi);
+  private readonly spinnerFacade = inject(SpinnerFacade);
 
   readonly pages$ = this.store.select(ArticlePageState.getArticlePageItems);
   readonly currentPage$ = this.store.select(ArticlePageState.getArticlePage);
@@ -48,15 +50,18 @@ export class ArticlePageFacade {
   }
 
   loadPages(articleId: string): void {
-    this.api.getPages(articleId).subscribe((response) => {
-      const pages: ArticlePageItem[] = response.pages.map((r) => ({
-        id: r.id,
-        title: r.title,
-        level: r.level,
-        order: r.order,
-      }));
-      this.store.dispatch(new SetArticlePageItems(pages));
-    });
+    this.api
+      .getPages(articleId)
+      .pipe(this.spinnerFacade.withSpinner())
+      .subscribe((response) => {
+        const pages: ArticlePageItem[] = response.pages.map((r) => ({
+          id: r.id,
+          title: r.title,
+          level: r.level,
+          order: r.order,
+        }));
+        this.store.dispatch(new SetArticlePageItems(pages));
+      });
   }
 
   loadPage(articleId: string, pageId: string): void {
@@ -65,7 +70,10 @@ export class ArticlePageFacade {
 
     this.api
       .getPage(articleId, pageId)
-      .pipe(switchMap((response) => this.processPageContent(response, articleId, pageId, contentKey, tocKey)))
+      .pipe(
+        this.spinnerFacade.withSpinner(),
+        switchMap((response) => this.processPageContent(response, articleId, pageId, contentKey, tocKey)),
+      )
       .subscribe();
   }
 
