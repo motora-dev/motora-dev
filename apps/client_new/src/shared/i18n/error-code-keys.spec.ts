@@ -2,7 +2,7 @@ import { ERROR_CODE } from '@monorepo/error-code';
 import { describe, expect, it } from 'vitest';
 
 import jaJson from '$i18n/ja.json';
-import { DEFAULT_ERROR_KEY, getErrorCodeKey, isDialogErrorCode } from './error-code-keys';
+import { DEFAULT_ERROR_KEY, getErrorCodeKey, isDefinedErrorCode, isDialogErrorCode } from './error-code-keys';
 
 /** ページ遷移で処理するステータスコード（ダイアログでは表示しない） */
 const PAGE_NAVIGATE_STATUS_CODES = new Set([401, 403, 404]);
@@ -11,6 +11,9 @@ const PAGE_NAVIGATE_STATUS_CODES = new Set([401, 403, 404]);
 const DIALOG_ERROR_CODES = Object.values(ERROR_CODE)
   .filter((e) => !PAGE_NAVIGATE_STATUS_CODES.has(e.statusCode))
   .map((e) => e.code);
+
+/** ja.json に定義されているエラーコード */
+const DEFINED_ERROR_CODES = Object.keys(jaJson.errorCodes);
 
 describe('error-code-keys', () => {
   describe('ja.json との整合性', () => {
@@ -44,17 +47,26 @@ describe('error-code-keys', () => {
     });
   });
 
+  describe('isDefinedErrorCode', () => {
+    it.each(DEFINED_ERROR_CODES)('ja.json に定義されているエラーコード "%s" は true を返すこと', (code) => {
+      expect(isDefinedErrorCode(code)).toBe(true);
+    });
+
+    it('ja.json に定義されていないエラーコードは false を返すこと', () => {
+      expect(isDefinedErrorCode('E-999-UNKNOWN-001')).toBe(false);
+    });
+  });
+
   describe('getErrorCodeKey', () => {
-    it.each(DIALOG_ERROR_CODES)('ダイアログ表示対象のエラーコード "%s" は errorCodes.{code} を返すこと', (code) => {
-      expect(getErrorCodeKey(code)).toBe(`errorCodes.${code}`);
-    });
+    it.each(DEFINED_ERROR_CODES)(
+      'ja.json に定義されているエラーコード "%s" は errorCodes.{code} を返すこと',
+      (code) => {
+        expect(getErrorCodeKey(code)).toBe(`errorCodes.${code}`);
+      },
+    );
 
-    it('ページ遷移対象のエラーコードはデフォルトキーを返すこと', () => {
-      expect(getErrorCodeKey(ERROR_CODE.UNAUTHORIZED.code)).toBe(DEFAULT_ERROR_KEY);
-    });
-
-    it('未知のエラーコードはデフォルトキーを返すこと', () => {
-      expect(getErrorCodeKey('E-999-UNKNOWN-001')).toBe(DEFAULT_ERROR_KEY);
+    it('ja.json に定義されていないエラーコードはデフォルトキーを返すこと', () => {
+      expect(getErrorCodeKey('E-999-UNDEFINED-CODE')).toBe(DEFAULT_ERROR_KEY);
     });
   });
 });
