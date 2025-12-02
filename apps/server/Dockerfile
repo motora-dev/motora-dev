@@ -44,8 +44,9 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy necessary files from builder stage
-# 本番ビルドでは全てバンドルされるため、distのみ必要
+# 本番ビルドでは全てバンドルされるため、distとreflect-metadataのみ必要
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
+COPY --from=builder /app/apps/server/node_modules/reflect-metadata ./apps/server/node_modules/reflect-metadata
 
 # Set environment variables
 ENV NODE_ENV=production

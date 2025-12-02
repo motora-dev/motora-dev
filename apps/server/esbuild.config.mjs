@@ -22,9 +22,10 @@ const nestjsOptionalPackages = [
 // 開発時: 全ての依存関係を外部化（ビルド高速化）
 // 本番時: 全てバンドル（node_modules不要）
 const getExternalPackages = () => {
-  // 本番ビルド時はNestJSオプショナルパッケージのみ外部化
+  // 本番ビルド時はNestJSオプショナルパッケージ + reflect-metadataのみ外部化
+  // reflect-metadata: バナーでimportしているため
   if (isProduction) {
-    return nestjsOptionalPackages;
+    return [...nestjsOptionalPackages, 'reflect-metadata'];
   }
 
   // 開発時は全ての外部パッケージを外部化（高速ビルド）
