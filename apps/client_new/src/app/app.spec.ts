@@ -3,14 +3,15 @@ import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideStore } from '@ngxs/store';
 
-import { MODULE_STATES } from '$modules';
+import { ErrorState } from '$modules/error/store';
+import { SpinnerState } from '$modules/spinner/store';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App, TranslateModule.forRoot()],
-      providers: [provideRouter([]), provideStore(MODULE_STATES)],
+      providers: [provideRouter([]), provideStore([ErrorState, SpinnerState])],
     }).compileComponents();
   });
 

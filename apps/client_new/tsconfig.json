@@ -19,10 +19,10 @@
       "$components/*": ["src/components/*"],
       "$domains": ["src/domains"],
       "$domains/*": ["src/domains/*"],
+      "$environments": ["environments/environment"],
       "$i18n/*": ["public/i18n/*"],
       "$modules": ["src/modules"],
       "$modules/*": ["src/modules/*"],
-      "$environments": ["environments/environment"],
       "$shared/*": ["src/shared/*"],
       "$shared/ui": ["src/shared/ui"],
       "$shared/lib": ["src/shared/lib"]

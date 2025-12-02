@@ -42,15 +42,19 @@ export default [
               group: 'internal',
             },
             {
+              pattern: '$environments',
+              group: 'internal',
+            },
+            {
+              pattern: '$i18n/**',
+              group: 'internal',
+            },
+            {
               pattern: '$domains',
               group: 'internal',
             },
             {
               pattern: '$domains/**',
-              group: 'internal',
-            },
-            {
-              pattern: '$environments',
               group: 'internal',
             },
             {
