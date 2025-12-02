@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
     <footer class="mt-auto bg-white border-t border-gray-200 min-h-[120px]">
       <div class="max-w-[1280px] mx-auto py-8 px-4">
@@ -12,14 +13,14 @@ import { RouterLink } from '@angular/router';
           <!-- Links -->
           <nav class="flex gap-6 flex-wrap justify-center">
             <a routerLink="/privacy" class="text-gray-600 text-sm no-underline hover:text-gray-900">
-              プライバシーポリシー
+              {{ 'footer.privacyPolicy' | translate }}
             </a>
             <a
               routerLink="/privacy"
               fragment="cookie-settings"
               class="text-gray-600 text-sm no-underline hover:text-gray-900"
             >
-              Cookie設定
+              {{ 'footer.cookieSettings' | translate }}
             </a>
             <a
               href="https://github.com/motora-dev/motora-dev"
@@ -37,7 +38,7 @@ import { RouterLink } from '@angular/router';
           </nav>
 
           <!-- Copyright -->
-          <p class="text-gray-500 text-sm m-0 text-center">© 2025 もとら's dev</p>
+          <p class="text-gray-500 text-sm m-0 text-center">{{ 'footer.copyright' | translate }}</p>
         </div>
       </div>
     </footer>

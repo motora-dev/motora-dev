@@ -2,10 +2,6 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: '**',
-    loadComponent: () => import('./error/not-found/not-found').then((m) => m.NotFoundComponent),
-  },
-  {
     path: '',
     loadChildren: () => import('./article-list/article-list.routes').then((m) => m.ARTICLE_LIST_ROUTES),
   },
@@ -16,5 +12,9 @@ export const routes: Routes = [
   {
     path: 'error',
     loadChildren: () => import('./error/error.routes').then((m) => m.ERROR_ROUTES),
+  },
+  {
+    path: '**',
+    loadComponent: () => import('./error/not-found/not-found').then((m) => m.NotFoundComponent),
   },
 ];

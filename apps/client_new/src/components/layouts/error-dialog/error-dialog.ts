@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { ErrorFacade } from '$modules/error';
+import { getErrorCodeKey } from '$shared/i18n';
 
 @Component({
   selector: 'app-error-dialog',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     @if (error(); as err) {
       <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
@@ -21,21 +24,22 @@ import { ErrorFacade } from '$modules/error';
                 />
               </svg>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900">エラーが発生しました</h2>
+            <h2 class="text-lg font-semibold text-gray-900">{{ 'error.dialogTitle' | translate }}</h2>
           </div>
 
           @if (err.type === 'api') {
-            <p class="mb-2 text-sm text-gray-500">エラーコード: {{ err.errorCode }}</p>
+            <p class="mb-2 text-sm text-gray-500">{{ 'error.errorCode' | translate }}: {{ err.errorCode }}</p>
+            <p class="mb-6 text-gray-700">{{ errorMessageKey() | translate }}</p>
+          } @else {
+            <p class="mb-6 text-gray-700">{{ err.message }}</p>
           }
-
-          <p class="mb-6 text-gray-700">{{ err.message }}</p>
 
           <button
             type="button"
             class="w-full rounded-md bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             (click)="close()"
           >
-            閉じる
+            {{ 'common.close' | translate }}
           </button>
         </div>
       </div>
@@ -47,6 +51,14 @@ export class ErrorDialogComponent {
   private readonly errorFacade = inject(ErrorFacade);
 
   readonly error = toSignal(this.errorFacade.error$, { initialValue: null });
+
+  readonly errorMessageKey = computed(() => {
+    const err = this.error();
+    if (err?.type === 'api') {
+      return getErrorCodeKey(err.errorCode);
+    }
+    return 'error.unexpectedError';
+  });
 
   close(): void {
     this.errorFacade.clearError();

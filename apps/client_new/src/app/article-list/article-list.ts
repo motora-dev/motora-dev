@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { RxLet } from '@rx-angular/template/let';
 
 import { ArticleListFacade } from '$domains/article-list';
@@ -7,7 +8,7 @@ import { ArticleListContentComponent } from './components';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RxLet, ArticleListContentComponent],
+  imports: [RxLet, TranslatePipe, ArticleListContentComponent],
   providers: [ArticleListFacade],
   templateUrl: './article-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

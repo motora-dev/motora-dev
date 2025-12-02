@@ -42,51 +42,12 @@ catalogs:
     '@angular/ssr':
       specifier: 21.0.1
       version: 21.0.1
-    '@eslint/eslintrc':
-      specifier: 3.3.3
-      version: 3.3.3
-    '@eslint/js':
-      specifier: 9.39.1
-      version: 9.39.1
-    '@nestjs/cli':
-      specifier: 11.0.14
-      version: 11.0.14
-    '@nestjs/common':
-      specifier: 11.1.9
-      version: 11.1.9
-    '@nestjs/core':
-      specifier: 11.1.9
-      version: 11.1.9
-    '@nestjs/platform-express':
-      specifier: 11.1.9
-      version: 11.1.9
-    '@nestjs/testing':
-      specifier: 11.1.9
-      version: 11.1.9
     '@ngxs/form-plugin':
       specifier: 20.1.0
       version: 20.1.0
     '@ngxs/store':
       specifier: 20.1.0
       version: 20.1.0
-    '@prisma/adapter-pg':
-      specifier: 7.0.1
-      version: 7.0.1
-    '@prisma/client':
-      specifier: 7.0.1
-      version: 7.0.1
-    '@prisma/client-runtime-utils':
-      specifier: 7.0.1
-      version: 7.0.1
-    '@radix-ui/react-checkbox':
-      specifier: 1.3.3
-      version: 1.3.3
-    '@radix-ui/react-label':
-      specifier: 2.1.8
-      version: 2.1.8
-    '@radix-ui/react-slot':
-      specifier: 1.2.4
-      version: 1.2.4
     '@rx-angular/cdk':
       specifier: 20.1.0
       version: 20.1.0
@@ -96,75 +57,15 @@ catalogs:
     '@rx-angular/template':
       specifier: 20.1.0
       version: 20.1.0
-    '@storybook/addon-a11y':
-      specifier: 10.1.2
-      version: 10.1.2
-    '@storybook/addon-vitest':
-      specifier: 10.1.2
-      version: 10.1.2
     '@storybook/angular':
       specifier: 10.1.2
       version: 10.1.2
-    '@storybook/nextjs-vite':
-      specifier: 10.1.2
-      version: 10.1.2
-    '@supabase/supabase-js':
-      specifier: 2.86.0
-      version: 2.86.0
-    '@swc/core':
-      specifier: 1.15.3
-      version: 1.15.3
     '@tailwindcss/postcss':
       specifier: 4.1.17
       version: 4.1.17
-    '@tanstack/react-form':
-      specifier: 1.26.0
-      version: 1.26.0
-    '@tanstack/react-query':
-      specifier: 5.90.11
-      version: 5.90.11
-    '@tiptap/core':
-      specifier: 3.11.1
-      version: 3.11.1
-    '@tiptap/extension-code-block-lowlight':
-      specifier: 3.11.1
-      version: 3.11.1
-    '@tiptap/extension-image':
-      specifier: 3.11.1
-      version: 3.11.1
-    '@tiptap/extension-placeholder':
-      specifier: 3.11.1
-      version: 3.11.1
-    '@tiptap/pm':
-      specifier: 3.11.1
-      version: 3.11.1
-    '@tiptap/react':
-      specifier: 3.11.1
-      version: 3.11.1
-    '@tiptap/starter-kit':
-      specifier: 3.11.1
-      version: 3.11.1
     '@types/node':
       specifier: 24.10.1
       version: 24.10.1
-    '@types/react':
-      specifier: 19.2.7
-      version: 19.2.7
-    '@types/react-dom':
-      specifier: 19.2.3
-      version: 19.2.3
-    '@typescript-eslint/eslint-plugin':
-      specifier: 8.48.0
-      version: 8.48.0
-    '@typescript-eslint/parser':
-      specifier: 8.48.0
-      version: 8.48.0
-    '@vitest/browser':
-      specifier: 4.0.14
-      version: 4.0.14
-    '@vitest/browser-playwright':
-      specifier: 4.0.14
-      version: 4.0.14
     '@vitest/coverage-v8':
       specifier: 4.0.14
       version: 4.0.14
@@ -174,72 +75,18 @@ catalogs:
     clsx:
       specifier: 2.1.1
       version: 2.1.1
-    cookie:
-      specifier: 1.1.1
-      version: 1.1.1
-    esbuild:
-      specifier: 0.27.0
-      version: 0.27.0
     eslint:
       specifier: 9.39.1
       version: 9.39.1
-    eslint-config-next:
-      specifier: 16.0.5
-      version: 16.0.5
-    eslint-plugin-boundaries:
-      specifier: 5.3.0
-      version: 5.3.0
-    eslint-plugin-jest:
-      specifier: 29.2.1
-      version: 29.2.1
-    eslint-plugin-storybook:
-      specifier: 10.1.2
-      version: 10.1.2
-    eslint-plugin-testing-library:
-      specifier: 7.13.5
-      version: 7.13.5
-    eslint-plugin-turbo:
-      specifier: 2.6.1
-      version: 2.6.1
-    google-auth-library:
-      specifier: 10.5.0
-      version: 10.5.0
-    husky:
-      specifier: 9.1.7
-      version: 9.1.7
-    jest:
-      specifier: 30.2.0
-      version: 30.2.0
-    jest-environment-jsdom:
-      specifier: 30.2.0
-      version: 30.2.0
     jsdom:
       specifier: 27.2.0
       version: 27.2.0
-    lint-staged:
-      specifier: 16.2.7
-      version: 16.2.7
-    next:
-      specifier: 16.0.5
-      version: 16.0.5
-    playwright:
-      specifier: 1.57.0
-      version: 1.57.0
     postcss:
       specifier: 8.5.6
       version: 8.5.6
     prettier:
       specifier: 3.7.3
       version: 3.7.3
-    prisma:
-      specifier: 7.0.1
-      version: 7.0.1
-    react:
-      specifier: 19.2.0
-      version: 19.2.0
-    react-dom:
-      specifier: 19.2.0
-      version: 19.2.0
     rimraf:
       specifier: 6.1.2
       version: 6.1.2
@@ -249,36 +96,21 @@ catalogs:
     storybook:
       specifier: 10.1.2
       version: 10.1.2
-    stylelint:
-      specifier: 16.26.1
-      version: 16.26.1
     tailwind-merge:
       specifier: 3.4.0
       version: 3.4.0
     tailwindcss:
       specifier: 4.1.17
       version: 4.1.17
-    turbo:
-      specifier: 2.6.1
-      version: 2.6.1
     typescript:
       specifier: 5.9.3
       version: 5.9.3
-    unplugin-swc:
-      specifier: 1.5.9
-      version: 1.5.9
     vite:
       specifier: 7.2.4
       version: 7.2.4
     vitest:
       specifier: 4.0.14
       version: 4.0.14
-    zod:
-      specifier: 4.1.13
-      version: 4.1.13
-    zustand:
-      specifier: 5.0.9
-      version: 5.0.9
 
 importers:
 
@@ -546,9 +378,15 @@ importers:
       '@angular/ssr':
         specifier: 'catalog:'
         version: 21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/platform-server@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/compiler@21.0.1)(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/platform-browser@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)))(rxjs@7.8.2))(@angular/router@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/platform-browser@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)))(rxjs@7.8.2))
+      '@monorepo/error-code':
+        specifier: workspace:*
+        version: link:../../packages/error-code
       '@monorepo/markdown':
         specifier: workspace:*
         version: link:../../packages/markdown
+      '@ngx-translate/core':
+        specifier: ^17.0.0
+        version: 17.0.0(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))
       '@ngxs/form-plugin':
         specifier: 'catalog:'
         version: 20.1.0(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/forms@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/platform-browser@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)))(@standard-schema/spec@1.0.0)(rxjs@7.8.2))(@ngxs/store@20.1.0(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)
@@ -3839,6 +3677,12 @@ packages:
       '@angular/compiler-cli': ^20.0.0
       typescript: '>=5.8 <6.0'
       webpack: ^5.54.0
+
+  '@ngx-translate/core@17.0.0':
+    resolution: {integrity: sha512-Rft2D5ns2pq4orLZjEtx1uhNuEBerUdpFUG1IcqtGuipj6SavgB8SkxtNQALNDA+EVlvsNCCjC2ewZVtUeN6rg==}
+    peerDependencies:
+      '@angular/common': '>=16'
+      '@angular/core': '>=16'
 
   '@ngxs/form-plugin@20.1.0':
     resolution: {integrity: sha512-7rvbswkEhg3X/KV1R6kTAOac2E4tmhryB73o6SkpeYODmbOGNKpftNdMbcrPfTg6V5n8wbTX4rm3pC+MUDUf5g==}
@@ -13242,20 +13086,6 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  '@boundaries/elements@1.1.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))':
-    dependencies:
-      eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
-      handlebars: 4.7.8
-      is-core-module: 2.16.1
-      micromatch: 4.0.8
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
-
   '@cacheable/memory@2.0.6':
     dependencies:
       '@cacheable/utils': 2.3.2
@@ -13725,8 +13555,8 @@ snapshots:
 
   '@feature-sliced/eslint-config@0.1.1(eslint-plugin-boundaries@5.3.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-import@2.32.0)':
     dependencies:
-      eslint-plugin-boundaries: 5.3.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-boundaries: 5.3.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1(jiti@2.6.1))
 
   '@floating-ui/core@1.7.3':
     dependencies:
@@ -14750,6 +14580,12 @@ snapshots:
       '@angular/compiler-cli': 21.0.1(@angular/compiler@21.0.1)(typescript@5.9.3)
       typescript: 5.9.3
       webpack: 5.101.2(@swc/core@1.15.3)(esbuild@0.25.9)
+
+  '@ngx-translate/core@17.0.0(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))':
+    dependencies:
+      '@angular/common': 21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)
+      tslib: 2.8.1
 
   '@ngxs/form-plugin@20.1.0(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/forms@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(@angular/platform-browser@21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)))(@standard-schema/spec@1.0.0)(rxjs@7.8.2))(@ngxs/store@20.1.0(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
@@ -16256,7 +16092,7 @@ snapshots:
 
   '@types/serve-index@1.9.4':
     dependencies:
-      '@types/express': 5.0.5
+      '@types/express': 4.17.25
 
   '@types/serve-static@1.15.10':
     dependencies:
@@ -16470,7 +16306,7 @@ snapshots:
       '@vitest/mocker': 4.0.14(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       playwright: 1.57.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.14(@types/node@24.10.1)(@vitest/browser-playwright@4.0.14)(jiti@2.6.1)(jsdom@27.2.0)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+      vitest: 4.0.14(@types/node@24.10.1)(@vitest/browser-playwright@4.0.14)(jiti@2.6.1)(jsdom@26.1.0)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
     transitivePeerDependencies:
       - bufferutil
       - msw
@@ -16504,7 +16340,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.0.3
-      vitest: 4.0.14(@types/node@24.10.1)(@vitest/browser-playwright@4.0.14)(jiti@2.6.1)(jsdom@27.2.0)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+      vitest: 4.0.14(@types/node@24.10.1)(@vitest/browser-playwright@4.0.14)(jiti@2.6.1)(jsdom@26.1.0)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
       ws: 8.18.3
     transitivePeerDependencies:
       - bufferutil
@@ -16544,7 +16380,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.14(@types/node@24.10.1)(@vitest/browser-playwright@4.0.14)(jiti@2.6.1)(jsdom@27.2.0)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+      vitest: 4.0.14(@types/node@24.10.1)(@vitest/browser-playwright@4.0.14)(jiti@2.6.1)(jsdom@26.1.0)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
     optionalDependencies:
       '@vitest/browser': 4.0.14(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.0)(lightningcss@1.30.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(vitest@4.0.14)
     transitivePeerDependencies:
@@ -17531,7 +17367,7 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       parse-json: 5.2.0
     optionalDependencies:
       typescript: 5.9.3
@@ -18141,7 +17977,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -18189,20 +18025,6 @@ snapshots:
       eslint: 9.39.1(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
       eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1(jiti@2.6.1))
-      micromatch: 4.0.8
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
-
-  eslint-plugin-boundaries@5.3.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)):
-    dependencies:
-      '@boundaries/elements': 1.1.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
-      chalk: 4.1.2
-      eslint: 9.39.1(jiti@2.6.1)
-      eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
       micromatch: 4.0.8
     transitivePeerDependencies:
       - '@typescript-eslint/parser'

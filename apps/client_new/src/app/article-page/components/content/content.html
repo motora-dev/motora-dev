@@ -19,7 +19,7 @@
         [routerLink]="['/article', articleId(), nav.prev.id]"
         class="flex-1 max-w-[45%] p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left"
       >
-        <div class="text-sm text-gray-500 mb-1">← 前へ</div>
+        <div class="text-sm text-gray-500 mb-1">{{ 'articlePage.prev' | translate }}</div>
         <div class="text-sm font-medium text-gray-900 truncate">{{ nav.prev.title }}</div>
       </a>
       } @else {
@@ -29,7 +29,7 @@
         [routerLink]="['/article', articleId(), nav.next.id]"
         class="flex-1 max-w-[45%] p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-right"
       >
-        <div class="text-sm text-gray-500 mb-1">次へ →</div>
+        <div class="text-sm text-gray-500 mb-1">{{ 'articlePage.next' | translate }}</div>
         <div class="text-sm font-medium text-gray-900 truncate">{{ nav.next.title }}</div>
       </a>
       } @else {

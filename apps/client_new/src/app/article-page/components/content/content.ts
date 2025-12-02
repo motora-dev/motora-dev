@@ -12,6 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { RxUnpatch } from '@rx-angular/template/unpatch';
 import { animationFrameScheduler, fromEvent } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
@@ -27,7 +28,7 @@ export interface ArticlePageNavigation {
 @Component({
   selector: 'app-article-page-content',
   standalone: true,
-  imports: [RouterLink, RxUnpatch],
+  imports: [RouterLink, TranslatePipe, RxUnpatch],
   templateUrl: './content.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

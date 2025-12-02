@@ -2,9 +2,11 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ErrorFacade } from '$modules/error';
 import { ClientError } from '$modules/error/error.model';
+import { DEFAULT_ERROR_KEY } from '$shared/i18n';
 
 /** ページ遷移対象のステータスコードとルートのマッピング */
 const PAGE_NAVIGATE_ROUTES: Record<number, string> = {
@@ -25,6 +27,7 @@ export class ClientErrorHandler implements ErrorHandler {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly errorFacade = inject(ErrorFacade);
+  private readonly translate = inject(TranslateService);
 
   handleError(error: unknown): void {
     console.error('Unhandled error:', error);
@@ -48,7 +51,7 @@ export class ClientErrorHandler implements ErrorHandler {
     // HttpErrorResponse 以外（純粋なクライアントエラー）→ ダイアログ表示
     const clientError: ClientError = {
       type: 'client',
-      message: error instanceof Error ? error.message : 'An unexpected error occurred',
+      message: error instanceof Error ? error.message : this.translate.instant(DEFAULT_ERROR_KEY),
     };
 
     this.errorFacade.showError(clientError);

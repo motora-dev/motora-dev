@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, output, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RxUnpatch } from '@rx-angular/template/unpatch';
 
 import { TocItem } from '$domains/article-page/model';
@@ -6,12 +16,13 @@ import { TocItem } from '$domains/article-page/model';
 @Component({
   selector: 'app-article-page-right-sidebar',
   standalone: true,
-  imports: [RxUnpatch],
+  imports: [TranslatePipe, RxUnpatch],
   templateUrl: './right-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageRightSidebarComponent {
   private readonly tocNavRef = viewChild<ElementRef<HTMLElement>>('tocNav');
+  private readonly translate = inject(TranslateService);
 
   readonly toc = input.required<TocItem[]>();
   readonly articleId = input.required<string>();
@@ -27,6 +38,10 @@ export class ArticlePageRightSidebarComponent {
         this.scrollToActiveItem(activeId);
       }
     });
+  }
+
+  getAriaLabel(item: TocItem): string {
+    return this.translate.instant('articlePage.goToHeading', { text: item.text });
   }
 
   private scrollToActiveItem(id: string): void {
