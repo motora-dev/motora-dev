@@ -5,6 +5,8 @@
   "scripts": {
     "clean": "rimraf .angular .turbo coverage dist node_modules",
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
+    "build:prd": "ng build --configuration production",
     "start": "ng serve",
     "start:ssr": "node dist/client_new/server/server.mjs",
     "check-all": "pnpm lint && pnpm format && pnpm tsc && pnpm test",

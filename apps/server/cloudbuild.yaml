@@ -5,9 +5,7 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${_IMAGE_TAG}'
       - '-f'
-      - 'apps/client_new/Dockerfile'
-      - '--build-arg'
-      - 'BUILD_CONFIGURATION=${_BUILD_CONFIGURATION}'
+      - 'apps/server/Dockerfile'
       - '.'
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -16,9 +14,8 @@ steps:
       - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${_IMAGE_TAG}'
 
 substitutions:
-  _SERVICE_NAME: client-new
+  _SERVICE_NAME: server
   _IMAGE_TAG: latest
-  _BUILD_CONFIGURATION: production
 
 images:
   - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${_IMAGE_TAG}'

@@ -20,7 +20,8 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Build only the client_new
-RUN pnpm run build --filter=@monorepo/client-new
+ARG BUILD_CONFIGURATION=production
+RUN pnpm run build --filter=@monorepo/client-new -- --configuration=${BUILD_CONFIGURATION}
 
 # Production stage
 FROM node:24.11.0-slim AS runner

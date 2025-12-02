@@ -59,7 +59,7 @@ jobs:
         run: |
           gcloud builds submit . \
             --config=apps/client_new/cloudbuild.yaml \
-            --substitutions=_IMAGE_TAG=${{ github.sha }},_SERVICE_NAME=${{ secrets.CLIENT_SERVICE_NAME }} \
+            --substitutions=_IMAGE_TAG=${{ github.sha }},_SERVICE_NAME=${{ secrets.CLIENT_SERVICE_NAME }},_BUILD_CONFIGURATION=${{ github.ref_name == 'main' && 'production' || 'develop' }} \
             --suppress-logs
 
       - name: Deploy to Cloud Run
@@ -70,6 +70,11 @@ jobs:
           region: ${{ vars.REGION }}
           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.CLIENT_SERVICE_NAME }}:${{ github.sha }}
           flags: '--allow-unauthenticated --service-account ${{ secrets.RUN_SERVICE_ACCOUNT }}'
+          env:
+            BASIC_AUTH_ENABLED: ${{ vars.BASIC_AUTH_ENABLED }}
+          secrets: |
+            BASIC_AUTH_USER=basic-auth-user:latest
+            BASIC_AUTH_PASSWORD=basic-auth-password:latest
 
   deploy-server:
     name: Deploy Server
@@ -113,7 +118,10 @@ jobs:
       - name: Build and Push Docker Image
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          gcloud builds submit . -f apps/server/Dockerfile --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} --suppress-logs
+          gcloud builds submit . \
+            --config=apps/server/cloudbuild.yaml \
+            --substitutions=_IMAGE_TAG=${{ github.sha }},_SERVICE_NAME=${{ secrets.SERVICE_NAME }} \
+            --suppress-logs
 
       - name: Deploy to Cloud Run
         if: steps.changed-files.outputs.any_changed == 'true'
