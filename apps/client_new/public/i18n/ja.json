@@ -29,6 +29,16 @@
     "prev": "← 前へ",
     "next": "次へ →"
   },
+  "login": {
+    "title": "ログイン",
+    "description": "アカウントにログインしてください",
+    "googleButton": "Googleでログイン"
+  },
+  "callback": {
+    "title": "ログイン完了",
+    "message": "ログインに成功しました",
+    "redirecting": "ホームページへ移動中..."
+  },
   "error": {
     "dialogTitle": "エラーが発生しました",
     "errorCode": "エラーコード",

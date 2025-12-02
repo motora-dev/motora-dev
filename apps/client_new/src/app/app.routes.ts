@@ -10,6 +10,14 @@ export const routes: Routes = [
     loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
   },
   {
+    path: 'login',
+    loadChildren: () => import('./auth/login/login.routes').then((m) => m.LOGIN_ROUTES),
+  },
+  {
+    path: 'auth/callback',
+    loadChildren: () => import('./auth/callback/callback.routes').then((m) => m.CALLBACK_ROUTES),
+  },
+  {
     path: 'error',
     loadChildren: () => import('./error/error.routes').then((m) => m.ERROR_ROUTES),
   },

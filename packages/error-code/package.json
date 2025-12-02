@@ -3,14 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    }
+  },
   "scripts": {
     "clean": "find . -type d \\( -name \".turbo\" -o -name \"coverage\" -o -name \"dist\" -o -name \"node_modules\" \\) -prune -exec rm -rf '{}' +",
     "prebuild": "rm -rf dist",
     "build": "pnpm prebuild && tsc --project tsconfig.build.json",
     "tsc": "pnpm tsc:src && pnpm tsc:spec",
-    "tsc:src": "tsc --noEmit -p tsconfig.json",
+    "tsc:src": "tsc --noEmit -p tsconfig.build.json",
     "tsc:spec": "tsc --noEmit -p tsconfig.spec.json",
     "format": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\"",

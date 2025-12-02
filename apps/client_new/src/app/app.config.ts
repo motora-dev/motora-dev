@@ -15,6 +15,7 @@ import { provideStore } from '@ngxs/store';
 import { ClientErrorHandler } from '$domains/error-handlers';
 import { credentialsInterceptor, httpErrorInterceptor } from '$domains/interceptors';
 import { environment } from '$environments';
+import { AuthState } from '$modules/auth/store';
 import { ErrorState } from '$modules/error/store';
 import { SpinnerState } from '$modules/spinner/store';
 import { StaticTranslateLoader } from '$shared/i18n';
@@ -39,7 +40,7 @@ export const appConfig: ApplicationConfig = {
       withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
     ),
     provideRouter(routes),
-    provideStore([ErrorState, SpinnerState], withNgxsFormPlugin()),
+    provideStore([AuthState, ErrorState, SpinnerState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
   ],
 };

@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import {
   AngularNodeAppEngine,
   createNodeRequestHandler,
@@ -7,6 +9,7 @@ import {
 import { ISRHandler } from '@rx-angular/isr/server';
 import compression from 'compression';
 import express from 'express';
+import basicAuth from 'express-basic-auth';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -19,6 +22,21 @@ const angularApp = new AngularNodeAppEngine();
 
 // Enable gzip/brotli compression for all responses
 app.use(compression() as any);
+
+// Basic authentication (enabled via environment variable for preview/develop environments)
+if (process.env['BASIC_AUTH_ENABLED'] === 'true') {
+  const user = process.env['BASIC_AUTH_USER'];
+  const password = process.env['BASIC_AUTH_PASSWORD'];
+  if (user && password) {
+    app.use(
+      basicAuth({
+        users: { [user]: password },
+        challenge: true,
+        realm: 'motora-dev',
+      }),
+    );
+  }
+}
 
 // ISRHandler for caching (only initialize if index.html exists)
 const isr = indexHtml

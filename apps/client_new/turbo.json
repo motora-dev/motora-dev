@@ -5,7 +5,7 @@
     "build": {
       "outputs": ["dist/**"]
     },
-    "test": {
+    "test:coverage": {
       "outputs": ["coverage/**"]
     }
   }

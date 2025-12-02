@@ -30,8 +30,6 @@ export class ClientErrorHandler implements ErrorHandler {
   private readonly translate = inject(TranslateService);
 
   handleError(error: unknown): void {
-    console.error('Unhandled error:', error);
-
     // SSRなら処理をスキップ
     if (!isPlatformBrowser(this.platformId)) {
       return;
