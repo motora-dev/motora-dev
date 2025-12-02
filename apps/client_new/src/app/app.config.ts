@@ -1,4 +1,4 @@
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 import {
   ApplicationConfig,
   ErrorHandler,
@@ -13,7 +13,7 @@ import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { provideStore } from '@ngxs/store';
 
 import { ClientErrorHandler } from '$domains/error-handlers';
-import { httpErrorInterceptor } from '$domains/interceptors';
+import { credentialsInterceptor, httpErrorInterceptor } from '$domains/interceptors';
 import { environment } from '$environments';
 import { ErrorState } from '$modules/error/store';
 import { SpinnerState } from '$modules/spinner/store';
@@ -33,7 +33,11 @@ export const appConfig: ApplicationConfig = {
     ),
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch(), withInterceptors([httpErrorInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([credentialsInterceptor, httpErrorInterceptor]),
+      withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
+    ),
     provideRouter(routes),
     provideStore([ErrorState, SpinnerState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
