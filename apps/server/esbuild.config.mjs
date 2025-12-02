@@ -19,18 +19,11 @@ const nestjsOptionalPackages = [
 ];
 
 // 外部化するパッケージを取得
-// 開発時: 全ての依存関係を外部化（ビルド高速化）
-// 本番時: 全てバンドル（node_modules不要）
+// 全ての依存関係を外部化（node_modulesからロード）
 const getExternalPackages = () => {
-  // 本番ビルド時はNestJSオプショナルパッケージ + reflect-metadataのみ外部化
-  // reflect-metadata: バナーでimportしているため
-  if (isProduction) {
-    return [...nestjsOptionalPackages, 'reflect-metadata'];
-  }
-
-  // 開発時は全ての外部パッケージを外部化（高速ビルド）
   const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.json'), 'utf-8'));
   return [
+    ...nestjsOptionalPackages,
     ...Object.keys(packageJson.dependencies || {}),
     ...Object.keys(packageJson.devDependencies || {}),
     '@prisma/client',
