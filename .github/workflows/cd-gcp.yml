@@ -72,7 +72,7 @@ jobs:
           flags: '--allow-unauthenticated --service-account ${{ secrets.RUN_SERVICE_ACCOUNT }}'
 
   deploy-server:
-    name: Deploy
+    name: Deploy Server
     runs-on: ubuntu-latest
 
     environment: ${{ github.ref_name }}
