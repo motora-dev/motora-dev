@@ -18,7 +18,7 @@ COPY packages/error-code/package.json ./packages/error-code/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/markdown/package.json ./packages/markdown/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
-COPY apps/server/prisma/ ./apps/server/prisma/
+COPY packages/database/package.json ./packages/database/package.json
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
@@ -42,15 +42,8 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy necessary files from builder stage
-COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages/error-code/dist ./packages/error-code/dist
-COPY --from=builder /app/packages/error-code/node_modules ./packages/error-code/node_modules
-COPY --from=builder /app/packages/error-code/package.json ./packages/error-code/package.json
+# 本番ビルドでは全てバンドルされるため、distのみ必要
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
-COPY --from=builder /app/apps/server/node_modules ./apps/server/node_modules
-COPY --from=builder /app/apps/server/package.json ./apps/server/
-COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
 
 # Set environment variables
 ENV NODE_ENV=production

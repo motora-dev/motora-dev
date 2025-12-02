@@ -21,7 +21,8 @@ COPY . .
 
 # Build only the client_new
 ARG BUILD_CONFIGURATION=production
-RUN pnpm run build --filter=@monorepo/client-new -- --configuration=${BUILD_CONFIGURATION}
+ENV BUILD_CONFIGURATION=${BUILD_CONFIGURATION}
+RUN pnpm run build --filter=@monorepo/client-new
 
 # Production stage
 FROM node:24.11.0-slim AS runner

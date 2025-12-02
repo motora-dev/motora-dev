@@ -8,14 +8,35 @@ import { fileURLToPath } from 'node:url';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const isWatch = process.argv.includes('--watch');
 const isDebug = process.argv.includes('--debug');
+const isProduction = !isWatch && !isDebug;
 
-// package.jsonからdependenciesを読み取り、外部化するパッケージを取得
-const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.json'), 'utf-8'));
-const externalPackages = [
-  ...Object.keys(packageJson.dependencies || {}),
-  ...Object.keys(packageJson.devDependencies || {}),
-  '@prisma/client',
-].filter((pkg) => !pkg.startsWith('@monorepo/')); // モノレポ内のパッケージはバンドルに含める
+// NestJSのオプショナルパッケージ（インストールしていないが、coreが動的にロードしようとする）
+const nestjsOptionalPackages = [
+  '@nestjs/websockets',
+  '@nestjs/websockets/socket-module',
+  '@nestjs/microservices',
+  '@nestjs/microservices/microservices-module',
+];
+
+// 外部化するパッケージを取得
+// 開発時: 全ての依存関係を外部化（ビルド高速化）
+// 本番時: 全てバンドル（node_modules不要）
+const getExternalPackages = () => {
+  // 本番ビルド時はNestJSオプショナルパッケージのみ外部化
+  if (isProduction) {
+    return nestjsOptionalPackages;
+  }
+
+  // 開発時は全ての外部パッケージを外部化（高速ビルド）
+  const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.json'), 'utf-8'));
+  return [
+    ...Object.keys(packageJson.dependencies || {}),
+    ...Object.keys(packageJson.devDependencies || {}),
+    '@prisma/client',
+  ].filter((pkg) => !pkg.startsWith('@monorepo/')); // モノレポ内のパッケージはバンドルに含める
+};
+
+const externalPackages = getExternalPackages();
 
 /**
  * SWCを使ってデコレーターをサポートするesbuildプラグイン
@@ -70,7 +91,9 @@ const config = {
     js: "import 'reflect-metadata';",
   },
   plugins: [swcPlugin()],
-  logLevel: 'info',
+  // 本番ビルド時はesbuildのログを抑制し、カスタムでサイズ表示
+  logLevel: isProduction ? 'silent' : 'info',
+  metafile: isProduction,
 };
 
 /**
@@ -162,7 +185,17 @@ async function build() {
     console.log('👀 Watching for changes...\n');
   } else {
     // 単発ビルド
-    await esbuild.build(config);
+    const result = await esbuild.build(config);
+
+    // 本番ビルド時はバンドルサイズを表示
+    if (isProduction && result.metafile) {
+      const outputs = result.metafile.outputs;
+      for (const [file, info] of Object.entries(outputs)) {
+        const size = (info.bytes / 1024 / 1024).toFixed(2);
+        console.log(`  ${file}  ${size}MB`);
+      }
+    }
+
     console.log('✅ Build complete!\n');
   }
 }
