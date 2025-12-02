@@ -34,23 +34,7 @@ const DEFAULT_ERROR_MESSAGES: Record<string, string> = {
 @Component({
   selector: 'app-input-field',
   standalone: true,
-  template: `
-    @if (label()) {
-      <label [for]="id()" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-        {{ label() }}
-      </label>
-    }
-
-    <ng-content></ng-content>
-
-    @if (showError()) {
-      <div class="mt-2 text-sm text-destructive">
-        @for (message of activeErrorMessages(); track message) {
-          <p>{{ message }}</p>
-        }
-      </div>
-    }
-  `,
+  templateUrl: './input-field.html',
   host: {
     class: 'block',
   },

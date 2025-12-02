@@ -1,6 +1,16 @@
 import { ERROR_CODE } from '@monorepo/error-code';
 
-import jaJson from '$i18n/ja.json';
+import jaJson from '../../../public/i18n/ja.json';
+
+/** サポートする言語 */
+export const SUPPORTED_LANGUAGES = ['ja'] as const;
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+
+/** 言語ごとの翻訳ファイル */
+type TranslationFile = { errorCodes: Record<string, string> };
+const TRANSLATIONS: Record<SupportedLanguage, TranslationFile> = {
+  ja: jaJson,
+};
 
 /** デフォルトのエラー翻訳キー */
 export const DEFAULT_ERROR_KEY = 'error.unexpectedError';
@@ -18,8 +28,16 @@ const DIALOG_ERROR_CODES = new Set(
     .map((e) => e.code),
 );
 
-/** ja.json に定義されているエラーコード */
-const DEFINED_ERROR_CODES = new Set(Object.keys(jaJson.errorCodes));
+/**
+ * 指定言語の翻訳ファイルを取得
+ */
+export const getTranslation = (lang: SupportedLanguage): TranslationFile => TRANSLATIONS[lang];
+
+/**
+ * 指定言語に定義されているエラーコード一覧を取得
+ */
+export const getDefinedErrorCodes = (lang: SupportedLanguage): Set<string> =>
+  new Set(Object.keys(TRANSLATIONS[lang].errorCodes));
 
 /**
  * エラーコードがダイアログ表示対象かどうかを判定
@@ -27,13 +45,14 @@ const DEFINED_ERROR_CODES = new Set(Object.keys(jaJson.errorCodes));
 export const isDialogErrorCode = (code: string): boolean => DIALOG_ERROR_CODES.has(code);
 
 /**
- * エラーコードが ja.json に定義されているかどうかを判定
+ * エラーコードが指定言語に定義されているかどうかを判定
  */
-export const isDefinedErrorCode = (code: string): boolean => DEFINED_ERROR_CODES.has(code);
+export const isDefinedErrorCode = (code: string, lang: SupportedLanguage = 'ja'): boolean =>
+  getDefinedErrorCodes(lang).has(code);
 
 /**
  * エラーコードから翻訳キーを取得
- * ja.json に定義されている場合は対応するキー、それ以外はデフォルトキーを返す
+ * 指定言語に定義されている場合は対応するキー、それ以外はデフォルトキーを返す
  */
-export const getErrorCodeKey = (code: string): string =>
-  isDefinedErrorCode(code) ? `errorCodes.${code}` : DEFAULT_ERROR_KEY;
+export const getErrorCodeKey = (code: string, lang: SupportedLanguage = 'ja'): string =>
+  isDefinedErrorCode(code, lang) ? `errorCodes.${code}` : DEFAULT_ERROR_KEY;
