@@ -19,6 +19,8 @@ COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/markdown/package.json ./packages/markdown/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/database/package.json ./packages/database/package.json
+COPY packages/database/prisma ./packages/database/prisma
+COPY packages/database/prisma.config.ts ./packages/database/prisma.config.ts
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
