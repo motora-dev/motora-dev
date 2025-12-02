@@ -17,7 +17,6 @@ import { httpErrorInterceptor } from '$domains/interceptors';
 import { environment } from '$environments';
 import { ErrorState } from '$modules/error/store';
 import { SpinnerState } from '$modules/spinner/store';
-import { UiState } from '$modules/ui/store';
 import { StaticTranslateLoader } from '$shared/i18n';
 import { API_URL } from '$shared/lib';
 import { routes } from './app.routes';
@@ -36,7 +35,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), withInterceptors([httpErrorInterceptor])),
     provideRouter(routes),
-    provideStore([ErrorState, SpinnerState, UiState], withNgxsFormPlugin()),
+    provideStore([ErrorState, SpinnerState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
   ],
 };

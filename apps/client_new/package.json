@@ -10,7 +10,7 @@
     "check-all": "pnpm lint && pnpm format && pnpm tsc && pnpm test",
     "format": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\" --config eslint.config.mjs",
+    "lint": "eslint \"src/**/*.{ts,html}\" --config eslint.config.mjs",
     "lint:fix": "pnpm lint --fix",
     "tsc": "pnpm tsc:build && pnpm tsc:test",
     "tsc:build": "tsc --noEmit --project tsconfig.build.json",
@@ -65,6 +65,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "angular-eslint": "^21.0.1",
     "eslint": "catalog:",
     "jsdom": "catalog:",
     "postcss": "catalog:",
@@ -79,6 +80,9 @@
   "lint-staged": {
     "src/**/*.ts": [
       "prettier --write",
+      "eslint --fix --config eslint.config.mjs"
+    ],
+    "src/**/*.html": [
       "eslint --fix --config eslint.config.mjs"
     ]
   },
