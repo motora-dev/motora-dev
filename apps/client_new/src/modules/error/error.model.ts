@@ -5,6 +5,13 @@ export interface ApiError {
   message: string;
 }
 
+/** サーバーエラー（HTTPレスポンスエラー） */
+export interface ServerError {
+  type: 'server';
+  status: number;
+  message: string;
+}
+
 /** クライアントエラー（ランタイムエラー） */
 export interface ClientError {
   type: 'client';
@@ -12,4 +19,4 @@ export interface ClientError {
 }
 
 /** アプリケーションエラー（APIエラー | クライアントエラー） */
-export type AppError = ApiError | ClientError;
+export type AppError = ApiError | ServerError | ClientError;

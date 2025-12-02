@@ -18,6 +18,9 @@
     @if (err.type === 'api') {
     <p class="mb-2 text-sm text-gray-500">{{ 'error.errorCode' | translate }}: {{ err.errorCode }}</p>
     <p class="mb-6 text-gray-700">{{ errorMessageKey() | translate }}</p>
+    } @else if (err.type === 'server') {
+    <p class="mb-2 text-sm text-gray-500">{{ 'error.status' | translate }}: {{ err.status }}</p>
+    <p class="mb-6 text-gray-700">{{ err.message }}</p>
     } @else {
     <p class="mb-6 text-gray-700">{{ err.message }}</p>
     }
