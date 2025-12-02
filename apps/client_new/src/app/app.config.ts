@@ -15,7 +15,9 @@ import { provideStore } from '@ngxs/store';
 import { ClientErrorHandler } from '$domains/error-handlers';
 import { httpErrorInterceptor } from '$domains/interceptors';
 import { environment } from '$environments';
-import { MODULE_STATES } from '$modules';
+import { ErrorState } from '$modules/error/store';
+import { SpinnerState } from '$modules/spinner/store';
+import { UiState } from '$modules/ui/store';
 import { StaticTranslateLoader } from '$shared/i18n';
 import { API_URL } from '$shared/lib';
 import { routes } from './app.routes';
@@ -34,7 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), withInterceptors([httpErrorInterceptor])),
     provideRouter(routes),
-    provideStore(MODULE_STATES, withNgxsFormPlugin()),
+    provideStore([ErrorState, SpinnerState, UiState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
   ],
 };
