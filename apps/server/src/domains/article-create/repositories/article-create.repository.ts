@@ -1,9 +1,10 @@
+import { ArticleStatus } from '@monorepo/database/client';
 import { Injectable } from '@nestjs/common';
 
 import { PrismaAdapter } from '$adapters';
-import type { Article } from '$prisma/client';
-import { ArticleStatus } from '$prisma/client';
 import { generatePublicId } from '$utils';
+
+import type { Article } from '@monorepo/database/client';
 
 @Injectable()
 export class ArticleCreateRepository {

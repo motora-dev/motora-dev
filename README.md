@@ -4,10 +4,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-24.11.0-green.svg)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-10.20.0-F69220.svg)](https://pnpm.io/)
-[![Build](https://github.com/motora-dev/motora-dev/actions/workflows/build.yml/badge.svg)](https://github.com/motora-dev/motora-dev/actions/workflows/build.yml)
-[![Test](https://github.com/motora-dev/motora-dev/actions/workflows/test.yml/badge.svg)](https://github.com/motora-dev/motora-dev/actions/workflows/test.yml)
-[![Deploy](https://github.com/motora-dev/motora-dev/actions/workflows/deploy.yml/badge.svg)](https://github.com/motora-dev/motora-dev/actions/workflows/deploy.yml)
+[![pnpm](https://img.shields.io/badge/pnpm-10.24.0-F69220.svg)](https://pnpm.io/)
+[![Build](https://github.com/motora-dev/motora-dev/actions/workflows/ci-check.yml/badge.svg)](https://github.com/motora-dev/motora-dev/actions/workflows/ci-check.yml)
+[![Test](https://github.com/motora-dev/motora-dev/actions/workflows/ci-test.yml/badge.svg)](https://github.com/motora-dev/motora-dev/actions/workflows/ci-test.yml)
+[![Deploy](https://github.com/motora-dev/motora-dev/actions/workflows/cd-gcp.yml/badge.svg)](https://github.com/motora-dev/motora-dev/actions/workflows/cd-gcp.yml)
 [![codecov](https://codecov.io/github/motora-dev/motora-dev/badge.svg?branch=main)](https://codecov.io/github/motora-dev/motora-dev)
 
 ## 🏗 プロジェクト構成
@@ -56,7 +56,7 @@ motora-dev/
 
 ## 🛠 技術スタック
 
-- **Package Manager**: [pnpm](https://pnpm.io/) 10.20.0 (ワークスペース機能使用)
+- **Package Manager**: [pnpm](https://pnpm.io/) 10.24.0 (ワークスペース機能使用)
 - **Build System**: [Turborepo](https://turbo.build/repo) 2.6.0
 - **Language**: [TypeScript](https://www.typescriptlang.org/) 5.9.3
 - **Code Quality**: ESLint 9.39.1 + Prettier 3.6.2 + Stylelint 16.25.0
@@ -68,7 +68,7 @@ motora-dev/
 ### 必要な環境
 
 - Node.js 24.11.0（推奨）
-- pnpm 10.20.0
+- pnpm 10.24.0
 
 ### Voltaのセットアップ（推奨）
 
@@ -240,7 +240,7 @@ pnpm --filter @monorepo/server test
 ### 共通
 
 ![Turborepo](https://img.shields.io/badge/Turborepo-2.6.0-ef4444?logo=turborepo&logoColor=white)
-![pnpm](https://img.shields.io/badge/pnpm-10.20.0-f69220?logo=pnpm&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-10.24.0-f69220?logo=pnpm&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178c6?logo=typescript&logoColor=white)
 ![ESLint](https://img.shields.io/badge/ESLint-9.39.1-4b32c3?logo=eslint&logoColor=white)
 ![Jest](https://img.shields.io/badge/Jest-30.2.0-c21325?logo=jest&logoColor=white)

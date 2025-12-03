@@ -1,3 +1,4 @@
+import { MediaType } from '@monorepo/database/client';
 import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable } from '@nestjs/common';
 import * as path from 'path';
@@ -5,7 +6,6 @@ import * as path from 'path';
 import { CreateUploadUrlDto } from '$domains/media/dto';
 import { MediaRepository } from '$domains/media/repositories';
 import { BusinessLogicError } from '$exceptions';
-import { MediaType } from '$prisma/client';
 import { SupabaseStorageAdapter } from '$shared/adapters';
 
 const BUCKET_NAME = 'media';

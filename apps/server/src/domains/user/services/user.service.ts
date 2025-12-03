@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '$domains/user/repositories';
 import { BusinessLogicError } from '$exceptions';
-import type { User } from '$prisma/client';
+
+import type { User } from '@monorepo/database/client';
 
 @Injectable()
 export class UserService {

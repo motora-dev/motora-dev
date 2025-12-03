@@ -1,0 +1,33 @@
+<div class="min-h-screen">
+  <!-- Main content -->
+  <ng-container *rxIf="currentPage$; let page">
+    <div class="w-full min-h-screen max-w-[90rem] mx-auto lg:grid lg:grid-cols-[16rem_1fr_14rem]">
+      <!-- Left sidebar: Page list -->
+      <app-article-page-left-sidebar
+        [pages]="pages$ | push"
+        [articleId]="articleId()"
+        [currentPageId]="pageId()"
+        [isOpen]="isSidebarOpen()"
+        (closeSidebar)="closeSidebar()"
+      />
+
+      <!-- Main content -->
+      <app-article-page-content
+        [page]="page"
+        [safeHtml]="safeHtml$ | push"
+        [navigation]="navigation$ | push"
+        [articleId]="articleId()"
+        [toc]="toc$ | push"
+      />
+
+      <!-- Right sidebar: Table of Contents -->
+      <app-article-page-right-sidebar
+        [toc]="toc$ | push"
+        [articleId]="articleId()"
+        [pageId]="pageId()"
+        [activeTocId]="activeTocId$ | push"
+        (tocClick)="onTocClick($event)"
+      />
+    </div>
+  </ng-container>
+</div>

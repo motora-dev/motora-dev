@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import type { User } from '$prisma/client';
 import { AuthRepository } from '../repositories/auth.repository';
+
+import type { User } from '@monorepo/database/client';
 
 @Injectable()
 export class AuthService {
