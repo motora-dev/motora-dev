@@ -32,7 +32,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: pnpm/action-setup@v3
         with:
-          version: 10.20.0
+          version: 10.24.0
 
       - name: Setup Node.js
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -49,11 +49,11 @@ jobs:
 
       - name: Run error-code coverage
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: pnpm --filter "@monorepo/error-code" test:coverage
+        run: pnpm test:coverage --filter "@monorepo/error-code"
 
       - name: Run markdown coverage
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: pnpm --filter "@monorepo/markdown" test:coverage
+        run: pnpm test:coverage --filter "@monorepo/markdown"
 
   test-client:
     name: Test Client
@@ -76,7 +76,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: pnpm/action-setup@v3
         with:
-          version: 10.20.0
+          version: 10.24.0
 
       - name: Setup Node.js
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -97,13 +97,14 @@ jobs:
 
       - name: Run client coverage
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: pnpm --filter "@monorepo/client" test:coverage
+        run: pnpm test:coverage --filter "@monorepo/client"
 
       - name: Upload coverage reports to Codecov
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          codecov_yml_path: ./apps/server/codecov.yml
           files: ./apps/client/coverage/jest/coverage-final.json,./apps/client/coverage/storybook/coverage-final.json
           flags: client
           verbose: true
@@ -145,13 +146,12 @@ jobs:
           files: |
             apps/server/**
             packages/**
-            apps/server/prisma/**
 
       - name: Setup pnpm
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: pnpm/action-setup@v3
         with:
-          version: 10.20.0
+          version: 10.24.0
 
       - name: Setup Node.js
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -175,15 +175,16 @@ jobs:
           echo "SUPABASE_URL=$SUPABASE_URL" >> .env.test
           echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.test
 
-      - name: Run server coverage
+      - name: Run test coverage
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: pnpm --filter "@monorepo/server" test:coverage
+        run: pnpm test:coverage --filter "@monorepo/server"
 
       - name: Upload coverage reports to Codecov
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          codecov_yml_path: ./apps/server/codecov.yml
           files: ./apps/server/coverage/coverage-final.json
           flags: server
           verbose: true

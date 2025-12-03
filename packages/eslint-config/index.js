@@ -28,6 +28,14 @@ export const baseConfig = [
       },
       'boundaries/elements': [
         {
+          type: 'app',
+          pattern: '$app/**',
+        },
+        {
+          type: 'components',
+          pattern: '$components/**',
+        },
+        {
           type: 'domains',
           pattern: '$domains/**',
         },
@@ -47,7 +55,7 @@ export const baseConfig = [
       turbo: turboPlugin,
     },
     rules: {
-      'turbo/no-undeclared-env-vars': 'warn',
+      'turbo/no-undeclared-env-vars': 'off',
       // enforce consistent import order across all workspaces
       'import/order': [
         'error',
@@ -55,7 +63,7 @@ export const baseConfig = [
           groups: [['builtin', 'external', 'internal'], ['parent', 'sibling', 'index', 'object'], 'type'],
           pathGroups: [
             {
-              pattern: '${domains,modules,shared}/**',
+              pattern: '${app,components,domains,modules,shared}/**',
               group: 'parent',
             },
           ],
@@ -63,20 +71,32 @@ export const baseConfig = [
           alphabetize: { order: 'asc', caseInsensitive: true, orderImportKind: 'asc' },
         },
       ],
+      // Clean Architecture boundaries enforcement
+      // Dependency rule: app → components → domains → modules → shared
       'boundaries/element-types': [
         'error',
         {
           default: 'allow',
           rules: [
             {
+              from: 'components',
+              disallow: ['app'],
+              message: 'Components should not depend on app.',
+            },
+            {
+              from: 'domains',
+              disallow: ['app', 'components'],
+              message: 'Domains should not depend on app or components.',
+            },
+            {
               from: 'modules',
-              disallow: ['domains'],
-              message: 'Modules should not depend on domains.',
+              disallow: ['app', 'components', 'domains'],
+              message: 'Modules should only depend on shared.',
             },
             {
               from: 'shared',
-              disallow: ['domains', 'modules'],
-              message: 'Shared should not depend on domains or modules.',
+              disallow: ['app', 'components', 'domains', 'modules'],
+              message: 'Shared should not depend on any other layer.',
             },
           ],
         },

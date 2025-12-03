@@ -1,7 +1,7 @@
+import { MediaType } from '@monorepo/database/client';
 import { Injectable } from '@nestjs/common';
 
 import { PrismaAdapter } from '$adapters';
-import { MediaType } from '$prisma/client';
 import { generatePublicId } from '$utils';
 
 @Injectable()

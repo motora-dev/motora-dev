@@ -6,8 +6,8 @@ on:
       - main
       - develop
     paths:
-      - 'apps/server/prisma/migrations/**'
-      - 'apps/server/prisma/schema.prisma'
+      - 'packages/database/prisma/migrations/**'
+      - 'packages/database/prisma/schema.prisma'
       - 'apps/content/articles/**'
       - '.github/workflows/cd-database.yml'
   workflow_dispatch:
@@ -17,9 +17,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      database: ${{ steps.filter.outputs.database }}
+      content: ${{ steps.filter.outputs.content }}
+      workflow: ${{ steps.filter.outputs.workflow }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check file changes
+        id: filter
+        uses: tj-actions/changed-files@v45
+        with:
+          files_yaml: |
+            database:
+              - 'packages/database/prisma/migrations/**'
+              - 'packages/database/prisma/schema.prisma'
+            content:
+              - 'apps/content/articles/**'
+            workflow:
+              - '.github/workflows/cd-database.yml'
+
   migrate:
     name: Apply Migrations
     runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.database == 'true' || needs.detect-changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch'
 
     environment: ${{ github.ref_name }}
 
@@ -30,7 +59,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 10.20.0
+          version: 10.24.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,10 +69,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        working-directory: apps/server
-        run: pnpm prisma generate
 
       - name: Debug Network Connectivity
         env:
@@ -64,7 +89,7 @@ jobs:
           fi
 
       - name: Apply Migrations
-        working-directory: apps/server
+        working-directory: packages/database
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
@@ -73,7 +98,11 @@ jobs:
   seed:
     name: Seed Content
     runs-on: ubuntu-latest
-    needs: [migrate]
+    needs: [detect-changes, migrate]
+    if: |
+      always() &&
+      (needs.migrate.result == 'success' || needs.migrate.result == 'skipped') &&
+      (needs.detect-changes.outputs.content == 'true' || needs.detect-changes.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch')
 
     environment: ${{ github.ref_name }}
 
@@ -84,7 +113,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 10.20.0
+          version: 10.24.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -94,10 +123,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        working-directory: apps/content
-        run: pnpm prisma generate
 
       - name: Seed Articles
         working-directory: apps/content
