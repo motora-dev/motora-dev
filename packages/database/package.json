@@ -8,8 +8,8 @@
     "./client": "./src/generated/prisma-client/client.ts"
   },
   "scripts": {
+    "prepare": "prisma generate || true",
     "clean": "rimraf .turbo node_modules",
-    "prepare": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",

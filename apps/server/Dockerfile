@@ -36,6 +36,9 @@ FROM node:24.11.0-slim AS runner
 
 WORKDIR /app
 
+# Install pnpm
+RUN npm install -g pnpm@10.19.0
+
 # Install required system dependencies for production
 RUN apt-get update && \
     apt-get install -y \
@@ -43,9 +46,17 @@ RUN apt-get update && \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy necessary files from builder stage
+# Copy package.json files for pnpm install (production dependencies only)
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/apps/server/package.json ./apps/server/
+COPY --from=builder /app/packages/error-code/package.json ./packages/error-code/
+COPY --from=builder /app/packages/database/package.json ./packages/database/
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
+
+# Copy dist from builder
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
-COPY --from=builder /app/apps/server/node_modules ./apps/server/node_modules
 
 # Set environment variables
 ENV NODE_ENV=production
