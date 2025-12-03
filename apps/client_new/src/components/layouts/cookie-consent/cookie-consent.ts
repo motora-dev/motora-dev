@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { CookieConsentService } from '$shared/lib/cookie-consent.service';
+import { CookieConsentService } from '$modules/cookie-consent';
 
 @Component({
   selector: 'app-cookie-consent',

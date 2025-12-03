@@ -1,4 +1,5 @@
 export * from './auth';
+export * from './cookie-consent';
 export * from './error';
 export * from './seo';
 export * from './spinner';

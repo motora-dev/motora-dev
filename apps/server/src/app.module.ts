@@ -48,7 +48,7 @@ import { MediaModule } from './domains/media/media.module';
       {
         name: 'short',
         ttl: 60000, // 60秒間（1分）
-        limit: 10, // 同一IPから10リクエストまで
+        limit: 100, // 同一IPから10リクエストまで
       },
     ]),
   ],

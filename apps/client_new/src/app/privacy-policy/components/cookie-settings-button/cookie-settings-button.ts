@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { CookieConsentService } from '$shared/lib/cookie-consent.service';
+import { CookieConsentService } from '$modules/cookie-consent';
 
 @Component({
   selector: 'app-cookie-settings-button',
