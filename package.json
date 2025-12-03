@@ -4,7 +4,9 @@
   "scripts": {
     "prepare": "husky || true",
     "clean": "turbo run clean && pnpm run clean:root && pnpm store prune",
+    "clean:cache": "turbo run clean:cache && pnpm run clean:cache:root",
     "clean:root": "rimraf .turbo node_modules",
+    "clean:cache:root": "rimraf .turbo",
     "build": "turbo run build",
     "start": "turbo run start",
     "start:prd": "turbo run start:prd",
@@ -15,7 +17,7 @@
     "tsc": "turbo run tsc",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
-    "check-all": "turbo run format lint tsc test"
+    "check-all": "pnpm clean:cache && turbo run format lint build tsc test"
   },
   "devDependencies": {
     "@monorepo/eslint-config": "workspace:*",

@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
   },
   {
+    path: 'privacy-policy',
+    loadChildren: () => import('./privacy-policy/privacy-policy.routes').then((m) => m.PRIVACY_POLICY_ROUTES),
+  },
+  {
     path: 'login',
     loadChildren: () => import('./auth/login/login.routes').then((m) => m.LOGIN_ROUTES),
   },

@@ -8,6 +8,7 @@ import { ArticleCreateModule } from '$domains/article-create/article-create.modu
 import { ArticleEditModule } from '$domains/article-edit/article-edit.module';
 import { ArticleListModule } from '$domains/article-list/article-list.module';
 import { ArticlePageModule } from '$domains/article-page/article-page.module';
+import { OgModule } from '$domains/og/og.module';
 import { SitemapModule } from '$domains/sitemap/sitemap.module';
 import { UserModule } from '$domains/user/user.module';
 import { GoogleCloudAuthGuard } from '$guards';
@@ -39,6 +40,7 @@ import { MediaModule } from './domains/media/media.module';
       envFilePath: ['.env.local', '.env'], // 複数ファイル対応（優先順位順）
     }),
     MediaModule,
+    OgModule,
     SitemapModule,
     UserModule,
     // レート制限の設定

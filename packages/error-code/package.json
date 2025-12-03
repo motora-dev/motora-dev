@@ -3,16 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.ts",
-      "default": "./index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
     "clean": "rimraf .turbo coverage dist node_modules",
+    "clean:cache": "rimraf .turbo coverage dist",
     "prebuild": "rm -rf dist",
     "build": "pnpm prebuild && tsc --project tsconfig.build.json",
     "tsc": "pnpm tsc:src && pnpm tsc:spec",

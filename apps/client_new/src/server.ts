@@ -13,15 +13,74 @@ import basicAuth from 'express-basic-auth';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { environment } from '$environments';
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const indexHtmlPath = join(browserDistFolder, 'index.csr.html');
-const indexHtml = existsSync(indexHtmlPath) ? readFileSync(indexHtmlPath, 'utf-8') : '';
+let indexHtml = existsSync(indexHtmlPath) ? readFileSync(indexHtmlPath, 'utf-8') : '';
+const baseUrl = environment.baseUrl;
+const apiUrl = environment.apiUrl;
+const gaId = environment.gaId;
+
+// Inject Google Analytics scripts if GA ID is configured
+if (gaId) {
+  const gaScripts = `
+    <!-- Consent Mode v2 default settings -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      // Default to denied
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied'
+      });
+
+      // Check localStorage for consent status
+      try {
+        var consent = localStorage.getItem('cookie-consent');
+        if (consent === 'accepted') {
+          gtag('consent', 'update', {
+            'ad_storage': 'granted',
+            'analytics_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted'
+          });
+        }
+      } catch (e) {
+        // LocalStorage access error - do nothing
+      }
+    </script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${gaId}');
+    </script>`;
+
+  indexHtml = indexHtml.replace('<!-- __GA_SCRIPTS__ -->', gaScripts);
+} else {
+  indexHtml = indexHtml.replace('<!-- __GA_SCRIPTS__ -->', '');
+}
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 // Enable gzip/brotli compression for all responses
 app.use(compression() as any);
+
+// Non-production environments: add noindex header
+if (!environment.production) {
+  app.use((req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    next();
+  });
+}
 
 // Basic authentication (enabled via environment variable for preview/develop environments)
 if (process.env['BASIC_AUTH_ENABLED'] === 'true') {
@@ -50,6 +109,60 @@ const isr = indexHtml
 
 // Parse JSON for invalidation endpoint
 app.use(express.json());
+
+/**
+ * robots.txt endpoint
+ */
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.send(`User-agent: *
+Allow: /
+Disallow: /private/
+Sitemap: ${baseUrl}/sitemap.xml`);
+});
+
+/**
+ * sitemap.xml endpoint
+ * Fetches article data from NestJS API and generates XML sitemap
+ */
+app.get('/sitemap.xml', async (req, res) => {
+  const staticPages = [
+    { url: baseUrl, lastmod: new Date().toISOString() },
+    { url: `${baseUrl}/privacy-policy`, lastmod: new Date().toISOString() },
+  ];
+
+  let articleUrls: Array<{ url: string; lastmod: string }> = [];
+
+  // Fetch sitemap data from NestJS API
+  const response = await fetch(`${apiUrl}/sitemap`);
+  if (response.ok) {
+    const data = await response.json();
+    articleUrls = data.articles.flatMap(
+      (article: { publicId: string; pages: Array<{ publicId: string; updatedAt: string }> }) =>
+        article.pages.map((page) => ({
+          url: `${baseUrl}/article/${article.publicId}/${page.publicId}`,
+          lastmod: new Date(page.updatedAt).toISOString(),
+        })),
+    );
+  }
+
+  const allUrls = [...staticPages, ...articleUrls];
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls
+  .map(
+    (item) => `  <url>
+    <loc>${item.url}</loc>
+    <lastmod>${item.lastmod}</lastmod>
+  </url>`,
+  )
+  .join('\n')}
+</urlset>`;
+
+  res.type('application/xml');
+  res.send(xml);
+});
 
 /**
  * ISR cache invalidation endpoint

@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf .tsbuildinfo .turbo coverage dist node_modules",
+    "clean:cache": "rimraf .tsbuildinfo .turbo coverage dist",
     "build": "node esbuild.config.mjs",
     "start": "node esbuild.config.mjs --watch --debug",
     "start:prd": "node dist/main.js",
-    "check-all": "pnpm lint && pnpm format && pnpm tsc && pnpm test",
+    "check-all": "pnpm lint && pnpm format && pnpm build && pnpm tsc && pnpm test",
     "format": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --config eslint.config.mjs",
@@ -45,7 +46,10 @@
     "gray-matter": "^4.0.3",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "satori": "^0.18.3",
+    "satori-html": "^0.3.2",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@monorepo/eslint-config": "workspace:*",
@@ -57,6 +61,7 @@
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.2",
+    "@types/sharp": "^0.32.0",
     "@vitest/coverage-v8": "catalog:",
     "dotenv": "^17.2.3",
     "esbuild": "catalog:",

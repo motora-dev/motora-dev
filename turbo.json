@@ -6,10 +6,12 @@
     "clean": {
       "cache": false
     },
+    "clean:cache": {
+      "cache": false
+    },
     "build": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "dependsOn": ["^build"],
-      "outputs": ["build/**", ".vercel/**", "dist/**", ".next/**", "!.next/cache/**"]
+      "cache": true
     },
     "start": {
       "dependsOn": ["^build"],
@@ -22,10 +24,11 @@
       "persistent": true
     },
     "tsc": {
+      "dependsOn": ["^build"],
       "cache": true
     },
     "format": {
-      "cache": false
+      "cache": true
     },
     "format:fix": {
       "cache": false
@@ -34,12 +37,14 @@
       "cache": true
     },
     "lint:fix": {
-      "cache": true
+      "cache": false
     },
     "test": {
+      "dependsOn": ["^build"],
       "cache": true
     },
     "test:coverage": {
+      "dependsOn": ["^build"],
       "cache": true,
       "outputs": ["coverage/**"]
     }

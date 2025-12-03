@@ -1,6 +1,6 @@
 import { ViewportScroller } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RxIf } from '@rx-angular/template/if';
@@ -8,6 +8,7 @@ import { RxPush } from '@rx-angular/template/push';
 import { combineLatest, filter, map, take } from 'rxjs';
 
 import { ArticlePageFacade } from '$domains/article-page/article-page.facade';
+import { SeoService } from '$modules/seo';
 import { UiFacade } from '$modules/ui';
 import {
   ArticlePageLeftSidebarComponent,
@@ -31,11 +32,13 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageComponent {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly facade = inject(ArticlePageFacade);
+  private readonly seoService = inject(SeoService);
   private readonly uiFacade = inject(UiFacade);
 
   readonly articleId = signal<string>('');
@@ -94,6 +97,22 @@ export class ArticlePageComponent {
     if (articleId && pageId) {
       this.facade.loadPage(articleId, pageId);
     }
+
+    // ページデータが読み込まれたらSEOメタタグを設定
+    this.currentPage$
+      .pipe(
+        filter((page) => page !== null),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((page) => {
+        this.seoService.setPageMeta({
+          title: page.title,
+          description: page.description,
+          type: 'article',
+          url: `/article/${this.articleId()}/${page.id}`,
+          tags: page.tags,
+        });
+      });
 
     // ルートパラメータの変更を監視
     this.route.paramMap.subscribe((params) => {

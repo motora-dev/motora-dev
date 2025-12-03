@@ -1,4 +1,6 @@
 export const environment = {
-  production: true,
+  production: false,
   apiUrl: 'https://api.preview.motora-dev.com',
+  baseUrl: 'https://preview.motora-dev.com',
+  gaId: '',
 };

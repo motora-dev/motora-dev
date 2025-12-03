@@ -1,5 +1,6 @@
 export * from './auth';
 export * from './error';
+export * from './seo';
 export * from './spinner';
 export * from './ui';
 

@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideStore } from '@ngxs/store';
 
+import { AppFacade } from '$domains/app';
 import { AuthState } from '$modules/auth/store';
 import { ErrorState } from '$modules/error/store';
 import { SpinnerState } from '$modules/spinner/store';
@@ -23,6 +24,7 @@ describe('App', () => {
         provideHttpClientTesting(),
         provideStore([AuthState, ErrorState, SpinnerState]),
         { provide: API_URL, useValue: 'http://localhost:3000' },
+        { provide: AppFacade, useValue: {} },
       ],
     }).compileComponents();
 
