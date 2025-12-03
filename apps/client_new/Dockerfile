@@ -22,6 +22,7 @@ COPY . .
 # Build only the client_new
 ARG BUILD_CONFIGURATION=production
 ENV BUILD_CONFIGURATION=${BUILD_CONFIGURATION}
+RUN echo "BUILD_CONFIGURATION=$BUILD_CONFIGURATION"  # デバッグ用
 RUN pnpm run build --filter=@monorepo/client-new
 
 # Production stage

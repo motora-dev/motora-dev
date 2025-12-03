@@ -3,6 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "env": ["BUILD_CONFIGURATION"],
       "outputs": ["dist/**"]
     },
     "test:coverage": {
