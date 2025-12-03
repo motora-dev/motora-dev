@@ -5,7 +5,7 @@ on:
     branches: [develop, main]
     paths:
       - 'apps/server/**'
-      - 'apps/client_new/**'
+      - 'apps/client/**'
       - 'packages/**'
       - '.github/workflows/cd-gcp.yml'
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            apps/client_new/**
+            apps/client/**
             packages/**
 
       - name: Google Auth
@@ -58,7 +58,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           gcloud builds submit . \
-            --config=apps/client_new/cloudbuild.yaml \
+            --config=apps/client/cloudbuild.yaml \
             --substitutions=_IMAGE_TAG=${{ github.sha }},_SERVICE_NAME=${{ secrets.CLIENT_SERVICE_NAME }},_BUILD_CONFIGURATION=${{ github.ref_name == 'main' && 'production' || 'develop' }} \
             --suppress-logs
 

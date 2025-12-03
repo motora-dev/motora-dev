@@ -1,10 +1,13 @@
 {
+  "$schema": "https://turborepo.org/schema.json",
   "extends": ["//"],
   "tasks": {
     "build": {
-      "outputs": [".next/**", "!.next/cache/**"],
-      "env": ["API_URL", "GOOGLE_APPLICATION_CREDENTIALS_JSON"]
+      "env": ["BUILD_CONFIGURATION"],
+      "outputs": ["dist/**"]
     },
-    "lint": {}
+    "test:coverage": {
+      "outputs": ["coverage/**"]
+    }
   }
 }

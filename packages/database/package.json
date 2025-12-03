@@ -9,7 +9,8 @@
   },
   "scripts": {
     "prepare": "prisma generate || true",
-    "clean": "rimraf .turbo node_modules",
+    "clean": "rimraf .turbo node_modules src/generated",
+    "clean:cache": "rimraf .turbo",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -26,4 +27,3 @@
     "extends": "../../package.json"
   }
 }
-

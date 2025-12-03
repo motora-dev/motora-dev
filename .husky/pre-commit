@@ -6,10 +6,10 @@ if git diff --cached --name-only | grep -q "^apps/client/"; then
   (cd apps/client && npx lint-staged) || exit 1
 fi
 
-# client_newアプリのlint-stagedを実行
-if git diff --cached --name-only | grep -q "^apps/client_new/"; then
-  echo "Running client_new lint-staged..."
-  (cd apps/client_new && npx lint-staged) || exit 1
+# client_oldアプリのlint-stagedを実行
+if git diff --cached --name-only | grep -q "^apps/client_old/"; then
+  echo "Running client_old lint-staged..."
+  (cd apps/client_old && npx lint-staged) || exit 1
 fi
 
 # serverアプリのlint-stagedを実行
