@@ -5,11 +5,11 @@ import { STATUS, ErrorStatus } from './error-status';
 
 // --- エラーコード生成ファクトリ ---
 // ドメインとエンティティを固定した、部分適用済みのジェネレーターを作成するファクトリ関数
-const createErrorCodeFactory = (domain: DomainCode) => {
+const createErrorCodeFactory = (domain: DomainCode, entity: EntityType) => {
   let counter = 1; // ドメインごとにカウンターを初期化
 
   // 自動採番を行うジェネレーターを返す
-  return (statusCode: ErrorStatus, entity: EntityType, message: ErrorMessages) => {
+  return (statusCode: ErrorStatus, message: ErrorMessages) => {
     // counterを3桁のゼロパディング文字列に変換
     const codeNumber = String(counter++).padStart(3, '0');
 
@@ -23,13 +23,15 @@ const createErrorCodeFactory = (domain: DomainCode) => {
 };
 
 // --- ドメインごとのファクトリを生成 ---
-const commonError = createErrorCodeFactory(DOMAIN.common);
-const authError = createErrorCodeFactory(DOMAIN.auth);
-const articleError = createErrorCodeFactory(DOMAIN.article);
-const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit);
-const articlePageError = createErrorCodeFactory(DOMAIN.articlePage);
-const mediaError = createErrorCodeFactory(DOMAIN.media);
-const userError = createErrorCodeFactory(DOMAIN.user);
+const commonError = createErrorCodeFactory(DOMAIN.common, ENTITY.common);
+const authTokenError = createErrorCodeFactory(DOMAIN.auth, ENTITY.token);
+const authUserError = createErrorCodeFactory(DOMAIN.auth, ENTITY.user);
+const articleError = createErrorCodeFactory(DOMAIN.article, ENTITY.article);
+const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit, ENTITY.article);
+const articlePageError = createErrorCodeFactory(DOMAIN.articlePage, ENTITY.page);
+const articlePageArticleError = createErrorCodeFactory(DOMAIN.articlePage, ENTITY.article);
+const mediaError = createErrorCodeFactory(DOMAIN.media, ENTITY.media);
+const userError = createErrorCodeFactory(DOMAIN.user, ENTITY.user);
 
 export const ERROR_CODE = {
   // System
@@ -38,44 +40,32 @@ export const ERROR_CODE = {
     statusCode: STATUS.unknown,
     message: MESSAGES.SYSTEM_ERROR,
   },
-  INTERNAL_SERVER_ERROR: createErrorCodeFactory(DOMAIN.common)(
-    STATUS.serverError,
-    ENTITY.common,
-    MESSAGES.INTERNAL_SERVER_ERROR,
-  ),
+  INTERNAL_SERVER_ERROR: commonError(STATUS.serverError, MESSAGES.INTERNAL_SERVER_ERROR),
 
   // Auth
-  NO_BEARER_TOKEN: authError(STATUS.unauthorized, ENTITY.token, MESSAGES.NO_BEARER_TOKEN),
-  INVALID_TOKEN: authError(STATUS.unauthorized, ENTITY.token, MESSAGES.INVALID_TOKEN),
-  UNAUTHORIZED: authError(STATUS.unauthorized, ENTITY.user, MESSAGES.UNAUTHORIZED),
-  FORBIDDEN_EMAIL_ACCESS: authError(STATUS.forbidden, ENTITY.user, MESSAGES.FORBIDDEN_EMAIL_ACCESS),
+  NO_BEARER_TOKEN: authTokenError(STATUS.unauthorized, MESSAGES.NO_BEARER_TOKEN),
+  INVALID_TOKEN: authTokenError(STATUS.unauthorized, MESSAGES.INVALID_TOKEN),
+  UNAUTHORIZED: authUserError(STATUS.unauthorized, MESSAGES.UNAUTHORIZED),
+  FORBIDDEN_EMAIL_ACCESS: authUserError(STATUS.forbidden, MESSAGES.FORBIDDEN_EMAIL_ACCESS),
 
   // User
-  USER_NOT_FOUND: userError(STATUS.notFound, ENTITY.user, MESSAGES.USER_NOT_FOUND),
+  USER_NOT_FOUND: userError(STATUS.notFound, MESSAGES.USER_NOT_FOUND),
 
   // Media
-  MEDIA_FILE_EXTENSION_MISSING: mediaError(STATUS.badRequest, ENTITY.media, MESSAGES.MEDIA_FILE_EXTENSION_MISSING),
+  MEDIA_FILE_EXTENSION_MISSING: mediaError(STATUS.badRequest, MESSAGES.MEDIA_FILE_EXTENSION_MISSING),
 
   // Storage
-  SIGNED_DOWNLOAD_URL_CREATION_FAILED: mediaError(
-    STATUS.serverError,
-    ENTITY.media,
-    MESSAGES.SIGNED_DOWNLOAD_URL_CREATION_FAILED,
-  ),
-  SIGNED_UPLOAD_URL_CREATION_FAILED: commonError(
-    STATUS.serverError,
-    ENTITY.media,
-    MESSAGES.SIGNED_UPLOAD_URL_CREATION_FAILED,
-  ),
+  SIGNED_DOWNLOAD_URL_CREATION_FAILED: mediaError(STATUS.serverError, MESSAGES.SIGNED_DOWNLOAD_URL_CREATION_FAILED),
+  SIGNED_UPLOAD_URL_CREATION_FAILED: commonError(STATUS.serverError, MESSAGES.SIGNED_UPLOAD_URL_CREATION_FAILED),
 
   // Article
-  ARTICLE_NOT_FOUND: articleError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
-  ARTICLE_EDIT_NOT_FOUND: articleEditError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
-  ARTICLE_EDIT_FORBIDDEN: articleEditError(STATUS.forbidden, ENTITY.article, MESSAGES.ARTICLE_EDIT_FORBIDDEN),
+  ARTICLE_NOT_FOUND: articleError(STATUS.notFound, MESSAGES.ARTICLE_NOT_FOUND),
+  ARTICLE_EDIT_NOT_FOUND: articleEditError(STATUS.notFound, MESSAGES.ARTICLE_NOT_FOUND),
+  ARTICLE_EDIT_FORBIDDEN: articleEditError(STATUS.forbidden, MESSAGES.ARTICLE_EDIT_FORBIDDEN),
 
   // Page
-  ARTICLE_NOT_FOUND_FOR_PAGE: articlePageError(STATUS.notFound, ENTITY.article, MESSAGES.ARTICLE_NOT_FOUND),
-  PAGE_NOT_FOUND: articlePageError(STATUS.notFound, ENTITY.page, MESSAGES.PAGE_NOT_FOUND),
+  ARTICLE_NOT_FOUND_FOR_PAGE: articlePageArticleError(STATUS.notFound, MESSAGES.ARTICLE_NOT_FOUND),
+  PAGE_NOT_FOUND: articlePageError(STATUS.notFound, MESSAGES.PAGE_NOT_FOUND),
 } as const;
 
 // --- 型定義 ---

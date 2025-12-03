@@ -1,11 +1,13 @@
 {
   "extends": "@monorepo/typescript-config",
   "include": ["src/**/*.ts", "index.ts"],
-  "exclude": [".turbo", "coverage", "node_modules"],
+  "exclude": [".turbo", "coverage", "node_modules", "src/**/*.spec.ts"],
   "compilerOptions": {
     "rootDir": ".",
+    "outDir": "dist",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "types": ["node", "jest"]
+    "noPropertyAccessFromIndexSignature": true,
+    "types": ["node"]
   }
 }

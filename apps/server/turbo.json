@@ -3,27 +3,10 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "outputs": ["dist/**"],
-      "env": ["NODE_ENV", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
+      "outputs": ["dist/**"]
     },
-    "test": {
-      "outputs": ["coverage/**"],
-      "env": [
-        "NODE_ENV",
-        "SUPABASE_URL",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "DATABASE_URL",
-        "CORS_ORIGINS",
-        "PORT",
-        "SESSION_SECRET_TOKEN",
-        "COLLECT_COVERAGE"
-      ]
-    },
-    "seed": {
-      "env": ["SEED_USER_PUBLIC_ID"]
-    },
-    "lint": {
-      "env": ["NODE_ENV", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
+    "test:coverage": {
+      "outputs": ["coverage/**"]
     }
   }
 }

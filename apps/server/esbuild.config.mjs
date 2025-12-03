@@ -1,5 +1,5 @@
 import * as esbuild from 'esbuild';
-import { esbuildDecorators } from '@anatine/esbuild-decorators';
+import * as swc from '@swc/core';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,25 +8,66 @@ import { fileURLToPath } from 'node:url';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const isWatch = process.argv.includes('--watch');
 const isDebug = process.argv.includes('--debug');
+const isProduction = !isWatch && !isDebug;
 
-// パスエイリアス（tsconfig.jsonと同期）
-const alias = {
-  '$prisma/client': path.resolve(dirname, 'src/generated/prisma-client/client.ts'),
-  $adapters: path.resolve(dirname, 'src/shared/adapters'),
-  $decorators: path.resolve(dirname, 'src/shared/decorators'),
-  $exceptions: path.resolve(dirname, 'src/shared/exceptions'),
-  $filters: path.resolve(dirname, 'src/shared/filters'),
-  $guards: path.resolve(dirname, 'src/shared/guards'),
-  $interceptors: path.resolve(dirname, 'src/shared/interceptors'),
-  $utils: path.resolve(dirname, 'src/shared/utils'),
+// NestJSのオプショナルパッケージ（インストールしていないが、coreが動的にロードしようとする）
+const nestjsOptionalPackages = [
+  '@nestjs/websockets',
+  '@nestjs/websockets/socket-module',
+  '@nestjs/microservices',
+  '@nestjs/microservices/microservices-module',
+];
+
+// 外部化するパッケージを取得
+// 全ての依存関係を外部化（node_modulesからロード）
+const getExternalPackages = () => {
+  const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.json'), 'utf-8'));
+  return [
+    ...nestjsOptionalPackages,
+    ...Object.keys(packageJson.dependencies || {}),
+    ...Object.keys(packageJson.devDependencies || {}),
+    '@prisma/client',
+  ].filter((pkg) => !pkg.startsWith('@monorepo/')); // モノレポ内のパッケージはバンドルに含める
 };
 
-// package.jsonからdependenciesを読み取り、外部化するパッケージを取得
-const packageJson = JSON.parse(fs.readFileSync(path.resolve(dirname, 'package.json'), 'utf-8'));
-const externalPackages = [
-  ...Object.keys(packageJson.dependencies || {}),
-  ...Object.keys(packageJson.devDependencies || {}),
-].filter((pkg) => !pkg.startsWith('@monorepo/')); // モノレポ内のパッケージはバンドルに含める
+const externalPackages = getExternalPackages();
+
+/**
+ * SWCを使ってデコレーターをサポートするesbuildプラグイン
+ * @returns {esbuild.Plugin}
+ */
+function swcPlugin() {
+  const enableSourceMaps = isWatch || isDebug;
+
+  return {
+    name: 'swc-decorator',
+    setup(build) {
+      build.onLoad({ filter: /\.ts$/ }, async (args) => {
+        const source = await fs.promises.readFile(args.path, 'utf8');
+        const result = await swc.transform(source, {
+          filename: args.path,
+          sourceMaps: enableSourceMaps ? 'inline' : false,
+          jsc: {
+            parser: {
+              syntax: 'typescript',
+              decorators: true,
+            },
+            transform: {
+              legacyDecorator: true,
+              decoratorMetadata: true,
+            },
+            target: 'es2023',
+            keepClassNames: true,
+          },
+        });
+        return {
+          contents: result.code,
+          loader: 'js',
+        };
+      });
+    },
+  };
+}
 
 /** @type {esbuild.BuildOptions} */
 const config = {
@@ -36,20 +77,17 @@ const config = {
   target: 'node24',
   outfile: path.resolve(dirname, 'dist/main.js'),
   format: 'esm',
-  sourcemap: true,
-  alias,
+  sourcemap: isWatch || isDebug, // 開発時・デバッグ時のみsourcemap生成
   // node_modulesのパッケージは外部化（バンドルしない）
   external: externalPackages,
   // バナーでreflect-metadataをインポート
   banner: {
     js: "import 'reflect-metadata';",
   },
-  plugins: [
-    esbuildDecorators({
-      tsconfig: path.resolve(dirname, 'tsconfig.json'),
-    }),
-  ],
-  logLevel: 'info',
+  plugins: [swcPlugin()],
+  // 本番ビルド時はesbuildのログを抑制し、カスタムでサイズ表示
+  logLevel: isProduction ? 'silent' : 'info',
+  metafile: isProduction,
 };
 
 /**
@@ -141,7 +179,17 @@ async function build() {
     console.log('👀 Watching for changes...\n');
   } else {
     // 単発ビルド
-    await esbuild.build(config);
+    const result = await esbuild.build(config);
+
+    // 本番ビルド時はバンドルサイズを表示
+    if (isProduction && result.metafile) {
+      const outputs = result.metafile.outputs;
+      for (const [file, info] of Object.entries(outputs)) {
+        const size = (info.bytes / 1024 / 1024).toFixed(2);
+        console.log(`  ${file}  ${size}MB`);
+      }
+    }
+
     console.log('✅ Build complete!\n');
   }
 }

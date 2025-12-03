@@ -1,8 +1,12 @@
 {
   "name": "@monorepo/typescript-config",
-  "license": "UNLICENSED",
   "private": true,
+  "exports": "./tsconfig.json",
+  "scripts": {
+    "clean": "rimraf .turbo node_modules"
+  },
   "devDependencies": {
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "volta": {
