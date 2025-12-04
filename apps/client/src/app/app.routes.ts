@@ -6,6 +6,14 @@ export const routes: Routes = [
     loadChildren: () => import('./article-list/article-list.routes').then((m) => m.ARTICLE_LIST_ROUTES),
   },
   {
+    path: 'article/:id/edit',
+    loadChildren: () => import('./article-edit/article-edit.routes').then((m) => m.ARTICLE_EDIT_ROUTES),
+  },
+  {
+    path: 'article/:id/:pageId/edit',
+    loadChildren: () => import('./article-edit/article-edit.routes').then((m) => m.ARTICLE_EDIT_ROUTES),
+  },
+  {
     path: 'article/:id',
     loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
   },
@@ -18,7 +26,7 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/login/login.routes').then((m) => m.LOGIN_ROUTES),
   },
   {
-    path: 'auth/callback',
+    path: 'auth',
     loadChildren: () => import('./auth/callback/callback.routes').then((m) => m.CALLBACK_ROUTES),
   },
   {

@@ -71,6 +71,12 @@ Angular 21 + Tailwind CSS 4 + SSR を採用したフロントエンドアプリ�
 ## 開発コマンド
 
 ```bash
+# 完全クリーンアップ（node_modulesも削除）
+pnpm clean
+
+# キャッシュクリア（.angular, .turbo, coverage, dist）
+pnpm clean:cache
+
 # 開発サーバー起動
 pnpm start
 
@@ -689,10 +695,10 @@ pnpm storybook        # http://localhost:6006
 
 ### 対象コンポーネント
 
-| カテゴリ   | パス                      | 内容                |
-| ---------- | ------------------------- | ------------------- |
-| UI         | `shared/ui/button/`       | ButtonDirective     |
-| UI         | `shared/ui/input/`        | InputDirective      |
+| カテゴリ   | パス                             | 内容                |
+| ---------- | -------------------------------- | ------------------- |
+| UI         | `shared/ui/button/`              | ButtonDirective     |
+| UI         | `shared/ui/input/`               | InputDirective      |
 | Components | `components/fields/input-field/` | InputFieldComponent |
 
 ### Stories の書き方

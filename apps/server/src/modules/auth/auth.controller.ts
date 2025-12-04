@@ -157,7 +157,7 @@ export class AuthController {
     // 許可するパターン
     const allowedPatterns = [
       // ローカル開発
-      'http://localhost:3000',
+      'http://localhost:4200',
       // メインドメイン: https://motora-dev.com
       `https://${domain}`,
       // 任意のサブドメイン: https://*.motora-dev.com
