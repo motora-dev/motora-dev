@@ -369,6 +369,65 @@ GitHub Actions による自動化されたパイプラインを構築してい�
 - **Workload Identity Federation**: サービスアカウントキーを使わない安全な認証
 - **環境分離**: develop/main ブランチで異なる環境にデプロイ
 
+## 🌍 環境構成
+
+| 環境        | ブランチ       | 用途                 | URL                |
+| ----------- | -------------- | -------------------- | ------------------ |
+| **develop** | `develop`      | 開発環境（機能検証） | develop.motora.dev |
+| **preview** | PR → `develop` | PRプレビュー環境     | preview.motora.dev |
+| **main**    | `main`         | 本番環境             | motora.dev         |
+
+### 環境変数
+
+各環境の設定は以下で管理：
+
+- **Client**: `apps/client/environments/environment.{env}.ts`
+- **Server**: GitHub Secrets + Secret Manager
+- **Terraform**: `terraform/environments/{env}/terraform.tfvars`
+
+## 🏗️ インフラストラクチャ（Terraform）
+
+GCPリソースをTerraformで管理しています。
+
+### モジュール構成
+
+| モジュール    | 用途                                                |
+| ------------- | --------------------------------------------------- |
+| **iam**       | サービスアカウント（GitHub Actions用、Cloud Run用） |
+| **wif**       | Workload Identity Federation（キーレス認証）        |
+| **secrets**   | Secret Manager（環境変数の安全な管理）              |
+| **cloud-run** | Cloud Runサービス定義（オプション）                 |
+
+### 有効化されるAPI
+
+- Cloud Run API
+- Cloud Build API
+- Secret Manager API
+- IAM API
+- Workload Identity API
+
+詳細は [Terraform README](terraform/README.md) を参照してください。
+
+## 📊 ログ・モニタリング
+
+### Cloud Logging
+
+Cloud Runのログは自動的にCloud Loggingに送信されます。
+
+```bash
+# ログの確認（gcloud CLI）
+gcloud logging read "resource.type=cloud_run_revision" --limit=50
+```
+
+### 確認ポイント
+
+| 項目                     | 確認方法                              |
+| ------------------------ | ------------------------------------- |
+| **アプリケーションログ** | Cloud Console > Cloud Run > ログ      |
+| **ビルドログ**           | Cloud Console > Cloud Build > 履歴    |
+| **デプロイ状態**         | GitHub Actions > ワークフロー実行履歴 |
+| **テストカバレッジ**     | Codecov ダッシュボード                |
+
 ## 🏃 開発フロー
 
 1. フィーチャーブランチを作成
