@@ -4,13 +4,13 @@ import { Injectable } from '@nestjs/common';
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
 import { BusinessLogicError } from '$exceptions';
 
-import type { Article } from '@monorepo/database/client';
+import type { Article, Page } from '@monorepo/database/client';
 
 @Injectable()
 export class ArticleEditService {
   constructor(private readonly articleEditRepository: ArticleEditRepository) {}
 
-  async getArticle(userId: number, articleId: string): Promise<Article> {
+  async getArticle(userId: number, articleId: string): Promise<Article & { pages: Page[] }> {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
@@ -21,7 +21,9 @@ export class ArticleEditService {
       throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
     }
 
-    return article;
+    const pages = await this.articleEditRepository.getPages(article.id);
+
+    return { ...article, pages };
   }
 
   async updateArticle(

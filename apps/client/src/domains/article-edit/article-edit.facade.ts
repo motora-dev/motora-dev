@@ -6,7 +6,7 @@ import { SpinnerFacade } from '$modules/spinner';
 import { ArticleEditApi } from './api';
 import { UpdateArticleRequest, UpdateArticleResponse } from './api/article-edit.response';
 import { ArticleEdit } from './model';
-import { ArticleEditState, SetArticle } from './store';
+import { ArticleEditState, SetArticle, SetPages } from './store';
 
 @Injectable()
 export class ArticleEditFacade {
@@ -15,6 +15,7 @@ export class ArticleEditFacade {
   private readonly spinnerFacade = inject(SpinnerFacade);
 
   readonly article$ = this.store.select(ArticleEditState.getArticle);
+  readonly pages$ = this.store.select(ArticleEditState.getPages);
 
   loadArticle(articleId: string): void {
     this.api
@@ -28,6 +29,14 @@ export class ArticleEditFacade {
           content: response.description,
         };
         this.store.dispatch(new SetArticle(article));
+
+        const pages = response.pages.map((p) => ({
+          id: p.id,
+          title: p.title,
+          level: p.level,
+          order: p.order,
+        }));
+        this.store.dispatch(new SetPages(pages));
       });
   }
 

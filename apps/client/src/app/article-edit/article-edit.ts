@@ -6,7 +6,6 @@ import { filter, take } from 'rxjs';
 
 import { InputFieldComponent } from '$components/fields';
 import { ArticleEditFacade } from '$domains/article-edit';
-import { ArticlePageEditFacade } from '$domains/article-page-edit';
 import { ButtonDirective } from '$shared/ui/button';
 import { InputDirective } from '$shared/ui/input';
 
@@ -14,7 +13,7 @@ import { InputDirective } from '$shared/ui/input';
   selector: 'app-article-edit',
   standalone: true,
   imports: [FormsModule, InputFieldComponent, ButtonDirective, InputDirective],
-  providers: [ArticleEditFacade, ArticlePageEditFacade],
+  providers: [ArticleEditFacade],
   templateUrl: './article-edit.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -23,9 +22,9 @@ export class ArticleEditComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly facade = inject(ArticleEditFacade);
-  private readonly pageEditFacade = inject(ArticlePageEditFacade);
 
   readonly article$ = this.facade.article$;
+  readonly pages$ = this.facade.pages$;
 
   readonly articleId = signal<string>('');
 
@@ -99,8 +98,7 @@ export class ArticleEditComponent {
     const articleId = this.articleId();
     if (articleId) {
       // ページ一覧を取得して最初のページにリダイレクト
-      this.pageEditFacade.loadPages(articleId);
-      this.pageEditFacade.pages$
+      this.pages$
         .pipe(
           filter((pages) => pages.length > 0),
           take(1),
