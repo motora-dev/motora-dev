@@ -1,13 +1,11 @@
 import { Controller, Get, HttpCode, HttpStatus, Query, Res } from '@nestjs/common';
 
-import { Public } from '$decorators';
 import { OgService } from './og.service';
 
 @Controller('og')
 export class OgController {
   constructor(private readonly ogService: OgService) {}
 
-  @Public()
   @Get('')
   @HttpCode(HttpStatus.OK)
   async getOgImage(

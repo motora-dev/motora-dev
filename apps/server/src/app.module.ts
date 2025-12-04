@@ -11,7 +11,6 @@ import { ArticlePageModule } from '$domains/article-page/article-page.module';
 import { OgModule } from '$domains/og/og.module';
 import { SitemapModule } from '$domains/sitemap/sitemap.module';
 import { UserModule } from '$domains/user/user.module';
-import { GoogleCloudAuthGuard } from '$guards';
 import { LoggingInterceptor } from '$interceptors';
 import { AuthModule } from '$modules/auth/auth.module';
 import { MediaModule } from './domains/media/media.module';
@@ -22,11 +21,6 @@ import { MediaModule } from './domains/media/media.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard, // 全てのルートにレート制限を適用
-    },
-    // Google Cloud認証を有効化
-    {
-      provide: APP_GUARD,
-      useClass: GoogleCloudAuthGuard, // 全てのルートに認証を適用（@Public()で除外可能）
     },
   ],
   imports: [

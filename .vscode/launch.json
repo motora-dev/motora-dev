@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Start Angular",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "--filter=client", "start"],
+      "runtimeArgs": ["run", "start", "--filter=@monorepo/client"],
       "restart": true,
       "console": "integratedTerminal"
     },
@@ -27,7 +27,7 @@
       "request": "launch",
       "name": "Debug Server",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "--filter=server", "start"],
+      "runtimeArgs": ["run", "start", "--filter=@monorepo/server"],
       "restart": true,
       "console": "integratedTerminal"
     }
