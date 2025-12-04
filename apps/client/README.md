@@ -29,7 +29,7 @@
 
 **テスト & UIカタログ:**</br>
 [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF.svg?logo=vite)](https://vite.dev/)
-[![Vitest](https://img.shields.io/badge/Vitest-4.0-6E9F18.svg?logo=vitest)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.0.14-6E9F18.svg?logo=vitest)](https://vitest.dev/)
 [![Testing Library](https://img.shields.io/badge/Testing_Library-18.1-E33332.svg?logo=testinglibrary)](https://testing-library.com/)
 [![jsdom](https://img.shields.io/badge/jsdom-27.2-F7DF1E.svg)](https://github.com/jsdom/jsdom)
 [![Storybook](https://img.shields.io/badge/Storybook-10.1-FF4785.svg?logo=storybook)](https://storybook.js.org/)

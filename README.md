@@ -16,14 +16,17 @@
 
 ```
 motora-dev/
-├── apps/               # アプリケーション
-│   ├── client/         # Angular フロントエンドアプリケーション
-│   └── server/         # NestJS バックエンドAPI
-├── packages/           # 共有パッケージ
+├── apps/                   # アプリケーション
+│   ├── client/             # Angular フロントエンドアプリケーション
+│   ├── content/            # 記事コンテンツ管理・シード
+│   └── server/             # NestJS バックエンドAPI
+├── packages/               # 共有パッケージ
+│   ├── database/           # Prismaスキーマ・クライアント
 │   ├── error-code/         # エラーコード定義
 │   ├── eslint-config/      # ESLint設定
 │   ├── markdown/           # Markdown処理パッケージ
 │   └── typescript-config/  # TypeScript設定
+├── terraform/              # GCPインフラ構成（IaC）
 ├── pnpm-workspace.yaml
 ├── turbo.json
 └── package.json
@@ -47,14 +50,51 @@ motora-dev/
 - **Testing**: Vitest 4.0.14 + Supertest
 - **Linting**: ESLint 9.39.1 (Flat Config)
 
+#### 📝 Content (`apps/content`)
+
+- **用途**: 記事コンテンツ（Markdown）の管理・データベースシード
+- **機能**: Markdownファイルからメタデータを読み取り、Prisma経由でデータベースへ投入
+- **依存**: @monorepo/database
+
 #### 📦 Shared Packages
 
+- **@monorepo/database**: Prismaスキーマ定義・クライアント生成（User, Article, Page, Mediaモデル）
 - **@monorepo/error-code**: エラーコード定義（ドメイン・エンティティ・ステータスコード・メッセージの一元管理）
 - **@monorepo/eslint-config**: 共通ESLint設定（TypeScript対応）
 - **@monorepo/markdown**: Markdown処理パッケージ（Markdown ↔ ProseMirror変換、Markdown → HTML変換）
 - **@monorepo/typescript-config**: 基本TypeScript設定
 
 ## 🏛 アーキテクチャ
+
+### システム全体図
+
+```mermaid
+flowchart TB
+    subgraph GCP["Google Cloud Platform"]
+        subgraph Client["Client (Angular + SSR)"]
+            UI[UI Components]
+            NGXS[NGXS Store]
+            Facade[Facade]
+        end
+
+        subgraph Server["Server (NestJS)"]
+            Controller[Controller]
+            CQRS[CQRS Query/Command]
+            Repository[Repository]
+        end
+    end
+
+    subgraph Supabase["Supabase"]
+        Auth[(Auth)]
+        PostgreSQL[(PostgreSQL)]
+    end
+
+    UI --> Facade --> NGXS
+    Facade -->|HTTP| Controller
+    Controller --> CQRS --> Repository
+    Repository --> PostgreSQL
+    Controller -->|JWT検証| Auth
+```
 
 ### 設計方針
 
@@ -93,6 +133,7 @@ motora-dev/
 
 - [Client README](apps/client/README.md) - Facade パターン、NGXS 状態管理、UI アーキテクチャ
 - [Server README](apps/server/README.md) - CQRS パターン、Repository パターン、認証・認可
+- [Terraform README](terraform/README.md) - GCP インフラ構成（IAM、Workload Identity Federation）
 
 ## 🛠 技術スタック
 
@@ -151,7 +192,7 @@ source ~/.bash_profile
 
 ```bash
 # プロジェクトディレクトリに移動すると、Voltaが自動的に
-# package.jsonの設定に基づいてNode.js 24.11.0とpnpm 10.20.0を切り替えます
+# package.jsonの設定に基づいてNode.js 24.11.0とpnpm 10.24.0を切り替えます
 ```
 
 > **注意**: Voltaのpnpmサポートは実験的な機能です。詳細は[公式ドキュメント](https://docs.volta.sh/advanced/pnpm)を参照してください。
@@ -302,6 +343,31 @@ pnpm test --filter=@monorepo/server
 ![RxJS](https://img.shields.io/badge/RxJS-7.8.2-b7178c?logo=reactivex&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-7.0.1-2d3748?logo=prisma&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-2.86.0-3ecf8e?logo=supabase&logoColor=white)
+
+## 🔄 CI/CD パイプライン
+
+GitHub Actions による自動化されたパイプラインを構築しています。
+
+### CI（継続的インテグレーション）
+
+| ワークフロー               | トリガー                | 内容                            |
+| -------------------------- | ----------------------- | ------------------------------- |
+| **Check** (`ci-check.yml`) | PR・Push (develop/main) | Format, Lint, Build, 型チェック |
+| **Test** (`ci-test.yml`)   | PR・Push (develop/main) | 変更検知付きテスト + カバレッジ |
+
+### CD（継続的デリバリー）
+
+| ワークフロー                     | トリガー            | 内容                             |
+| -------------------------------- | ------------------- | -------------------------------- |
+| **Deploy to GCP** (`cd-gcp.yml`) | Push (develop/main) | Cloud Build + Cloud Run デプロイ |
+| **Preview** (`cd-preview.yml`)   | PR (develop)        | プレビュー環境へのデプロイ       |
+| **Database** (`cd-database.yml`) | 手動                | データベースマイグレーション     |
+
+### 特徴
+
+- **変更検知**: `tj-actions/changed-files` により、変更があったパッケージのみテスト・デプロイ
+- **Workload Identity Federation**: サービスアカウントキーを使わない安全な認証
+- **環境分離**: develop/main ブランチで異なる環境にデプロイ
 
 ## 🏃 開発フロー
 
