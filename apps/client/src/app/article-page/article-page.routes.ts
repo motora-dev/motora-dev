@@ -10,10 +10,4 @@ export const ARTICLE_PAGE_ROUTES: Routes = [
     loadComponent: () => import('./article-page').then((m) => m.ArticlePageComponent),
     providers: [provideStates([ArticlePageState, UiState])],
   },
-  {
-    path: ':pageId',
-    loadComponent: () => import('./article-page').then((m) => m.ArticlePageComponent),
-    providers: [provideStates([ArticlePageState, UiState])],
-    data: { revalidate: 300 }, // ISR: キャッシュを5分ごとに再検証
-  },
 ];

@@ -4,19 +4,13 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 import { PrismaAdapterModule, SupabaseAdapterModule } from '$adapters';
 import { ArticleEditController } from '$domains/article-edit/article-edit.controller';
-import { UpdateArticleHandler, UpdatePageHandler } from '$domains/article-edit/commands';
-import { GetArticleHandler, GetPageHandler, GetPagesHandler } from '$domains/article-edit/queries';
+import { UpdateArticleHandler } from '$domains/article-edit/commands';
+import { GetArticleHandler } from '$domains/article-edit/queries';
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
 import { ArticleEditService } from '$domains/article-edit/services';
 import { SupabaseAuthGuardModule } from '$modules/auth/supabase-auth.guard.module';
 
-const ArticleEditHandlers = [
-  UpdateArticleHandler,
-  UpdatePageHandler,
-  GetArticleHandler,
-  GetPagesHandler,
-  GetPageHandler,
-];
+const ArticleEditHandlers = [UpdateArticleHandler, GetArticleHandler];
 
 @Module({
   imports: [CqrsModule, ConfigModule, PrismaAdapterModule, SupabaseAdapterModule, SupabaseAuthGuardModule],

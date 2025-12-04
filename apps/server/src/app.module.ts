@@ -8,6 +8,7 @@ import { ArticleCreateModule } from '$domains/article-create/article-create.modu
 import { ArticleEditModule } from '$domains/article-edit/article-edit.module';
 import { ArticleListModule } from '$domains/article-list/article-list.module';
 import { ArticlePageModule } from '$domains/article-page/article-page.module';
+import { ArticlePageEditModule } from '$domains/article-page-edit/article-page-edit.module';
 import { OgModule } from '$domains/og/og.module';
 import { SitemapModule } from '$domains/sitemap/sitemap.module';
 import { UserModule } from '$domains/user/user.module';
@@ -28,6 +29,7 @@ import { MediaModule } from './domains/media/media.module';
     ArticleEditModule,
     ArticleListModule,
     ArticleModule,
+    ArticlePageEditModule,
     ArticlePageModule,
     AuthModule,
     ConfigModule.forRoot({

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { PageItem } from '$domains/article-edit';
+import { PageItem } from '$domains/article-page-edit';
 
 @Component({
   selector: 'app-page-sidebar',

@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
 import { BusinessLogicError } from '$exceptions';
 
-import type { Article, Page } from '@monorepo/database/client';
+import type { Article } from '@monorepo/database/client';
 
 @Injectable()
 export class ArticleEditService {
@@ -42,39 +42,5 @@ export class ArticleEditService {
     }
 
     return await this.articleEditRepository.updateArticle(articleId, title, tags, content);
-  }
-
-  async getPages(userId: number, articleId: string): Promise<Page[]> {
-    const article = await this.getArticle(userId, articleId);
-    return await this.articleEditRepository.getPages(article.id);
-  }
-
-  async getPage(userId: number, articleId: string, pageId: string): Promise<Page> {
-    const article = await this.getArticle(userId, articleId);
-    const page = await this.articleEditRepository.getPage(article.id, pageId);
-
-    if (!page) {
-      throw new BusinessLogicError(ERROR_CODE.PAGE_NOT_FOUND);
-    }
-
-    return page;
-  }
-
-  async updatePage(
-    userId: number,
-    articleId: string,
-    pageId: string,
-    title: string,
-    description: string,
-    content: string,
-  ): Promise<Page> {
-    const article = await this.getArticle(userId, articleId);
-    const page = await this.articleEditRepository.getPage(article.id, pageId);
-
-    if (!page) {
-      throw new BusinessLogicError(ERROR_CODE.PAGE_NOT_FOUND);
-    }
-
-    return await this.articleEditRepository.updatePage(pageId, title, description, content);
   }
 }

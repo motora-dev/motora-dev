@@ -3,17 +3,9 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import { CurrentUser } from '$decorators';
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
-import { UpdateArticleCommand, UpdatePageCommand } from './commands';
-import {
-  GetArticleResponseDto,
-  GetPageResponseDto,
-  GetPagesResponseDto,
-  UpdateArticleRequestDto,
-  UpdateArticleResponseDto,
-  UpdatePageRequestDto,
-  UpdatePageResponseDto,
-} from './dto';
-import { GetArticleQuery, GetPageQuery, GetPagesQuery } from './queries';
+import { UpdateArticleCommand } from './commands';
+import { GetArticleResponseDto, UpdateArticleRequestDto, UpdateArticleResponseDto } from './dto';
+import { GetArticleQuery } from './queries';
 
 @Controller('article')
 @UseGuards(SupabaseAuthGuard)
@@ -44,42 +36,6 @@ export class ArticleEditController {
         updateArticleRequestDto.title,
         updateArticleRequestDto.tags,
         updateArticleRequestDto.content,
-      ),
-    );
-  }
-
-  @Get('edit/:articleId/page')
-  async getPages(
-    @CurrentUser() user: Express.UserPayload,
-    @Param('articleId') articleId: string,
-  ): Promise<GetPagesResponseDto> {
-    return await this.queryBus.execute(new GetPagesQuery(user.id, articleId));
-  }
-
-  @Get('edit/:articleId/page/:pageId')
-  async getPage(
-    @CurrentUser() user: Express.UserPayload,
-    @Param('articleId') articleId: string,
-    @Param('pageId') pageId: string,
-  ): Promise<GetPageResponseDto> {
-    return await this.queryBus.execute(new GetPageQuery(user.id, articleId, pageId));
-  }
-
-  @Put('edit/:articleId/page/:pageId')
-  async updatePage(
-    @CurrentUser() user: Express.UserPayload,
-    @Param('articleId') articleId: string,
-    @Param('pageId') pageId: string,
-    @Body() updatePageRequestDto: UpdatePageRequestDto,
-  ): Promise<UpdatePageResponseDto> {
-    return await this.commandBus.execute(
-      new UpdatePageCommand(
-        user.id,
-        articleId,
-        pageId,
-        updatePageRequestDto.title,
-        updatePageRequestDto.description,
-        updatePageRequestDto.content,
       ),
     );
   }

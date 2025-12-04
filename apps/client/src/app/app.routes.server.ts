@@ -14,11 +14,19 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'article/:articleId/edit',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'article/:articleId/:pageId/edit',
+    renderMode: RenderMode.Server,
+  },
+  {
     path: 'privacy-policy',
     renderMode: RenderMode.Prerender,
   },
   {
     path: '**',
-    renderMode: RenderMode.Client,
+    renderMode: RenderMode.Server,
   },
 ];
