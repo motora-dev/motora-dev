@@ -68,7 +68,7 @@ export class ArticlePageComponent {
   );
 
   constructor() {
-    const articleId = this.route.snapshot.paramMap.get('id') || '';
+    const articleId = this.route.snapshot.paramMap.get('articleId') || '';
     const pageId = this.route.snapshot.paramMap.get('pageId') || '';
 
     this.articleId.set(articleId);

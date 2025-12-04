@@ -6,15 +6,15 @@ export const routes: Routes = [
     loadChildren: () => import('./article-list/article-list.routes').then((m) => m.ARTICLE_LIST_ROUTES),
   },
   {
-    path: 'article/:id/edit',
+    path: 'article/:articleId/edit',
     loadChildren: () => import('./article-edit/article-edit.routes').then((m) => m.ARTICLE_EDIT_ROUTES),
   },
   {
-    path: 'article/:id/:pageId/edit',
+    path: 'article/:articleId/:pageId/edit',
     loadChildren: () => import('./article-edit/article-edit.routes').then((m) => m.ARTICLE_EDIT_ROUTES),
   },
   {
-    path: 'article/:id',
+    path: 'article/:articleId',
     loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
   },
   {
