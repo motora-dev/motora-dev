@@ -1,0 +1,31 @@
+<form [formGroup]="form" ngxsForm="articleEdit.articleForm">
+  <!-- Title Field -->
+  <app-input-field [label]="'articleEdit.form.titleLabel' | translate" [control]="form.controls.title">
+    <input
+      appInput
+      formControlName="title"
+      [placeholder]="'articleEdit.form.titlePlaceholder' | translate"
+      class="w-full"
+    />
+  </app-input-field>
+
+  <!-- Description Field -->
+  <app-input-field [label]="'articleEdit.form.descriptionLabel' | translate" [control]="form.controls.description">
+    <textarea
+      appInput
+      formControlName="description"
+      [placeholder]="'articleEdit.form.descriptionPlaceholder' | translate"
+      class="w-full min-h-[200px] resize-y"
+    ></textarea>
+  </app-input-field>
+
+  <!-- Tags Field -->
+  <app-tags-field [label]="'articleEdit.form.tagsLabel' | translate" formControlName="tags" [control]="form.controls.tags" />
+
+  <!-- Action Buttons -->
+  <!-- <div class="flex items-center justify-end pt-4">
+    <button type="button" appButton [disabled]="!form.valid" (click)="onSave()" class="px-4 py-2">
+      {{ 'articleEdit.form.saveButton' | translate }}
+    </button>
+  </div> -->
+</form>

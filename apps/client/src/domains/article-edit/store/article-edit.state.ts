@@ -1,37 +1,60 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { patch } from '@ngxs/store/operators';
 
-import { PageItem } from '$domains/article-page-edit/model';
-import { ArticleEdit } from '../model';
 import { SetArticle, SetPages } from './article-edit.actions';
+import { ArticleEditFormState, ArticleEditPageItem } from '../model';
 
 export interface ArticleEditStateModel {
-  article: ArticleEdit | null;
-  pages: PageItem[];
+  pages: ArticleEditPageItem[];
+  articleForm: ArticleEditFormState;
 }
 
 @State<ArticleEditStateModel>({
   name: 'articleEdit',
   defaults: {
-    article: null,
     pages: [],
+    articleForm: {
+      model: {
+        articleId: '',
+        title: '',
+        description: '',
+        tags: [],
+      },
+      dirty: false,
+      status: '',
+      errors: {},
+    },
   },
 })
 @Injectable()
 export class ArticleEditState {
   @Selector()
-  static getArticle(state: ArticleEditStateModel): ArticleEdit | null {
-    return state.article;
+  static isFormInvalid(state: ArticleEditStateModel): boolean {
+    return state.articleForm.status !== 'VALID';
   }
 
   @Selector()
-  static getPages(state: ArticleEditStateModel): PageItem[] {
+  static isFormDirty(state: ArticleEditStateModel): boolean {
+    return state.articleForm.dirty;
+  }
+
+  @Selector()
+  static getPages(state: ArticleEditStateModel): ArticleEditPageItem[] {
     return state.pages;
   }
 
   @Action(SetArticle)
   setArticle(ctx: StateContext<ArticleEditStateModel>, action: SetArticle) {
-    ctx.patchState({ article: action.article });
+    ctx.setState(
+      patch({
+        articleForm: patch({
+          model: patch({
+            ...action.article,
+          }),
+        }),
+      }),
+    );
   }
 
   @Action(SetPages)

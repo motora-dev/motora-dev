@@ -40,6 +40,13 @@ export default [
       // 属性セレクターを使うコンポーネント（button, input等）はcamelCaseを許可
       '@angular-eslint/component-selector': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'import/order': [
         'error',
         {

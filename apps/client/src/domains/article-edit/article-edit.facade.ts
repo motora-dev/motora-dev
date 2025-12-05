@@ -5,7 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { SpinnerFacade } from '$modules/spinner';
 import { ArticleEditApi } from './api';
 import { UpdateArticleRequest, UpdateArticleResponse } from './api/article-edit.response';
-import { ArticleEdit } from './model';
+import { ArticleEditFormModel, ArticleEditPageItem } from './model';
 import { ArticleEditState, SetArticle, SetPages } from './store';
 
 @Injectable()
@@ -14,7 +14,8 @@ export class ArticleEditFacade {
   private readonly api = inject(ArticleEditApi);
   private readonly spinnerFacade = inject(SpinnerFacade);
 
-  readonly article$ = this.store.select(ArticleEditState.getArticle);
+  readonly isFormInvalid$ = this.store.select(ArticleEditState.isFormInvalid);
+  readonly isFormDirty$ = this.store.select(ArticleEditState.isFormDirty);
   readonly pages$ = this.store.select(ArticleEditState.getPages);
 
   loadArticle(articleId: string): void {
@@ -22,16 +23,17 @@ export class ArticleEditFacade {
       .getArticle(articleId)
       .pipe(this.spinnerFacade.withSpinner())
       .subscribe((response) => {
-        const article: ArticleEdit = {
-          id: response.id,
+        const article: ArticleEditFormModel = {
+          articleId: response.id,
           title: response.title,
           tags: response.tags,
-          content: response.description,
+          description: response.description,
         };
         this.store.dispatch(new SetArticle(article));
 
-        const pages = response.pages.map((p) => ({
-          id: p.id,
+        const pages: ArticleEditPageItem[] = response.pages.map((p) => ({
+          articleId: response.id,
+          pageId: p.id,
           title: p.title,
           level: p.level,
           order: p.order,
@@ -44,18 +46,14 @@ export class ArticleEditFacade {
     return this.api.updateArticle(articleId, request).pipe(
       this.spinnerFacade.withSpinner(),
       tap((response) => {
-        const article: ArticleEdit = {
-          id: response.id,
+        const article: ArticleEditFormModel = {
+          articleId: response.id,
           title: response.title,
           tags: response.tags,
-          content: response.description,
+          description: response.description,
         };
         this.store.dispatch(new SetArticle(article));
       }),
     );
-  }
-
-  clearArticle(): void {
-    this.store.dispatch(new SetArticle(null));
   }
 }

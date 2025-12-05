@@ -1,53 +1,24 @@
-<main class="h-screen flex flex-col bg-white">
+<main class="flex flex-col bg-white min-h-full">
   <!-- Header -->
   <div class="flex-shrink-0 p-4 border-b border-gray-200">
     <div class="flex items-center justify-between">
-      <h1 class="text-xl font-bold text-gray-900">記事設定</h1>
-
-      <!-- Success/Error Messages -->
-      @if (saveSuccess()) {
-      <div class="px-4 py-2 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
-        保存が完了しました
-      </div>
-      } @if (saveError()) {
-      <div class="px-4 py-2 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">{{ saveError() }}</div>
-      }
+      <h1 class="text-xl font-bold text-gray-900">{{ 'articleEdit.title' | translate }}</h1>
     </div>
   </div>
 
   <!-- Content -->
-  <div class="flex-1 overflow-auto p-4">
+  <div class="flex-1 p-4">
     <div class="max-w-2xl mx-auto space-y-6">
-      <!-- Title Field -->
-      <app-input-field label="タイトル">
-        <input appInput [(ngModel)]="title" placeholder="記事のタイトルを入力してください" class="w-full" />
-      </app-input-field>
+      <app-edit-form #editForm (save)="onSave()" />
 
-      <!-- Description Field -->
-      <app-input-field label="説明">
-        <textarea
-          appInput
-          [(ngModel)]="description"
-          placeholder="記事の説明を入力してください"
-          class="w-full min-h-[200px] resize-y"
-        ></textarea>
-      </app-input-field>
-
-      <!-- Tags Field -->
-      <app-input-field label="タグ（カンマ区切り）">
-        <input appInput [(ngModel)]="tags" placeholder="例: JavaScript, Angular, TypeScript" class="w-full" />
-      </app-input-field>
-
-      <!-- Action Buttons -->
-      <div class="flex items-center justify-between pt-4">
-        <button type="button" appButton variant="outline" (click)="navigateToPageEdit()" class="px-4 py-2">
-          ページ編集
-        </button>
-
-        <button type="button" appButton [disabled]="isSaving() || !title().trim()" (click)="onSave()" class="px-4 py-2">
-          {{ isSaving() ? '保存中...' : '保存' }}
+      <!-- Save Buttons -->
+      <div class="flex items-center justify-end pt-4">
+        <button type="button" appButton [disabled]="(isFormInvalid$ | push) || !(isFormDirty$ | push)" (click)="onSave()" class="px-4 py-2">
+          {{ 'articleEdit.form.saveButton' | translate }}
         </button>
       </div>
+
+      <app-page-list [pages]="pages$ | push" (pageEdit)="navigateToPageEdit($event.articleId, $event.pageId)" />
     </div>
   </div>
 </main>

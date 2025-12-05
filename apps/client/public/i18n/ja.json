@@ -13,6 +13,22 @@
     "cookieSettings": "Cookie設定",
     "copyright": "© 2025 もとら's dev"
   },
+  "articleEdit": {
+    "title": "記事設定",
+    "form": {
+      "titleLabel": "タイトル",
+      "titlePlaceholder": "記事のタイトルを入力してください",
+      "descriptionLabel": "説明",
+      "descriptionPlaceholder": "記事の説明を入力してください",
+      "tagsLabel": "タグ",
+      "saveButton": "保存"
+    },
+    "pageList": {
+      "title": "ページ一覧",
+      "noPages": "ページがありません",
+      "editPage": "ページ「{{title}}」を編集"
+    }
+  },
   "articleList": {
     "title": "記事一覧",
     "description": "技術記事やチュートリアルを掲載しています",

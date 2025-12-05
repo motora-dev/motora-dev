@@ -1,114 +1,69 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, take } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RxPush } from '@rx-angular/template/push';
+import { map } from 'rxjs';
 
-import { InputFieldComponent } from '$components/fields';
 import { ArticleEditFacade } from '$domains/article-edit';
+import { NotFoundError } from '$modules/error';
 import { ButtonDirective } from '$shared/ui/button';
-import { InputDirective } from '$shared/ui/input';
+import { EditFormComponent } from './components/edit-form';
+import { PageListComponent } from './components/page-list';
 
 @Component({
   selector: 'app-article-edit',
   standalone: true,
-  imports: [FormsModule, InputFieldComponent, ButtonDirective, InputDirective],
+  imports: [ButtonDirective, EditFormComponent, PageListComponent, ReactiveFormsModule, RxPush, TranslatePipe],
   providers: [ArticleEditFacade],
   templateUrl: './article-edit.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticleEditComponent {
-  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly facade = inject(ArticleEditFacade);
 
-  readonly article$ = this.facade.article$;
-  readonly pages$ = this.facade.pages$;
+  readonly editForm = viewChild<EditFormComponent>('editForm');
 
-  readonly articleId = signal<string>('');
-
-  readonly title = signal<string>('');
-  readonly description = signal<string>('');
-  readonly tags = signal<string>(''); // カンマ区切りの文字列として管理
-
-  readonly isSaving = signal(false);
-  readonly saveSuccess = signal(false);
-  readonly saveError = signal<string | null>(null);
+  readonly isFormInvalid$ = this.facade.isFormInvalid$;
+  readonly isFormDirty$ = this.facade.isFormDirty$;
+  readonly pages$ = this.facade.pages$.pipe(map((pages) => [...pages].sort((a, b) => a.order - b.order)));
 
   constructor() {
     const articleId = this.route.snapshot.paramMap.get('articleId') || '';
-    this.articleId.set(articleId);
 
-    // 記事データを読み込む
-    if (articleId) {
-      this.facade.loadArticle(articleId);
+    // articleIdがない場合は404エラーをthrow
+    if (!articleId) {
+      throw new NotFoundError('記事IDが指定されていません');
     }
 
-    // 記事データが読み込まれたらフォームを初期化
-    this.article$
-      .pipe(
-        filter((article) => article !== null),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((article) => {
-        this.title.set(article.title);
-        this.description.set(article.content); // contentはdescriptionとして扱う
-        this.tags.set(article.tags.join(', '));
-      });
+    // 記事データを読み込む（loadArticle内でarticleIdも設定される）
+    this.facade.loadArticle(articleId);
   }
 
   onSave(): void {
-    const articleId = this.articleId();
-    if (!articleId) return;
-
-    const tagsArray = this.tags()
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-
-    if (!this.title().trim()) {
-      this.saveError.set('タイトルは必須です');
+    const form = this.editForm()?.form;
+    if (!form || form.invalid) {
       return;
     }
 
-    this.isSaving.set(true);
-    this.saveSuccess.set(false);
-    this.saveError.set(null);
+    // ストアからarticleIdを取得
+    const formValue = form.getRawValue();
+    if (!formValue) {
+      return;
+    }
 
     this.facade
-      .updateArticle(articleId, {
-        title: this.title(),
-        tags: tagsArray,
-        content: this.description(),
+      .updateArticle(formValue.articleId, {
+        title: formValue.title,
+        tags: formValue.tags,
+        content: formValue.description,
       })
-      .subscribe({
-        next: () => {
-          this.isSaving.set(false);
-          this.saveSuccess.set(true);
-        },
-        error: (err) => {
-          this.isSaving.set(false);
-          this.saveError.set(err?.message || '保存中にエラーが発生しました');
-        },
-      });
+      .subscribe();
   }
 
-  navigateToPageEdit(): void {
-    const articleId = this.articleId();
-    if (articleId) {
-      // ページ一覧を取得して最初のページにリダイレクト
-      this.pages$
-        .pipe(
-          filter((pages) => pages.length > 0),
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe((pages) => {
-          const sortedPages = [...pages].sort((a, b) => a.order - b.order);
-          const firstPage = sortedPages[0];
-          this.router.navigate(['/article', articleId, firstPage.id, 'edit']);
-        });
-    }
+  navigateToPageEdit(articleId: string, pageId: string): void {
+    this.router.navigate(['/article', articleId, pageId, 'edit']);
   }
 }
