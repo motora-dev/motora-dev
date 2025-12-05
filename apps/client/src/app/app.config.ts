@@ -13,10 +13,16 @@ import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { provideStore } from '@ngxs/store';
 
 import { ClientErrorHandler } from '$domains/error-handlers';
-import { credentialsInterceptor, httpErrorInterceptor } from '$domains/interceptors';
+import {
+  credentialsInterceptor,
+  csrfTokenInterceptor,
+  httpErrorInterceptor,
+  ssrCookieInterceptor,
+} from '$domains/interceptors';
 import { environment } from '$environments';
 import { AuthState } from '$modules/auth/store';
 import { ErrorState } from '$modules/error/store';
+import { SnackbarState } from '$modules/snackbar/store';
 import { SpinnerState } from '$modules/spinner/store';
 import { StaticTranslateLoader } from '$shared/i18n';
 import { API_URL } from '$shared/lib';
@@ -36,11 +42,16 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(
       withFetch(),
-      withInterceptors([credentialsInterceptor, httpErrorInterceptor]),
-      withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
+      withInterceptors([
+        ssrCookieInterceptor,
+        credentialsInterceptor,
+        ...(environment.production === false ? [csrfTokenInterceptor] : []),
+        httpErrorInterceptor,
+      ]),
+      withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'x-xsrf-token' }),
     ),
     provideRouter(routes),
-    provideStore([AuthState, ErrorState, SpinnerState], withNgxsFormPlugin()),
+    provideStore([AuthState, ErrorState, SnackbarState, SpinnerState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
   ],
 };

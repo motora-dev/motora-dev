@@ -10,6 +10,18 @@ export class GetArticleHandler implements IQueryHandler<GetArticleQuery> {
 
   async execute(query: GetArticleQuery): Promise<GetArticleResponseDto> {
     const article = await this.articleEditService.getArticle(query.userId, query.articleId);
-    return { id: article.publicId, title: article.title, tags: article.tags, description: article.description ?? '' };
+
+    return {
+      id: article.publicId,
+      title: article.title,
+      tags: article.tags,
+      description: article.description ?? '',
+      pages: article.pages.map((page) => ({
+        id: page.publicId,
+        title: page.title,
+        level: page.level,
+        order: page.order,
+      })),
+    };
   }
 }

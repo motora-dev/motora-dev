@@ -6,7 +6,19 @@ export const routes: Routes = [
     loadChildren: () => import('./article-list/article-list.routes').then((m) => m.ARTICLE_LIST_ROUTES),
   },
   {
-    path: 'article/:id',
+    path: 'article/:articleId/:pageId/edit',
+    loadChildren: () => import('./article-page-edit/article-page-edit.routes').then((m) => m.ARTICLE_PAGE_EDIT_ROUTES),
+  },
+  {
+    path: 'article/:articleId/edit',
+    loadChildren: () => import('./article-edit/article-edit.routes').then((m) => m.ARTICLE_EDIT_ROUTES),
+  },
+  {
+    path: 'article/:articleId/:pageId',
+    loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
+  },
+  {
+    path: 'article/:articleId',
     loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
   },
   {
@@ -18,7 +30,7 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/login/login.routes').then((m) => m.LOGIN_ROUTES),
   },
   {
-    path: 'auth/callback',
+    path: 'auth',
     loadChildren: () => import('./auth/callback/callback.routes').then((m) => m.CALLBACK_ROUTES),
   },
   {

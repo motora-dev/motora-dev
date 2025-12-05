@@ -27,8 +27,6 @@ describe('error-code-keys', () => {
     });
 
     it.each([
-      ERROR_CODE.NO_BEARER_TOKEN.code,
-      ERROR_CODE.INVALID_TOKEN.code,
       ERROR_CODE.UNAUTHORIZED.code,
       ERROR_CODE.FORBIDDEN_EMAIL_ACCESS.code,
       ERROR_CODE.USER_NOT_FOUND.code,

@@ -258,3 +258,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/node,linux,macos,turbo,nextjs,windows,storybookjs
 
 *storybook.log
+/assets/

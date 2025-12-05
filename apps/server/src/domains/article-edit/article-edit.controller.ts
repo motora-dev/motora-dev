@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { CurrentUser, Public } from '$decorators';
+import { CurrentUser } from '$decorators';
 import { SupabaseAuthGuard } from '$modules/auth/supabase-auth.guard';
 import { UpdateArticleCommand } from './commands';
 import { GetArticleResponseDto, UpdateArticleRequestDto, UpdateArticleResponseDto } from './dto';
@@ -15,7 +15,6 @@ export class ArticleEditController {
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Public()
   @Get('edit/:articleId')
   async getArticle(
     @CurrentUser() user: Express.UserPayload,

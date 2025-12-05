@@ -23,6 +23,7 @@
     "build-storybook": "ng run client:build-storybook"
   },
   "dependencies": {
+    "@angular/animations": "^21.0.3",
     "@angular/cdk": "catalog:",
     "@angular/common": "catalog:",
     "@angular/compiler": "catalog:",

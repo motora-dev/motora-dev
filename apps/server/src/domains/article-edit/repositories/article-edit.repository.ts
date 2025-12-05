@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaAdapter } from '$adapters';
 
-import type { Article } from '@monorepo/database/client';
+import type { Article, Page } from '@monorepo/database/client';
 
 @Injectable()
 export class ArticleEditRepository {
@@ -11,6 +11,13 @@ export class ArticleEditRepository {
   async getArticle(articleId: string): Promise<Article | null> {
     return await this.prisma.article.findUnique({
       where: { publicId: articleId },
+    });
+  }
+
+  async getPages(articleId: number): Promise<Page[]> {
+    return await this.prisma.page.findMany({
+      where: { articleId },
+      orderBy: { order: 'asc' },
     });
   }
 

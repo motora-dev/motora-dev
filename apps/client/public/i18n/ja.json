@@ -13,6 +13,22 @@
     "cookieSettings": "Cookie設定",
     "copyright": "© 2025 もとら's dev"
   },
+  "articleEdit": {
+    "title": "記事設定",
+    "form": {
+      "titleLabel": "タイトル",
+      "titlePlaceholder": "記事のタイトルを入力してください",
+      "descriptionLabel": "説明",
+      "descriptionPlaceholder": "記事の説明を入力してください",
+      "tagsLabel": "タグ",
+      "saveButton": "保存"
+    },
+    "pageList": {
+      "title": "ページ一覧",
+      "noPages": "ページがありません",
+      "editPage": "ページ「{{title}}」を編集"
+    }
+  },
   "articleList": {
     "title": "記事一覧",
     "description": "技術記事やチュートリアルを掲載しています",
@@ -28,11 +44,6 @@
     "goToHeading": "{{text}}へ移動",
     "prev": "← 前へ",
     "next": "次へ →"
-  },
-  "login": {
-    "title": "ログイン",
-    "description": "アカウントにログインしてください",
-    "googleButton": "Googleでログイン"
   },
   "callback": {
     "title": "ログイン完了",
@@ -55,6 +66,14 @@
       "title": "ページが見つかりません",
       "message": "お探しのページは存在しないか、移動した可能性があります。"
     }
+  },
+  "login": {
+    "title": "ログイン",
+    "description": "アカウントにログインしてください",
+    "googleButton": "Googleでログイン"
+  },
+  "spinner": {
+    "defaultMessage": "読み込み中..."
   },
   "errorCodes": {
     "E-999": "予期しないエラーが発生しました",

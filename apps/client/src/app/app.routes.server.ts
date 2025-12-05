@@ -6,11 +6,19 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
   },
   {
-    path: 'article/:id',
+    path: 'article/:articleId/:pageId/edit',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'article/:articleId/edit',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'article/:articleId/:pageId',
     renderMode: RenderMode.Server,
   },
   {
-    path: 'article/:id/:pageId',
+    path: 'article/:articleId',
     renderMode: RenderMode.Server,
   },
   {
@@ -19,6 +27,6 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: '**',
-    renderMode: RenderMode.Client,
+    renderMode: RenderMode.Server,
   },
 ];

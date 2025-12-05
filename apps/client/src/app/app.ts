@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, DOCUMENT, inject, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import {
@@ -6,10 +7,14 @@ import {
   ErrorDialogComponent,
   FooterComponent,
   HeaderComponent,
+  SnackbarComponent,
   SpinnerComponent,
 } from '$components/layouts';
-import { AppFacade } from '$domains/app';
 import { AuthFacade } from '$modules/auth';
+
+/** Material Symbols Outlined フォントURL*/
+const MATERIAL_SYMBOLS_URL =
+  'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +24,7 @@ import { AuthFacade } from '$modules/auth';
     HeaderComponent,
     FooterComponent,
     SpinnerComponent,
+    SnackbarComponent,
     ErrorDialogComponent,
     CookieConsentComponent,
   ],
@@ -26,11 +32,48 @@ import { AuthFacade } from '$modules/auth';
   styleUrl: './app.css',
 })
 export class App {
-  private readonly appFacade = inject(AppFacade);
   private readonly authFacade = inject(AuthFacade);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
+
   readonly isAuthenticated$ = this.authFacade.isAuthenticated$;
 
   constructor() {
-    this.authFacade.checkSession(); // セッション確認
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(() => this.preload());
+    } else {
+      setTimeout(() => this.preload(), 100);
+    }
+  }
+
+  private preload(): void {
+    this.checkSessionOnIdle();
+    this.preloadMaterialSymbolsFont();
+    this.preloadMarkdownLibs();
+  }
+
+  /**
+   * セッション確認をrequestIdleCallbackで遅延実行
+   * クリティカルパスから外すことで、初期ロード時間を短縮
+   */
+  private checkSessionOnIdle(): void {
+    // セッション確認を非クリティカルパスとして遅延実行
+    this.authFacade.checkSession();
+  }
+
+  private preloadMaterialSymbolsFont(): void {
+    const link = this.document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = MATERIAL_SYMBOLS_URL;
+    this.document.head.appendChild(link);
+  }
+
+  private preloadMarkdownLibs(): void {
+    import('@monorepo/markdown');
+    import('$shared/ui/highlighter');
   }
 }
