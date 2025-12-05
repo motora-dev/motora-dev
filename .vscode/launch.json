@@ -7,27 +7,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Start Next.js",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "--filter=client", "start"],
-      "restart": true,
-      "console": "integratedTerminal"
-    },
-    {
-      "type": "msedge",
-      "request": "launch",
-      "name": "Attach to Next.js",
-      "url": "http://localhost:3000",
-      "port": 9229,
-      "webRoot": "${workspaceFolder}/apps/client",
-      "sourceMaps": true
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Start Angular",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "--filter=client-new", "start"],
+      "runtimeArgs": ["run", "start", "--filter=@monorepo/client"],
       "restart": true,
       "console": "integratedTerminal"
     },
@@ -37,7 +19,7 @@
       "name": "Attach to Angular",
       "url": "http://localhost:4200",
       "port": 9229,
-      "webRoot": "${workspaceFolder}/apps/client_new",
+      "webRoot": "${workspaceFolder}/apps/client",
       "sourceMaps": true
     },
     {
@@ -45,18 +27,14 @@
       "request": "launch",
       "name": "Debug Server",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "--filter=server", "start"],
+      "runtimeArgs": ["run", "start", "--filter=@monorepo/server"],
       "restart": true,
       "console": "integratedTerminal"
     }
   ],
   "compounds": [
     {
-      "name": "Debug Next.js",
-      "configurations": ["Start Next.js", "Attach to Next.js", "Debug Server"]
-    },
-    {
-      "name": "Debug Angular",
+      "name": "Debug All",
       "configurations": ["Start Angular", "Attach to Angular", "Debug Server"]
     }
   ]

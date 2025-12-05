@@ -91,10 +91,6 @@ jobs:
           export NODE_ENV=development
           pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: pnpm --filter "@monorepo/client" exec playwright install --with-deps chromium
-
       - name: Run client coverage
         if: steps.changed-files.outputs.any_changed == 'true'
         run: pnpm test:coverage --filter "@monorepo/client"

@@ -8,10 +8,10 @@ import { ArticleCreateModule } from '$domains/article-create/article-create.modu
 import { ArticleEditModule } from '$domains/article-edit/article-edit.module';
 import { ArticleListModule } from '$domains/article-list/article-list.module';
 import { ArticlePageModule } from '$domains/article-page/article-page.module';
+import { ArticlePageEditModule } from '$domains/article-page-edit/article-page-edit.module';
 import { OgModule } from '$domains/og/og.module';
 import { SitemapModule } from '$domains/sitemap/sitemap.module';
 import { UserModule } from '$domains/user/user.module';
-import { GoogleCloudAuthGuard } from '$guards';
 import { LoggingInterceptor } from '$interceptors';
 import { AuthModule } from '$modules/auth/auth.module';
 import { MediaModule } from './domains/media/media.module';
@@ -23,17 +23,13 @@ import { MediaModule } from './domains/media/media.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard, // 全てのルートにレート制限を適用
     },
-    // Google Cloud認証を有効化
-    {
-      provide: APP_GUARD,
-      useClass: GoogleCloudAuthGuard, // 全てのルートに認証を適用（@Public()で除外可能）
-    },
   ],
   imports: [
     ArticleCreateModule,
     ArticleEditModule,
     ArticleListModule,
     ArticleModule,
+    ArticlePageEditModule,
     ArticlePageModule,
     AuthModule,
     ConfigModule.forRoot({

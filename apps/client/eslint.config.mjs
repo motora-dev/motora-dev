@@ -1,61 +1,123 @@
-import { baseConfig } from '@monorepo/eslint-config';
-import nextConfig from 'eslint-config-next';
-import jest from 'eslint-plugin-jest';
-import jestdom from 'eslint-plugin-jest-dom';
-import storybook from 'eslint-plugin-storybook';
-import testinglibrary from 'eslint-plugin-testing-library';
+import angular from 'angular-eslint';
 
-const config = [
-  ...nextConfig,
-  ...storybook.configs['flat/recommended'],
-  // // @feature-sliced languageOptions
-  // {
-  //   languageOptions: { ecmaVersion: 'latest' },
-  // },
-  // Custom import/order for FSD structure
+import { baseConfig } from '@monorepo/eslint-config';
+
+/**
+ * ESLint configuration for Angular client application.
+ *
+ * @type {import("eslint").Linter.Config}
+ * */
+export default [
+  // Apply baseConfig only to TypeScript files
+  ...baseConfig.map((config) => ({
+    ...config,
+    files: config.files || ['src/**/*.ts'],
+  })),
   {
-    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['*.config.cjs', '*.config.mjs', 'src/**/*.html'],
+  },
+  // Angular ESLint base configuration (includes plugins)
+  {
+    files: ['src/**/*.ts'],
+    ...angular.configs.tsRecommended[0],
+  },
+  // TypeScript files configuration with Angular rules
+  {
+    files: ['src/**/*.ts'],
+    ...angular.configs.tsRecommended[1],
+    languageOptions: {
+      ...angular.configs.tsRecommended[1].languageOptions,
+      parserOptions: {
+        ...angular.configs.tsRecommended[1].languageOptions?.parserOptions,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    processor: angular.processInlineTemplates,
     rules: {
-      '@next/next/no-page-custom-font': 'off',
+      ...angular.configs.tsRecommended[1].rules,
+      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: ['app'], style: 'camelCase' }],
+      // 属性セレクターを使うコンポーネント（button, input等）はcamelCaseを許可
+      '@angular-eslint/component-selector': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'import/order': [
         'error',
         {
           groups: [['builtin', 'external'], ['internal', 'parent', 'sibling', 'index', 'object'], 'type'],
           pathGroups: [
             {
-              pattern: '{server-only,client-only}',
-              group: 'builtin',
+              pattern: '$app',
+              group: 'internal',
             },
             {
-              pattern: '${app,domains,layouts,modules,shared}/**/*',
+              pattern: '$app/**',
+              group: 'internal',
+            },
+            {
+              pattern: '$components',
+              group: 'internal',
+            },
+            {
+              pattern: '$components/**',
+              group: 'internal',
+            },
+            {
+              pattern: '$environments',
+              group: 'internal',
+            },
+            {
+              pattern: '$i18n/**',
+              group: 'internal',
+            },
+            {
+              pattern: '$domains',
+              group: 'internal',
+            },
+            {
+              pattern: '$domains/**',
+              group: 'internal',
+            },
+            {
+              pattern: '$modules',
+              group: 'internal',
+            },
+            {
+              pattern: '$modules/**',
+              group: 'internal',
+            },
+            {
+              pattern: '$shared',
+              group: 'internal',
+            },
+            {
+              pattern: '$shared/**',
               group: 'internal',
             },
           ],
+          alphabetize: { order: 'asc', caseInsensitive: true, orderImportKind: 'asc' },
           'newlines-between': 'always',
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: true,
-          },
         },
       ],
     },
   },
-  // Use tsconfig.spec.json for test files to enable typed linting on specs
+  // HTML template files configuration
   {
-    files: ['src/**/*.spec.{ts,tsx}'],
-    plugins: {
-      jest: jest,
-      'testing-library': testinglibrary,
-      'jest-dom': jestdom,
-    },
-    languageOptions: {
-      parserOptions: {
-        project: 'tsconfig.spec.json',
-        tsconfigRootDir: import.meta.dirname,
-        sourceType: 'module',
-      },
+    files: ['src/**/*.html'],
+    ...angular.configs.templateRecommended[0],
+  },
+  {
+    files: ['src/**/*.html'],
+    ...angular.configs.templateRecommended[1],
+    rules: {
+      ...angular.configs.templateRecommended[1].rules,
+      ...angular.configs.templateAccessibility[1]?.rules,
     },
   },
 ];
-
-export default config;

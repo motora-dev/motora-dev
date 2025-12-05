@@ -57,6 +57,12 @@ NestJS + Prisma + CQRS を採用したバックエンド API です。
 ## 開発コマンド
 
 ```bash
+# 完全クリーンアップ（node_modulesも削除）
+pnpm clean
+
+# キャッシュクリア（.tsbuildinfo, .turbo, coverage, dist）
+pnpm clean:cache
+
 # 開発サーバー起動（watch + debug）
 pnpm start
 

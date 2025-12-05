@@ -24,7 +24,6 @@ const createErrorCodeFactory = (domain: DomainCode, entity: EntityType) => {
 
 // --- ドメインごとのファクトリを生成 ---
 const commonError = createErrorCodeFactory(DOMAIN.common, ENTITY.common);
-const authTokenError = createErrorCodeFactory(DOMAIN.auth, ENTITY.token);
 const authUserError = createErrorCodeFactory(DOMAIN.auth, ENTITY.user);
 const articleError = createErrorCodeFactory(DOMAIN.article, ENTITY.article);
 const articleEditError = createErrorCodeFactory(DOMAIN.articleEdit, ENTITY.article);
@@ -43,8 +42,6 @@ export const ERROR_CODE = {
   INTERNAL_SERVER_ERROR: commonError(STATUS.serverError, MESSAGES.INTERNAL_SERVER_ERROR),
 
   // Auth
-  NO_BEARER_TOKEN: authTokenError(STATUS.unauthorized, MESSAGES.NO_BEARER_TOKEN),
-  INVALID_TOKEN: authTokenError(STATUS.unauthorized, MESSAGES.INVALID_TOKEN),
   UNAUTHORIZED: authUserError(STATUS.unauthorized, MESSAGES.UNAUTHORIZED),
   FORBIDDEN_EMAIL_ACCESS: authUserError(STATUS.forbidden, MESSAGES.FORBIDDEN_EMAIL_ACCESS),
 

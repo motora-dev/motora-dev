@@ -6,8 +6,6 @@ export const MESSAGES = {
   BUSINESS_LOGIC_ERROR: 'A business logic error occurred',
 
   // Auth
-  NO_BEARER_TOKEN: 'No bearer token provided',
-  INVALID_TOKEN: 'Invalid token',
   UNAUTHORIZED: 'Unauthorized',
   FORBIDDEN_EMAIL_ACCESS: 'This email address is not allowed to access this application',
 

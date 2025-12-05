@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 
 import { createServerSupabase } from '$adapters';
-import { Public } from '$decorators';
 import { CreateUserCommand } from '$domains/user/commands';
 import { BusinessLogicError } from '$exceptions';
 import { BasicAuthGuard } from './guards/basic-auth.guard';
@@ -16,7 +15,6 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Public()
   @Get('check-session')
   @HttpCode(HttpStatus.OK)
   async getSession(@Req() req: any, @Res() res: any) {
@@ -68,7 +66,6 @@ export class AuthController {
     return res.json({ success: true });
   }
 
-  @Public()
   @UseGuards(BasicAuthGuard)
   @Get('login/google')
   async googleLogin(@Req() req: any, @Res({ passthrough: true }) res: any) {
@@ -92,7 +89,6 @@ export class AuthController {
     return res.redirect(data.url);
   }
 
-  @Public()
   @Get('callback/google')
   async callbackGoogle(@Req() req: any, @Res({ passthrough: true }) res: any) {
     const isProd = this.configService.get('NODE_ENV') === 'production';
@@ -157,7 +153,7 @@ export class AuthController {
     // 許可するパターン
     const allowedPatterns = [
       // ローカル開発
-      'http://localhost:3000',
+      'http://localhost:4200',
       // メインドメイン: https://motora-dev.com
       `https://${domain}`,
       // 任意のサブドメイン: https://*.motora-dev.com
