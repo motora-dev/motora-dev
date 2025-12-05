@@ -7,11 +7,11 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'article/:articleId/:pageId/edit',
-    renderMode: RenderMode.Server,
+    renderMode: RenderMode.Client,
   },
   {
     path: 'article/:articleId/edit',
-    renderMode: RenderMode.Server,
+    renderMode: RenderMode.Client,
   },
   {
     path: 'article/:articleId/:pageId',

@@ -1,0 +1,30 @@
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Store } from '@ngxs/store';
+
+import { HideSnackbar, ShowSnackbar, SnackbarState } from './store';
+import { SnackbarItem } from './store/snackbar.state';
+
+@Injectable({ providedIn: 'root' })
+export class SnackbarFacade {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly store = inject(Store);
+
+  readonly snackbars$ = this.store.select(SnackbarState.getSnackbars);
+
+  showSnackbar(
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning' = 'info',
+    duration: number = 3000,
+  ): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.store.dispatch(new ShowSnackbar(message, type, duration));
+    }
+  }
+
+  hideSnackbar(id: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.store.dispatch(new HideSnackbar(id));
+    }
+  }
+}

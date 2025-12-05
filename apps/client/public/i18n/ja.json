@@ -45,11 +45,6 @@
     "prev": "← 前へ",
     "next": "次へ →"
   },
-  "login": {
-    "title": "ログイン",
-    "description": "アカウントにログインしてください",
-    "googleButton": "Googleでログイン"
-  },
   "callback": {
     "title": "ログイン完了",
     "message": "ログインに成功しました",
@@ -71,6 +66,14 @@
       "title": "ページが見つかりません",
       "message": "お探しのページは存在しないか、移動した可能性があります。"
     }
+  },
+  "login": {
+    "title": "ログイン",
+    "description": "アカウントにログインしてください",
+    "googleButton": "Googleでログイン"
+  },
+  "spinner": {
+    "defaultMessage": "読み込み中..."
   },
   "errorCodes": {
     "E-999": "予期しないエラーが発生しました",

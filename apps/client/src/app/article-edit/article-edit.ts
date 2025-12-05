@@ -3,10 +3,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RxPush } from '@rx-angular/template/push';
-import { map } from 'rxjs';
 
 import { ArticleEditFacade } from '$domains/article-edit';
 import { NotFoundError } from '$modules/error';
+import { SnackbarFacade } from '$modules/snackbar';
 import { ButtonDirective } from '$shared/ui/button';
 import { EditFormComponent } from './components/edit-form';
 import { PageListComponent } from './components/page-list';
@@ -23,12 +23,13 @@ export class ArticleEditComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly facade = inject(ArticleEditFacade);
+  private readonly snackbarFacade = inject(SnackbarFacade);
 
   readonly editForm = viewChild<EditFormComponent>('editForm');
 
   readonly isFormInvalid$ = this.facade.isFormInvalid$;
   readonly isFormDirty$ = this.facade.isFormDirty$;
-  readonly pages$ = this.facade.pages$.pipe(map((pages) => [...pages].sort((a, b) => a.order - b.order)));
+  readonly pages$ = this.facade.pages$;
 
   constructor() {
     const articleId = this.route.snapshot.paramMap.get('articleId') || '';
@@ -60,7 +61,9 @@ export class ArticleEditComponent {
         tags: formValue.tags,
         content: formValue.description,
       })
-      .subscribe();
+      .subscribe(() => {
+        this.snackbarFacade.showSnackbar('保存しました', 'success');
+      });
   }
 
   navigateToPageEdit(articleId: string, pageId: string): void {

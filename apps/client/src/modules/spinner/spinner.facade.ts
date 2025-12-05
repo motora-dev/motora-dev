@@ -14,10 +14,11 @@ export class SpinnerFacade {
   private readonly store = inject(Store);
 
   readonly isLoading$ = this.store.select(SpinnerState.isLoading);
+  readonly message$ = this.store.select(SpinnerState.getMessage);
 
-  showSpinner(): void {
+  showSpinner(message?: string): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.store.dispatch(new ShowSpinner());
+      this.store.dispatch(new ShowSpinner(message));
     }
   }
 
@@ -33,10 +34,10 @@ export class SpinnerFacade {
    * 最小表示時間を保証し、ちらつきを防止する
    * サーバー側ではスピナー制御をスキップ
    */
-  withSpinner<T>(): MonoTypeOperatorFunction<T> {
+  withSpinner<T>(message?: string): MonoTypeOperatorFunction<T> {
     return (source) =>
       defer(() => {
-        this.showSpinner();
+        this.showSpinner(message);
 
         if (isPlatformBrowser(this.platformId)) {
           return forkJoin({
