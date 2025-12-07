@@ -1,134 +1,83 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RxIf } from '@rx-angular/template/if';
 import { RxLet } from '@rx-angular/template/let';
-import { filter, take } from 'rxjs';
+import { RxPush } from '@rx-angular/template/push';
 
-import { ArticlePageEditFacade, PageItem } from '$domains/article-page-edit';
+import { ArticlePageEditFacade } from '$domains/article-page-edit';
+import { NotFoundError } from '$modules/error';
+import { SnackbarFacade } from '$modules/snackbar';
 import { MarkdownEditorComponent, PageSidebarComponent, PreviewPanelComponent } from './components';
 
 @Component({
   selector: 'app-article-page-edit',
   standalone: true,
-  imports: [RxIf, RxLet, PageSidebarComponent, MarkdownEditorComponent, PreviewPanelComponent],
+  imports: [RxIf, RxLet, RxPush, PageSidebarComponent, MarkdownEditorComponent, PreviewPanelComponent, TranslatePipe],
   providers: [ArticlePageEditFacade],
   templateUrl: './article-page-edit.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageEditComponent {
-  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly facade = inject(ArticlePageEditFacade);
+  private readonly snackbarFacade = inject(SnackbarFacade);
+  private readonly translate = inject(TranslateService);
+
+  readonly markdownEditor = viewChild<MarkdownEditorComponent>('markdownEditor');
 
   readonly pages$ = this.facade.pages$;
   readonly currentPage$ = this.facade.currentPage$;
-
-  readonly articleId = signal<string>('');
-  readonly pageId = signal<string>('');
-
-  readonly title = signal<string>('');
-  readonly description = signal<string>('');
-  readonly content = signal<string>('');
-
-  readonly isSaving = signal(false);
-  readonly saveSuccess = signal(false);
-  readonly saveError = signal<string | null>(null);
 
   constructor() {
     const articleId = this.route.snapshot.paramMap.get('articleId') || '';
     const pageId = this.route.snapshot.paramMap.get('pageId') || '';
 
-    this.articleId.set(articleId);
-    this.pageId.set(pageId);
+    // articleIdがない場合は404エラーをthrow
+    if (!articleId || !pageId) {
+      throw new NotFoundError(this.translate.instant('articlePageEdit.errors.articleIdOrPageIdRequired'));
+    }
 
     // ページ一覧を読み込む
-    if (articleId) {
-      this.facade.loadPages(articleId);
-    }
-
-    // pageIdがない場合は最初のページにリダイレクト
-    if (articleId && !pageId) {
-      this.pages$
-        .pipe(
-          filter((pages) => pages.length > 0),
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe((pages) => {
-          const sortedPages = [...pages].sort((a, b) => a.order - b.order);
-          const firstPage = sortedPages[0];
-          this.router.navigate(['/article', articleId, firstPage.id, 'edit'], { replaceUrl: true });
-        });
-      return;
-    }
+    this.facade.loadPages(articleId);
 
     // 現在のページを読み込む
-    if (articleId && pageId) {
-      this.facade.loadPage(articleId, pageId);
-    }
-
-    // ページデータが読み込まれたらフォームを初期化
-    this.currentPage$
-      .pipe(
-        filter((page) => page !== null),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((page) => {
-        this.title.set(page.title);
-        this.description.set(page.description);
-        this.content.set(page.content);
-      });
+    this.facade.loadPage(articleId, pageId);
 
     // ルートパラメータの変更を監視
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+    this.route.paramMap.subscribe((params) => {
+      const newArticleId = params.get('articleId') || '';
       const newPageId = params.get('pageId') || '';
-      if (newPageId && newPageId !== this.pageId()) {
-        this.pageId.set(newPageId);
-        this.facade.loadPage(this.articleId(), newPageId);
-        this.saveSuccess.set(false);
-        this.saveError.set(null);
+      if (newArticleId && newPageId) {
+        this.facade.loadPage(newArticleId, newPageId);
       }
     });
   }
 
   onSave(): void {
-    const articleId = this.articleId();
-    const pageId = this.pageId();
-    if (!articleId || !pageId) return;
-
-    this.isSaving.set(true);
-    this.saveSuccess.set(false);
-    this.saveError.set(null);
+    const form = this.markdownEditor()?.form;
+    if (!form || form.invalid) {
+      return;
+    }
+    const formValue = form.getRawValue();
+    if (!formValue) {
+      return;
+    }
 
     this.facade
-      .updatePage(articleId, pageId, {
-        title: this.title(),
-        description: this.description(),
-        content: this.content(),
+      .updatePage(formValue.articleId, formValue.pageId, {
+        title: formValue.title,
+        description: formValue.description,
+        content: formValue.content,
       })
-      .subscribe({
-        next: () => {
-          this.isSaving.set(false);
-          this.saveSuccess.set(true);
-          // ページ一覧のタイトルも更新するため再読み込み
-          this.facade.loadPages(articleId);
-        },
-        error: (err) => {
-          this.isSaving.set(false);
-          this.saveError.set(err?.message || '保存中にエラーが発生しました');
-        },
+      .subscribe(() => {
+        this.snackbarFacade.showSnackbar('success', this.translate.instant('articlePageEdit.saveSuccess'));
       });
   }
 
-  getFirstPageId(pages: PageItem[]): string {
-    const sortedPages = [...pages].sort((a, b) => a.order - b.order);
-    return sortedPages[0]?.id || '';
-  }
-
   navigateToArticleEdit(): void {
-    const articleId = this.articleId();
+    const articleId = this.markdownEditor()?.form.getRawValue().articleId;
     if (articleId) {
       this.router.navigate(['/article', articleId, 'edit']);
     }

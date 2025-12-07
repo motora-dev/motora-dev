@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RxPush } from '@rx-angular/template/push';
 
 import { ArticleEditFacade } from '$domains/article-edit';
@@ -24,6 +24,7 @@ export class ArticleEditComponent {
   private readonly router = inject(Router);
   private readonly facade = inject(ArticleEditFacade);
   private readonly snackbarFacade = inject(SnackbarFacade);
+  private readonly translate = inject(TranslateService);
 
   readonly editForm = viewChild<EditFormComponent>('editForm');
 
@@ -36,7 +37,7 @@ export class ArticleEditComponent {
 
     // articleIdがない場合は404エラーをthrow
     if (!articleId) {
-      throw new NotFoundError('記事IDが指定されていません');
+      throw new NotFoundError(this.translate.instant('articleEdit.errors.articleIdRequired'));
     }
 
     // 記事データを読み込む（loadArticle内でarticleIdも設定される）
@@ -62,7 +63,7 @@ export class ArticleEditComponent {
         content: formValue.description,
       })
       .subscribe(() => {
-        this.snackbarFacade.showSnackbar('保存しました', 'success');
+        this.snackbarFacade.showSnackbar('success', this.translate.instant('articleEdit.saveSuccess'));
       });
   }
 

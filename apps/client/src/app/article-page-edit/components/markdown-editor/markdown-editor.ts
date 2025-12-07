@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
+import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 
 import { InputDirective } from '$shared/ui/input';
 
@@ -11,12 +11,16 @@ import { InputDirective } from '$shared/ui/input';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MarkdownEditorComponent {
-  readonly title = model.required<string>();
-  readonly description = model.required<string>();
-  readonly content = model.required<string>();
-  readonly isSaving = input<boolean>(false);
-
+  private readonly fb = inject(FormBuilder);
   readonly save = output<void>();
+
+  readonly form = this.fb.nonNullable.group({
+    articleId: ['', [Validators.required]],
+    pageId: ['', [Validators.required]],
+    title: ['', [Validators.required]],
+    description: [''],
+    content: ['', [Validators.required]],
+  });
 
   onSave(): void {
     this.save.emit();

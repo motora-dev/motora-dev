@@ -15,6 +15,7 @@
   },
   "articleEdit": {
     "title": "記事設定",
+    "saveSuccess": "保存しました",
     "form": {
       "titleLabel": "タイトル",
       "titlePlaceholder": "記事のタイトルを入力してください",
@@ -27,6 +28,9 @@
       "title": "ページ一覧",
       "noPages": "ページがありません",
       "editPage": "ページ「{{title}}」を編集"
+    },
+    "errors": {
+      "articleIdRequired": "記事IDが指定されていません"
     }
   },
   "articleList": {
@@ -44,6 +48,15 @@
     "goToHeading": "{{text}}へ移動",
     "prev": "← 前へ",
     "next": "次へ →"
+  },
+  "articlePageEdit": {
+    "title": "ページ編集",
+    "saveSuccess": "保存が完了しました",
+    "saveError": "保存中にエラーが発生しました",
+    "articleSettings": "記事設定",
+    "errors": {
+      "articleIdOrPageIdRequired": "記事IDもしくはページIDが指定されていません"
+    }
   },
   "callback": {
     "title": "ログイン完了",

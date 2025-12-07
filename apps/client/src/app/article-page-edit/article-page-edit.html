@@ -2,47 +2,34 @@
   <!-- Header -->
   <div class="flex-shrink-0 p-4 border-b border-gray-200">
     <div class="flex items-center justify-between">
-      <h1 class="text-xl font-bold text-gray-900">ページ編集</h1>
-
-      <!-- Success/Error Messages -->
-      @if (saveSuccess()) {
-      <div class="px-4 py-2 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
-        保存が完了しました
-      </div>
-      } @if (saveError()) {
-      <div class="px-4 py-2 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">{{ saveError() }}</div>
-      }
+      <h1 class="text-xl font-bold text-gray-900">{{ 'articlePageEdit.title' | translate }}</h1>
     </div>
   </div>
 
   <!-- 3-Column Layout -->
-  <div class="flex-1 flex min-h-0" *rxLet="pages$; let pages">
+  <div class="flex-1 flex min-h-0" *rxLet="pages$ | push; let pages">
     <!-- Left: Page Sidebar -->
-    <app-page-sidebar [pages]="pages" [articleId]="articleId()" [currentPageId]="pageId()" />
+    <app-page-sidebar [pages]="pages" [articleId]="articleId" [currentPageId]="pageId" />
 
     <!-- Center: Markdown Editor -->
-    <div class="flex-1 border-r border-gray-200 min-w-0" *rxIf="currentPage$">
+    <div class="flex-1 border-r border-gray-200 min-w-0" *rxIf="currentPage$ | push">
       <div class="p-4 border-b border-gray-200">
         <button
           type="button"
           (click)="navigateToArticleEdit()"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
         >
-          記事設定
+          {{ 'articlePageEdit.articleSettings' | translate }}
         </button>
       </div>
-      <app-markdown-editor
-        [(title)]="title"
-        [(description)]="description"
-        [(content)]="content"
-        [isSaving]="isSaving()"
-        (save)="onSave()"
-      />
+      <app-markdown-editor #markdownEditor (save)="onSave()" />
     </div>
 
     <!-- Right: Preview Panel -->
-    <div class="flex-1 min-w-0" *rxIf="currentPage$">
-      <app-preview-panel [markdown]="content()" />
+    <div class="flex-1 min-w-0" *rxIf="currentPage$ | push">
+      @if (markdownEditor()) {
+      <app-preview-panel [markdown]="markdownEditor()!.content()" />
+      }
     </div>
   </div>
 </main>
