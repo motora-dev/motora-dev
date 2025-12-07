@@ -1,22 +1,22 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageItem } from '$domains/article-page-edit';
 
 @Component({
   selector: 'app-page-sidebar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './page-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageSidebarComponent {
   readonly pages = input.required<PageItem[]>();
-  readonly articleId = input.required<string>();
   readonly currentPageId = input.required<string>();
 
   isCurrentPage(page: PageItem): boolean {
-    return page.id === this.currentPageId();
+    return page.pageId === this.currentPageId();
   }
 
   getIndentClass(page: PageItem): string {

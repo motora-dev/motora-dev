@@ -1,4 +1,6 @@
-import angular from 'angular-eslint';
+import angularEslintPlugin from '@angular-eslint/eslint-plugin';
+import angularTemplateParser from '@angular-eslint/template-parser';
+import angularTemplatePlugin from '@angular-eslint/eslint-plugin-template';
 
 import { baseConfig } from '@monorepo/eslint-config';
 
@@ -14,28 +16,23 @@ export default [
     files: config.files || ['src/**/*.ts'],
   })),
   {
-    ignores: ['*.config.cjs', '*.config.mjs', 'src/**/*.html'],
+    ignores: ['*.config.cjs', '*.config.mjs'],
   },
-  // Angular ESLint base configuration (includes plugins)
+  // Angular ESLint TypeScript files configuration
   {
     files: ['src/**/*.ts'],
-    ...angular.configs.tsRecommended[0],
-  },
-  // TypeScript files configuration with Angular rules
-  {
-    files: ['src/**/*.ts'],
-    ...angular.configs.tsRecommended[1],
+    plugins: {
+      '@angular-eslint': angularEslintPlugin,
+    },
     languageOptions: {
-      ...angular.configs.tsRecommended[1].languageOptions,
       parserOptions: {
-        ...angular.configs.tsRecommended[1].languageOptions?.parserOptions,
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    processor: angular.processInlineTemplates,
+    processor: angularTemplatePlugin.processors['extract-inline-html'],
     rules: {
-      ...angular.configs.tsRecommended[1].rules,
+      ...angularEslintPlugin.configs.recommended.rules,
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: ['app'], style: 'camelCase' }],
       // 属性セレクターを使うコンポーネント（button, input等）はcamelCaseを許可
       '@angular-eslint/component-selector': 'off',
@@ -110,14 +107,15 @@ export default [
   // HTML template files configuration
   {
     files: ['src/**/*.html'],
-    ...angular.configs.templateRecommended[0],
-  },
-  {
-    files: ['src/**/*.html'],
-    ...angular.configs.templateRecommended[1],
+    languageOptions: {
+      parser: angularTemplateParser,
+    },
+    plugins: {
+      '@angular-eslint/template': angularTemplatePlugin,
+    },
     rules: {
-      ...angular.configs.templateRecommended[1].rules,
-      ...angular.configs.templateAccessibility[1]?.rules,
+      ...angularTemplatePlugin.configs.recommended.rules,
+      ...angularTemplatePlugin.configs.accessibility.rules,
     },
   },
 ];

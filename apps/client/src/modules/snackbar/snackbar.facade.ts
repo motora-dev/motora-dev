@@ -3,7 +3,6 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Store } from '@ngxs/store';
 
 import { HideSnackbar, ShowSnackbar, SnackbarState } from './store';
-import { SnackbarItem } from './store/snackbar.state';
 
 @Injectable({ providedIn: 'root' })
 export class SnackbarFacade {
@@ -13,8 +12,8 @@ export class SnackbarFacade {
   readonly snackbars$ = this.store.select(SnackbarState.getSnackbars);
 
   showSnackbar(
-    message: string,
     type: 'success' | 'error' | 'info' | 'warning' = 'info',
+    message: string,
     duration: number = 3000,
   ): void {
     if (isPlatformBrowser(this.platformId)) {
