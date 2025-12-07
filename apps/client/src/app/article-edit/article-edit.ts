@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { NgxsFormDirective } from '@ngxs/form-plugin';
 import { RxPush } from '@rx-angular/template/push';
+import { EMPTY, switchMap, take } from 'rxjs';
 
 import { ArticleEditFacade } from '$domains/article-edit';
 import { NotFoundError } from '$modules/error';
@@ -14,23 +16,36 @@ import { PageListComponent } from './components/page-list';
 @Component({
   selector: 'app-article-edit',
   standalone: true,
-  imports: [ButtonDirective, EditFormComponent, PageListComponent, ReactiveFormsModule, RxPush, TranslatePipe],
+  imports: [
+    ButtonDirective,
+    EditFormComponent,
+    NgxsFormDirective,
+    PageListComponent,
+    ReactiveFormsModule,
+    RxPush,
+    TranslatePipe,
+  ],
   providers: [ArticleEditFacade],
   templateUrl: './article-edit.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticleEditComponent {
+  private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly facade = inject(ArticleEditFacade);
+  private readonly router = inject(Router);
   private readonly snackbarFacade = inject(SnackbarFacade);
   private readonly translate = inject(TranslateService);
 
-  readonly editForm = viewChild<EditFormComponent>('editForm');
-
   readonly isFormInvalid$ = this.facade.isFormInvalid$;
   readonly isFormDirty$ = this.facade.isFormDirty$;
+  readonly formValue$ = this.facade.formValue$;
+
   readonly pages$ = this.facade.pages$;
+
+  readonly form = this.fb.nonNullable.group({
+    articleId: ['', [Validators.required]],
+  });
 
   constructor() {
     const articleId = this.route.snapshot.paramMap.get('articleId') || '';
@@ -45,23 +60,20 @@ export class ArticleEditComponent {
   }
 
   onSave(): void {
-    const form = this.editForm()?.form;
-    if (!form || form.invalid) {
-      return;
-    }
-
-    // ストアからarticleIdを取得
-    const formValue = form.getRawValue();
-    if (!formValue) {
-      return;
-    }
-
-    this.facade
-      .updateArticle(formValue.articleId, {
-        title: formValue.title,
-        tags: formValue.tags,
-        content: formValue.description,
-      })
+    this.facade.formValue$
+      .pipe(
+        take(1),
+        switchMap((formValue) => {
+          if (!formValue) {
+            return EMPTY;
+          }
+          return this.facade.updateArticle(formValue.articleId, {
+            title: formValue.title,
+            tags: formValue.tags,
+            content: formValue.description,
+          });
+        }),
+      )
       .subscribe(() => {
         this.snackbarFacade.showSnackbar('success', this.translate.instant('articleEdit.saveSuccess'));
       });

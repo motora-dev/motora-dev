@@ -5,7 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { SpinnerFacade } from '$modules/spinner';
 import { ArticleEditApi } from './api';
 import { UpdateArticleRequest, UpdateArticleResponse } from './api/article-edit.response';
-import { ArticleEditFormModel, ArticleEditPageItem } from './model';
+import { ArticleEditPageItem, EditFormModel, FormModel } from './model';
 import { ArticleEditState, SetArticle, SetPages } from './store';
 
 @Injectable()
@@ -16,6 +16,8 @@ export class ArticleEditFacade {
 
   readonly isFormInvalid$ = this.store.select(ArticleEditState.isFormInvalid);
   readonly isFormDirty$ = this.store.select(ArticleEditState.isFormDirty);
+  readonly formValue$ = this.store.select(ArticleEditState.getFormValue);
+
   readonly pages$ = this.store.select(ArticleEditState.getPages);
 
   loadArticle(articleId: string): void {
@@ -23,7 +25,7 @@ export class ArticleEditFacade {
       .getArticle(articleId)
       .pipe(this.spinnerFacade.withSpinner())
       .subscribe((response) => {
-        const article: ArticleEditFormModel = {
+        const article: FormModel & EditFormModel = {
           articleId: response.id,
           title: response.title,
           tags: response.tags,
@@ -46,7 +48,7 @@ export class ArticleEditFacade {
     return this.api.updateArticle(articleId, request).pipe(
       this.spinnerFacade.withSpinner(),
       tap((response) => {
-        const article: ArticleEditFormModel = {
+        const article: FormModel & EditFormModel = {
           articleId: response.id,
           title: response.title,
           tags: response.tags,

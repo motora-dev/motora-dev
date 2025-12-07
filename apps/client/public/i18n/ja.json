@@ -54,6 +54,17 @@
     "saveSuccess": "保存が完了しました",
     "saveError": "保存中にエラーが発生しました",
     "articleSettings": "記事設定",
+    "pageListTitle": "ページ一覧",
+    "previewLabel": "プレビュー",
+    "form": {
+      "titleLabel": "タイトル",
+      "titlePlaceholder": "ページタイトル",
+      "descriptionLabel": "説明",
+      "descriptionPlaceholder": "ページの説明",
+      "contentLabel": "コンテンツ (Markdown)",
+      "contentPlaceholder": "Markdownで記事を書いてください...",
+      "saveButton": "保存"
+    },
     "errors": {
       "articleIdOrPageIdRequired": "記事IDもしくはページIDが指定されていません"
     }

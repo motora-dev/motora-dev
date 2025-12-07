@@ -24,7 +24,6 @@ export class EditFormComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly form = this.fb.nonNullable.group({
-    articleId: ['', [Validators.required]],
     title: ['', [Validators.required]],
     description: [''],
     tags: [[] as string[]],
