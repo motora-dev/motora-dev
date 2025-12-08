@@ -61,7 +61,6 @@
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.2",
-    "@types/sharp": "^0.32.0",
     "@vitest/coverage-v8": "catalog:",
     "dotenv": "^17.2.3",
     "esbuild": "catalog:",
