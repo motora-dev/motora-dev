@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -69,7 +70,7 @@ export class ArticlePageEditComponent {
     this.facade.loadPage(articleId, pageId);
 
     // ルートパラメータの変更を監視
-    this.route.paramMap.subscribe((params) => {
+    this.route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       const newArticleId = params.get('articleId') || '';
       const newPageId = params.get('pageId') || '';
       if (newArticleId && newPageId) {
