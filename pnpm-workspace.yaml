@@ -7,17 +7,16 @@ versions:
   angular-build: &angular-build 21.0.2
   angular-cdk: &angular-cdk 21.0.2
   angular-eslint: &angular-eslint 21.1.0
+  class-transformer: &class-transformer 0.5.1
+  class-validator: &class-validator 0.14.3
   class-variance-authority: &cva 0.7.1
   clsx: &clsx 2.1.1
   compression: &compression 1.8.1
   cookie: &cookie 1.1.1
+  cookie-parser: &cookie-parser 1.4.7
+  csrf-csrf: &csrf-csrf 4.0.3
   dotenv: &dotenv 17.2.3
   esbuild: &esbuild 0.27.1
-  hast-util-to-html: &hast-util-to-html 9.0.5
-  highlight-js: &highlight-js 11.11.1
-  katex: &katex 0.16.27
-  lowlight: &lowlight 3.3.0
-  ngx-translate-core: &ngx-translate-core 17.0.0
   eslint: &eslint 9.39.1
   eslint-eslintrc: &eslint-eslintrc 3.3.3
   eslint-plugin-boundaries: &eslint-plugin-boundaries 5.3.1
@@ -25,31 +24,54 @@ versions:
   eslint-plugin-storybook: &eslint-plugin-storybook 10.1.2
   eslint-plugin-testing-library: &eslint-plugin-testing-library 7.13.5
   eslint-plugin-turbo: &eslint-plugin-turbo 2.6.3
+  express-session: &express-session 1.18.2
   google-auth-library: &google-auth-library 10.5.0
+  gray-matter: &gray-matter 4.0.3
+  hast-util-to-html: &hast-util-to-html 9.0.5
+  highlight-js: &highlight-js 11.11.1
   husky: &husky 9.1.7
   jest: &jest 30.2.0
   jsdom: &jsdom 27.3.0
+  katex: &katex 0.16.27
   lint-staged: &lint-staged 16.2.7
-  node: &node 24.10.1
+  lowlight: &lowlight 3.3.0
   nestjs: &nestjs 11.1.9
   nestjs-cli: &nestjs-cli 11.0.14
+  nestjs-config: &nestjs-config 4.0.2
+  nestjs-cqrs: &nestjs-cqrs 11.0.3
+  nestjs-passport: &nestjs-passport 11.0.5
+  nestjs-schematics: &nestjs-schematics 11.0.9
+  nestjs-throttler: &nestjs-throttler 6.5.0
+  ngx-translate-core: &ngx-translate-core 17.0.0
   ngxs: &ngxs 20.1.0
+  node: &node 24.10.1
+  paralleldrive-cuid2: &paralleldrive-cuid2 3.0.4
+  pg: &pg 8.16.3
   playwright: &playwright 1.57.0
   postcss: &postcss 8.5.6
   prettier: &prettier 3.7.4
   prisma: &prisma 7.1.0
+  reflect-metadata: &reflect-metadata 0.2.2
   rimraf: &rimraf 6.1.2
   rx-angular: &rx-angular 20.1.0
   rx-angular-isr: &rx-angular-isr 20.0.0
   rxjs: &rxjs 7.8.2
+  satori: &satori 0.18.3
+  satori-html: &satori-html 0.3.2
+  sharp: &sharp 0.34.5
   storybook: &storybook 10.1.4
   supabase: &supabase 2.86.2
   swc: &swc 1.15.3
   tailwind-merge: &tailwind-merge 3.4.0
   tailwindcss: &tailwindcss 4.1.17
   tiptap: &tiptap 3.13.0
+  ts-node: &ts-node 10.9.2
   tslib: &tslib 2.8.1
+  tsx: &tsx 4.20.6
   turbo: &turbo 2.6.3
+  types-cookie-parser: &types-cookie-parser 1.4.9
+  types-express: &types-express 5.0.0
+  types-express-session: &types-express-session 1.18.2
   types-katex: &types-katex 0.16.7
   typescript: &typescript 5.9.3
   typescript-eslint: &typescript-eslint 8.48.1
@@ -79,13 +101,19 @@ catalog:
   '@eslint/js': *eslint
   '@nestjs/cli': *nestjs-cli
   '@nestjs/common': *nestjs
+  '@nestjs/config': *nestjs-config
   '@nestjs/core': *nestjs
+  '@nestjs/cqrs': *nestjs-cqrs
+  '@nestjs/passport': *nestjs-passport
   '@nestjs/platform-express': *nestjs
+  '@nestjs/schematics': *nestjs-schematics
   '@nestjs/testing': *nestjs
+  '@nestjs/throttler': *nestjs-throttler
   '@ngx-translate/core': *ngx-translate-core
   '@ngxs/devtools-plugin': *ngxs
   '@ngxs/form-plugin': *ngxs
   '@ngxs/store': *ngxs
+  '@paralleldrive/cuid2': *paralleldrive-cuid2
   '@prisma/adapter-pg': *prisma
   '@prisma/client': *prisma
   '@prisma/client-runtime-utils': *prisma
@@ -99,49 +127,65 @@ catalog:
   '@swc/core': *swc
   '@tailwindcss/postcss': *tailwindcss
   '@tiptap/core': *tiptap
-  '@tiptap/extension-image': *tiptap
   '@tiptap/extension-code-block-lowlight': *tiptap
+  '@tiptap/extension-image': *tiptap
   '@tiptap/extension-placeholder': *tiptap
   '@tiptap/pm': *tiptap
   '@tiptap/starter-kit': *tiptap
+  '@types/cookie-parser': *types-cookie-parser
+  '@types/express': *types-express
+  '@types/express-session': *types-express-session
   '@types/katex': *types-katex
   '@types/node': *node
   '@typescript-eslint/eslint-plugin': *typescript-eslint
   '@typescript-eslint/parser': *typescript-eslint
   '@vitest/coverage-v8': *vitest
+  class-transformer: *class-transformer
+  class-validator: *class-validator
   class-variance-authority: *cva
   clsx: *clsx
   compression: *compression
   cookie: *cookie
+  cookie-parser: *cookie-parser
+  csrf-csrf: *csrf-csrf
   dotenv: *dotenv
   esbuild: *esbuild
   eslint: *eslint
-  hast-util-to-html: *hast-util-to-html
-  highlight.js: *highlight-js
-  katex: *katex
-  lowlight: *lowlight
   eslint-plugin-boundaries: *eslint-plugin-boundaries
   eslint-plugin-jest: *eslint-plugin-jest
   eslint-plugin-storybook: *eslint-plugin-storybook
   eslint-plugin-testing-library: *eslint-plugin-testing-library
   eslint-plugin-turbo: *eslint-plugin-turbo
+  express-session: *express-session
   google-auth-library: *google-auth-library
+  gray-matter: *gray-matter
+  hast-util-to-html: *hast-util-to-html
+  highlight.js: *highlight-js
   husky: *husky
   jest: *jest
   jest-environment-jsdom: *jest
   jsdom: *jsdom
+  katex: *katex
   lint-staged: *lint-staged
+  lowlight: *lowlight
+  pg: *pg
   playwright: *playwright
   postcss: *postcss
   prettier: *prettier
   prisma: *prisma
+  reflect-metadata: *reflect-metadata
   rimraf: *rimraf
   rxjs: *rxjs
+  satori: *satori
+  satori-html: *satori-html
+  sharp: *sharp
   storybook: *storybook
   tailwind-merge: *tailwind-merge
   tailwindcss: *tailwindcss
   turbo: *turbo
+  ts-node: *ts-node
   tslib: *tslib
+  tsx: *tsx
   typescript: *typescript
   typescript-eslint: *typescript-eslint
   unplugin-swc: *unplugin-swc

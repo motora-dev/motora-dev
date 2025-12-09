@@ -25,6 +25,10 @@ NestJS + esbuild + swc + Vitest + Prisma + CQRS を採用したバックエン�
 
 ## ビルドシステム（esbuild + SWC）
 
+**キーワード**: `esbuild`, `SWC`, `ビルド`, `デコレーター`, `ESModule`, `ホットリロード`
+
+このセクションでは、esbuildとSWCを使用したビルドシステムについて説明します。
+
 ### なぜ esbuild を使うのか
 
 従来の NestJS プロジェクトでは `tsc`（TypeScript コンパイラ）を使用していましたが、以下の問題がありました：
@@ -42,6 +46,7 @@ NestJS は TypeScript のデコレーターを多用しますが、esbuild 単�
 そこで、SWC を esbuild のプラグインとして使用し、デコレーターを正しく変換しています：
 
 ```javascript
+// 推奨: SWCプラグインでデコレーターメタデータをサポート
 // esbuild.config.mjs より抜粋
 function swcPlugin() {
   return {
@@ -80,6 +85,10 @@ pnpm start
 
 ## 開発体験の改善
 
+**キーワード**: `開発体験`, `ビルド速度`, `テスト速度`, `ホットリロード`, `デバッグ`
+
+このセクションでは、esbuildとVitestによる開発体験の改善について説明します。
+
 ### ビルド・テストの劇的な高速化
 
 | 項目           | 従来（tsc + Jest） | 現在（esbuild + Vitest） | 改善率        |
@@ -110,6 +119,10 @@ pnpm start
 
 ## 設計思想
 
+**キーワード**: `設計原則`, `Vertical Slice Architecture`, `CQRS`, `DDD`, `Repositoryパターン`
+
+このセクションでは、プロジェクトの設計思想と、なぜこの構成を採用したかの理由を説明します。
+
 ### なぜこの構成か
 
 1. **Vertical Slice Architecture**: 各ドメインが独立したスライスとして完結し、凝集度が高い
@@ -124,6 +137,10 @@ pnpm start
 チームメンバーはこのREADMEを参照し、配置基準を理解した上で開発を行ってください。
 
 ## 開発コマンド
+
+**キーワード**: `pnpm`, `開発サーバー`, `ビルド`, `テスト`, `Lint`, `フォーマット`
+
+このセクションでは、プロジェクトで使用する主要な開発コマンドを説明します。
 
 ```bash
 # 完全クリーンアップ（node_modulesも削除）
@@ -174,6 +191,10 @@ pnpm check-all
 
 ## パッケージ管理（pnpm catalog）
 
+**キーワード**: `pnpm`, `catalog`, `バージョン管理`, `pnpm-workspace.yaml`
+
+このセクションでは、pnpm catalogを使用したパッケージバージョンの一元管理方法について説明します。
+
 バージョンを `pnpm-workspace.yaml` で一元管理し、モノレポ全体で統一します。
 
 ### 設定例
@@ -205,6 +226,10 @@ catalog:
 2. `pnpm install` で全パッケージ一括更新
 
 ## ディレクトリ構成
+
+**キーワード**: `ディレクトリ構造`, `domains/`, `modules/`, `shared/`, `Vertical Slice`
+
+このセクションでは、プロジェクトのディレクトリ構成と各ディレクトリの役割を説明します。
 
 ```
 src/
@@ -266,7 +291,9 @@ domains/{domain}/
 
 ## アーキテクチャ
 
-本プロジェクトは **Vertical Slice Architecture** と **Clean Architecture** を組み合わせた構成を採用しています。
+**キーワード**: `Vertical Slice Architecture`, `Clean Architecture`, `レイヤー構成`, `依存関係`
+
+このセクションでは、プロジェクト全体のアーキテクチャ設計について説明します。Vertical Slice ArchitectureとClean Architectureを組み合わせた構成を採用しています。
 
 ### レイヤー構成
 
@@ -287,6 +314,10 @@ domains/ ──→ modules/ ──→ shared/
 - `shared/` は全レイヤーから参照可能
 
 ## 配置基準
+
+**キーワード**: `ファイル配置`, `配置ルール`, `パスエイリアス`, `命名規則`
+
+このセクションでは、ファイルやコンポーネントをどこに配置すべきかの基準を説明します。詳細は[ディレクトリ構成](#ディレクトリ構成)セクションも参照してください。
 
 ### どこに何を置くか
 
@@ -344,6 +375,16 @@ import { AuthService } from '$modules';
 
 ## CQRS（@nestjs/cqrs）
 
+**キーワード**: `CQRS`, `Command`, `Query`, `Handler`, `@nestjs/cqrs`
+
+このセクションでは、CQRSパターンを使用した読み取りと書き込みの責務分離について説明します。
+
+**関連ファイル**:
+- `apps/server/src/domains/{domain}/queries/{action}/{action}.query.ts` - Query定義
+- `apps/server/src/domains/{domain}/queries/{action}/{action}.handler.ts` - QueryHandler実装
+- `apps/server/src/domains/{domain}/commands/{action}/{action}.command.ts` - Command定義
+- `apps/server/src/domains/{domain}/commands/{action}/{action}.handler.ts` - CommandHandler実装
+
 ### 設計原則
 
 CQRS（Command Query Responsibility Segregation）パターンにより、読み取りと書き込みの責務を分離します。
@@ -353,6 +394,7 @@ CQRS（Command Query Responsibility Segregation）パターンにより、読み
 データの取得のみを行い、状態を変更しません。
 
 ```typescript
+// 推奨: Queryは状態を変更しない
 // queries/get-article-list/get-article-list.query.ts
 export class GetArticleListQuery {
   public constructor() {}
@@ -360,6 +402,7 @@ export class GetArticleListQuery {
 ```
 
 ```typescript
+// 推奨: QueryHandlerはデータ取得のみを行う
 // queries/get-article-list/get-article-list.handler.ts
 @QueryHandler(GetArticleListQuery)
 export class GetArticleListHandler implements IQueryHandler<GetArticleListQuery> {
@@ -376,6 +419,7 @@ export class GetArticleListHandler implements IQueryHandler<GetArticleListQuery>
 状態を変更する操作を行います。
 
 ```typescript
+// 推奨: Commandは状態を変更する操作を表す
 // commands/create-article/create-article.command.ts
 export class CreateArticleCommand {
   constructor(
@@ -386,6 +430,7 @@ export class CreateArticleCommand {
 ```
 
 ```typescript
+// 推奨: CommandHandlerは状態を変更する処理を実行する
 // commands/create-article/create-article.handler.ts
 @CommandHandler(CreateArticleCommand)
 export class CreateArticleHandler implements ICommandHandler<CreateArticleCommand> {
@@ -400,6 +445,7 @@ export class CreateArticleHandler implements ICommandHandler<CreateArticleComman
 ### Controller での使用
 
 ```typescript
+// 推奨: ControllerでQueryBus/CommandBusを使用してCQRSパターンを実現
 @Controller('article-list')
 export class ArticleListController {
   constructor(private readonly queryBus: QueryBus) {}
@@ -421,6 +467,14 @@ export class ArticleListController {
 
 ## データベースアクセス（Prisma）
 
+**キーワード**: `Prisma`, `データベース`, `Repositoryパターン`, `PrismaAdapter`, `ESModule`
+
+このセクションでは、Prismaを使用したデータベースアクセスの実装パターンについて説明します。
+
+**関連ファイル**:
+- `apps/server/src/shared/adapters/prisma/prisma.adapter.ts` - PrismaAdapter実装
+- `apps/server/src/domains/{domain}/repositories/{domain}.repository.ts` - Repository実装
+
 ### Prisma ESModule 対応
 
 #### 背景
@@ -436,6 +490,7 @@ Prisma 7.x 以降、`@prisma/client` は ESModule として提供されるよう
 3. **`reflect-metadata` のインポート** - バナーで先頭にインポート文を追加
 
 ```javascript
+// 推奨: ESModule環境ではformat: 'esm'とreflect-metadataのバナーを設定
 // esbuild.config.mjs より
 const config = {
   format: 'esm',
@@ -463,6 +518,7 @@ packages/database/
 Prisma Client を NestJS のライフサイクルに統合したアダプターを使用します。
 
 ```typescript
+// 推奨: PrismaAdapterを使用してPrisma ClientをNestJSのライフサイクルに統合
 // shared/adapters/prisma/prisma.adapter.ts
 import { PrismaClient } from '@monorepo/database/client';
 
@@ -489,6 +545,7 @@ export class PrismaAdapter extends PrismaClient implements OnModuleInit, OnModul
 各ドメインで Repository を定義し、データアクセスを抽象化します。
 
 ```typescript
+// 推奨: Repositoryパターンでデータアクセスを抽象化
 // domains/article-list/repositories/article-list.repository.ts
 @Injectable()
 export class ArticleListRepository {
@@ -518,6 +575,15 @@ pnpm prisma db seed
 ```
 
 ## 認証（Supabase Auth）
+
+**キーワード**: `認証`, `Supabase Auth`, `JWT`, `Guard`, `デコレーター`
+
+このセクションでは、Supabase Authを使用した認証の実装パターンについて説明します。
+
+**関連ファイル**:
+- `apps/server/src/shared/guards/supabase-auth.guard.ts` - SupabaseAuthGuard実装
+- `apps/server/src/shared/decorators/public.decorator.ts` - @Publicデコレーター
+- `apps/server/src/shared/decorators/current-user.decorator.ts` - @CurrentUserデコレーター
 
 ### SupabaseAuthGuard
 
@@ -557,11 +623,13 @@ export class SupabaseAuthGuard implements CanActivate {
 認証をバイパスするエンドポイントに使用します。
 
 ```typescript
+// 推奨: 認証不要なエンドポイントに@Publicデコレーターを使用
 // shared/decorators/public.decorator.ts
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 ```
 
 ```typescript
+// 推奨: 認証不要なエンドポイントに@Publicデコレーターを付与
 // 使用例
 @Public()
 @Get('article-list')
@@ -573,6 +641,7 @@ async getArticleList() { ... }
 認証済みユーザー情報を取得するデコレーターです。
 
 ```typescript
+// 推奨: @CurrentUserデコレーターで認証済みユーザー情報を取得
 // shared/decorators/current-user.decorator.ts
 export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
@@ -581,6 +650,7 @@ export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionCo
 ```
 
 ```typescript
+// 推奨: 認証済みユーザー情報が必要なエンドポイントで@CurrentUserを使用
 // 使用例
 @Post('article')
 async createArticle(@CurrentUser() user: User) { ... }
@@ -588,11 +658,20 @@ async createArticle(@CurrentUser() user: User) { ... }
 
 ## エラーハンドリング
 
+**キーワード**: `エラーハンドリング`, `BusinessLogicError`, `HttpExceptionFilter`, `例外処理`, `エラーレスポンス`
+
+このセクションでは、APIエラーやビジネスロジックエラーの処理方法について説明します。
+
+**関連ファイル**:
+- `apps/server/src/shared/exceptions/business-logic.exception.ts` - BusinessLogicError実装
+- `apps/server/src/shared/filters/http-exception.filter.ts` - HttpExceptionFilter実装
+
 ### BusinessLogicError
 
 ビジネスロジック層で発生するエラーを表すカスタム例外クラスです。
 
 ```typescript
+// 推奨: BusinessLogicErrorでビジネスロジックエラーを表現
 // shared/exceptions/business-logic.exception.ts
 export class BusinessLogicError extends Error {
   public readonly errorCode: ErrorCode;
@@ -607,6 +686,7 @@ export class BusinessLogicError extends Error {
 ```
 
 ```typescript
+// 推奨: ビジネスロジックエラーはBusinessLogicErrorを使用
 // 使用例
 throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED);
 throw new BusinessLogicError(ERROR_CODE.NOT_FOUND, 'Article not found');
@@ -617,6 +697,7 @@ throw new BusinessLogicError(ERROR_CODE.NOT_FOUND, 'Article not found');
 すべての例外をキャッチし、統一されたレスポンス形式に変換します。
 
 ```typescript
+// 推奨: HttpExceptionFilterで全例外を統一された形式に変換
 // shared/filters/http-exception.filter.ts
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -644,7 +725,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
 ## テスト戦略
 
-### なぜ Vitest を使うのか
+**キーワード**: `テスト`, `Vitest`, `ユニットテスト`, `E2Eテスト`, `カバレッジ`, `SWC`
+
+このセクションでは、テストの実行方法と、Vitestを使用したテスト戦略について説明します。
 
 Jest と比較して以下の利点があります：
 
@@ -721,7 +804,9 @@ domains/article-list/
 
 ## 設定ファイル
 
-### TypeScript設定
+**キーワード**: `設定ファイル`, `TypeScript`, `ESLint`, `Vitest`, `esbuild`, `NestJS`
+
+このセクションでは、プロジェクトで使用する各種設定ファイルについて説明します。
 
 | ファイル              | 用途                     |
 | --------------------- | ------------------------ |
@@ -747,7 +832,9 @@ domains/article-list/
 
 ## 環境変数
 
-### 必要な環境変数
+**キーワード**: `環境変数`, `.env`, `データベース`, `Supabase`, `CORS`
+
+このセクションでは、プロジェクトで必要な環境変数とその設定方法について説明します。
 
 | 変数名                      | 説明                                      | 例                                   | 必須   |
 | --------------------------- | ----------------------------------------- | ------------------------------------ | ------ |
