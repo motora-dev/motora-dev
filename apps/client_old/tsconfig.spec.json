@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": ["src/**/*.spec.ts", "jest.setup.ts"],
-  "exclude": ["node_modules", ".turbo", ".next"],
-  "compilerOptions": {
-    "jsx": "react",
-    "types": ["node", "jest", "@testing-library/jest-dom"]
-  }
-}

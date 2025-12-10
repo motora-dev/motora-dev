@@ -77,7 +77,7 @@ Angular 21 + Tailwind CSS 4 + SSR を採用したフロントエンドアプリ�
 
 ### Angular公式スタイルガイドとの差異
 
-本構成はAngular公式スタイルガイドの推奨（機能ごとのディレクトリ構成）とは一部異なります。これは設計原則（Clean Architecture / Vertical Slice）を優先した意図的な選択です。
+本構成はAngular公式スタイルガイドの推奨（機能ごとのディレクトリ構成）とは一部異なります。これは設計原則（Vertical Slice / Clean Architecture）を優先した意図的な選択です。
 
 チームメンバーはこのREADMEを参照し、配置基準を理解した上で開発を行ってください。
 
@@ -268,9 +268,9 @@ export class ArticleListComponent implements OnInit {
 
 ## アーキテクチャ
 
-**キーワード**: `Clean Architecture`, `Vertical Slice Architecture`, `レイヤー構成`, `依存関係`
+**キーワード**: `Vertical Slice Architecture`, `Clean Architecture`, `レイヤー構成`, `依存関係`
 
-このセクションでは、プロジェクト全体のアーキテクチャ設計について説明します。Clean ArchitectureとVertical Slice Architectureを組み合わせた構成を採用しています。
+このセクションでは、プロジェクト全体のアーキテクチャ設計について説明します。Vertical Slice ArchitectureとClean Architectureを組み合わせた構成を採用しています。
 
 詳細は[設計思想](#設計思想)セクションも参照してください。
 
