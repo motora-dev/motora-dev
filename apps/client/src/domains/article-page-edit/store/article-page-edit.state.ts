@@ -1,31 +1,81 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { patch } from '@ngxs/store/operators';
 
-import { PageEdit, PageItem } from '../model';
-import { SetCurrentPage, SetPages } from './article-page-edit.actions';
+import { EditFormState, FormModel, PageItem, RootFormState } from '../model';
+import { SetPage, SetPages } from './article-page-edit.actions';
 
 export interface ArticlePageEditStateModel {
   pages: PageItem[];
-  currentPage: PageEdit | null;
+  rootForm: RootFormState;
+  editForm: EditFormState;
 }
 
 @State<ArticlePageEditStateModel>({
   name: 'articlePageEdit',
   defaults: {
     pages: [],
-    currentPage: null,
+    rootForm: {
+      model: {
+        articleId: '',
+        pageId: '',
+        title: '',
+        description: '',
+      },
+      dirty: false,
+      status: '',
+      errors: {},
+    },
+    editForm: {
+      model: {
+        content: '',
+      },
+      dirty: false,
+      status: '',
+      errors: {},
+    },
   },
 })
 @Injectable()
 export class ArticlePageEditState {
+  @Selector()
+  static isFormInvalid(state: ArticlePageEditStateModel): boolean {
+    return state.rootForm.status !== 'VALID' || state.editForm.status !== 'VALID';
+  }
+
+  @Selector()
+  static isFormDirty(state: ArticlePageEditStateModel): boolean {
+    return state.rootForm.dirty || state.editForm.dirty;
+  }
+
+  @Selector()
+  static getFormValue(state: ArticlePageEditStateModel): FormModel | null {
+    const pageForm = state.rootForm?.model;
+    const editForm = state.editForm?.model;
+
+    if (!pageForm || !editForm) {
+      return null;
+    }
+
+    return {
+      ...pageForm,
+      ...editForm,
+    };
+  }
+
+  @Selector()
+  static getPageId(state: ArticlePageEditStateModel): string {
+    return state.rootForm.model.pageId;
+  }
+
   @Selector()
   static getPages(state: ArticlePageEditStateModel): PageItem[] {
     return state.pages;
   }
 
   @Selector()
-  static getCurrentPage(state: ArticlePageEditStateModel): PageEdit | null {
-    return state.currentPage;
+  static getContent(state: ArticlePageEditStateModel): string {
+    return state.editForm?.model?.content ?? '';
   }
 
   @Action(SetPages)
@@ -33,8 +83,26 @@ export class ArticlePageEditState {
     ctx.patchState({ pages: action.pages });
   }
 
-  @Action(SetCurrentPage)
-  setCurrentPage(ctx: StateContext<ArticlePageEditStateModel>, action: SetCurrentPage) {
-    ctx.patchState({ currentPage: action.page });
+  @Action(SetPage)
+  setCurrentPage(ctx: StateContext<ArticlePageEditStateModel>, action: SetPage) {
+    ctx.setState(
+      patch({
+        rootForm: patch({
+          model: patch({
+            articleId: action.page?.articleId || '',
+            pageId: action.page?.pageId || '',
+            title: action.page?.title || '',
+            description: action.page?.description || '',
+          }),
+          dirty: false,
+        }),
+        editForm: patch({
+          model: patch({
+            content: action.page?.content || '',
+          }),
+          dirty: false,
+        }),
+      }),
+    );
   }
 }

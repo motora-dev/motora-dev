@@ -7,6 +7,8 @@
       [innerHTML]="safeHtml()"
       [unpatch]="['click']"
       (click)="onContentClick($event)"
+      (keydown.enter)="onContentClick($event)"
+      tabindex="0"
     ></div>
   </article>
 

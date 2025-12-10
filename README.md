@@ -68,6 +68,9 @@ motora-dev/
 
 ### システム全体図
 
+![システム全体アーキテクチャ図](docs/images/architecture-diagram.png)
+
+
 ```mermaid
 flowchart TB
     subgraph GCP["Google Cloud Platform"]

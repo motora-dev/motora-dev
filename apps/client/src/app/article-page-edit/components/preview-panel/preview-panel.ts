@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-preview-panel',
   standalone: true,
+  imports: [TranslatePipe],
   templateUrl: './preview-panel.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,8 +1,8 @@
-import { ArticleEditFormModel, ArticleEditPageItem } from '../model';
+import { ArticleEditPageItem, FormModel } from '../model';
 
 export class SetArticle {
   static readonly type = '[ArticleEdit] SetArticle';
-  constructor(public article: ArticleEditFormModel | null) {}
+  constructor(public article: FormModel) {}
 }
 
 export class SetPages {

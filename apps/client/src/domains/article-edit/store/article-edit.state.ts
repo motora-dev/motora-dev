@@ -3,20 +3,28 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { patch } from '@ngxs/store/operators';
 
 import { SetArticle, SetPages } from './article-edit.actions';
-import { ArticleEditFormState, ArticleEditPageItem } from '../model';
+import { ArticleEditPageItem, EditFormState, FormModel, RootFormState } from '../model';
 
 export interface ArticleEditStateModel {
   pages: ArticleEditPageItem[];
-  articleForm: ArticleEditFormState;
+  rootForm: RootFormState;
+  editForm: EditFormState;
 }
 
 @State<ArticleEditStateModel>({
   name: 'articleEdit',
   defaults: {
     pages: [],
-    articleForm: {
+    rootForm: {
       model: {
         articleId: '',
+      },
+      dirty: false,
+      status: '',
+      errors: {},
+    },
+    editForm: {
+      model: {
         title: '',
         description: '',
         tags: [],
@@ -31,12 +39,12 @@ export interface ArticleEditStateModel {
 export class ArticleEditState {
   @Selector()
   static isFormInvalid(state: ArticleEditStateModel): boolean {
-    return state.articleForm.status !== 'VALID';
+    return state.rootForm.status !== 'VALID' || state.editForm.status !== 'VALID';
   }
 
   @Selector()
   static isFormDirty(state: ArticleEditStateModel): boolean {
-    return state.articleForm.dirty;
+    return state.rootForm.dirty || state.editForm.dirty;
   }
 
   @Selector()
@@ -44,14 +52,38 @@ export class ArticleEditState {
     return state.pages;
   }
 
+  @Selector()
+  static getFormValue(state: ArticleEditStateModel): FormModel | null {
+    const rootForm = state.rootForm?.model;
+    const editForm = state.editForm?.model;
+
+    if (!rootForm || !editForm) {
+      return null;
+    }
+
+    return {
+      ...rootForm,
+      ...editForm,
+    };
+  }
+
   @Action(SetArticle)
   setArticle(ctx: StateContext<ArticleEditStateModel>, action: SetArticle) {
     ctx.setState(
       patch({
-        articleForm: patch({
+        rootForm: patch({
           model: patch({
-            ...action.article,
+            articleId: action.article.articleId,
           }),
+          dirty: false,
+        }),
+        editForm: patch({
+          model: patch({
+            title: action.article.title,
+            description: action.article.description,
+            tags: action.article.tags,
+          }),
+          dirty: false,
         }),
       }),
     );
@@ -59,6 +91,10 @@ export class ArticleEditState {
 
   @Action(SetPages)
   setPages(ctx: StateContext<ArticleEditStateModel>, action: SetPages) {
-    ctx.patchState({ pages: action.pages });
+    ctx.setState(
+      patch({
+        pages: action.pages,
+      }),
+    );
   }
 }
