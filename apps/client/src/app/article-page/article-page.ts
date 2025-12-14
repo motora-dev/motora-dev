@@ -32,22 +32,25 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageComponent {
+  // inject
   private readonly destroyRef = inject(DestroyRef);
+  private readonly facade = inject(ArticlePageFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly viewportScroller = inject(ViewportScroller);
-  private readonly facade = inject(ArticlePageFacade);
   private readonly seoService = inject(SeoService);
   private readonly uiFacade = inject(UiFacade);
+  private readonly viewportScroller = inject(ViewportScroller);
 
+  // Signal
   readonly articleId = signal<string>('');
   readonly pageId = signal<string>('');
   readonly isSidebarOpen = toSignal(this.uiFacade.isSidebarOpen$, { initialValue: false });
 
-  readonly pages$ = this.facade.pages$;
-  readonly currentPage$ = this.facade.currentPage$;
-  readonly toc$ = this.facade.toc$;
+  // 直接のObservable（facadeから取得）
   readonly activeTocId$ = this.facade.activeTocId$;
+  readonly currentPage$ = this.facade.currentPage$;
+  readonly pages$ = this.facade.pages$;
+  readonly toc$ = this.facade.toc$;
 
   readonly safeHtml$ = this.currentPage$.pipe(
     map((page) => (page ? this.sanitizer.bypassSecurityTrustHtml(page.content) : null)),
