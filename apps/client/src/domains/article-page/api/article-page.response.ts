@@ -5,18 +5,16 @@ export interface ArticlePageItemResponse {
   order: number;
 }
 
-export interface ArticlePagesResponse {
-  pages: ArticlePageItemResponse[];
-}
-
 export interface ArticlePageResponse {
   id: string;
   createdAt: string;
   updatedAt: string;
   title: string;
   description: string;
+  articleId: string;
   content: string;
   level: number;
   order: number;
   tags: string[];
+  pages: ArticlePageItemResponse[];
 }

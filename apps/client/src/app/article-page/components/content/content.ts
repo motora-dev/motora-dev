@@ -39,7 +39,7 @@ export class ArticlePageContentComponent {
 
   readonly page = input.required<ArticlePage | null>();
   readonly safeHtml = input.required<SafeHtml | null>();
-  readonly navigation = input.required<ArticlePageNavigation | null>();
+  readonly navigation = input.required<ArticlePageNavigation>();
   readonly articleId = input.required<string>();
   readonly toc = input.required<TocItem[]>();
 

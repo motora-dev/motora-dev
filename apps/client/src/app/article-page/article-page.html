@@ -5,8 +5,8 @@
       <!-- Left sidebar: Page list -->
       <app-article-page-left-sidebar
         [pages]="pages$ | push"
-        [articleId]="articleId()"
-        [currentPageId]="pageId()"
+        [articleId]="page.articleId"
+        [currentPageId]="page.id"
         [isOpen]="isSidebarOpen()"
         (closeSidebar)="closeSidebar()"
       />
@@ -16,7 +16,7 @@
         [page]="page"
         [safeHtml]="safeHtml$ | push"
         [navigation]="navigation$ | push"
-        [articleId]="articleId()"
+        [articleId]="page.articleId"
         [toc]="toc$ | push"
       />
 
