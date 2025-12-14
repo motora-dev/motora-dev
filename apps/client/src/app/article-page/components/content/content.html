@@ -1,20 +1,18 @@
 @if (page(); as currentPage) {
-<main class="min-w-0 pb-16">
-  <article class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-12 py-8 lg:py-12">
-    <h1 class="text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-gray-900">{{ currentPage.title }}</h1>
-    <div
-      class="w-full prose prose-base max-w-none break-words"
-      [innerHTML]="safeHtml()"
-      [unpatch]="['click']"
-      (click)="onContentClick($event)"
-      (keydown.enter)="onContentClick($event)"
-      tabindex="0"
-    ></div>
-  </article>
+<article class="flex-1 w-full max-w-4xl">
+  <h1 class="text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-gray-900">{{ currentPage.title }}</h1>
+  <div
+    class="w-full prose prose-base max-w-none break-words"
+    [innerHTML]="safeHtml()"
+    [unpatch]="['click']"
+    (click)="onContentClick($event)"
+    (keydown.enter)="onContentClick($event)"
+    tabindex="0"
+  ></div>
 
   <!-- Page navigation -->
   @if (navigation(); as nav) {
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-12 py-6">
+  <div class="mt-12 pt-6">
     <div class="flex justify-between items-center gap-4">
       @if (nav.prev) {
       <a
@@ -40,6 +38,6 @@
     </div>
   </div>
   }
-</main>
+</article>
 }
 

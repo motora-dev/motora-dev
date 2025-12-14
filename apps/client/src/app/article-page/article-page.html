@@ -1,33 +1,38 @@
 <div class="min-h-screen">
-  <!-- Main content -->
   <ng-container *rxIf="currentPage$; let page">
-    <div class="w-full min-h-screen max-w-[90rem] mx-auto lg:grid lg:grid-cols-[16rem_1fr_14rem]">
-      <!-- Left sidebar: Page list -->
-      <app-article-page-left-sidebar
-        [pages]="pages$ | push"
-        [articleId]="page.articleId"
-        [currentPageId]="page.id"
-        [isOpen]="isSidebarOpen()"
-        (closeSidebar)="closeSidebar()"
-      />
+    <!-- Left sidebar: Page list (fixed) -->
+    <app-article-page-left-sidebar
+      [pages]="pages$ | push"
+      [articleId]="page.articleId"
+      [currentPageId]="page.id"
+      [isOpen]="isSidebarOpen()"
+      (closeSidebar)="closeSidebar()"
+    />
 
-      <!-- Main content -->
-      <app-article-page-content
-        [page]="page"
-        [safeHtml]="safeHtml$ | push"
-        [navigation]="navigation$ | push"
-        [articleId]="page.articleId"
-        [toc]="toc$ | push"
-      />
+    <!-- Main content area with 2-column layout -->
+    <main class="min-w-0 pb-16 lg:ml-64">
+      <div class="flex gap-8 px-4 sm:px-6 lg:px-12 py-8 lg:py-12">
+        <!-- Article content (left) -->
+        <app-article-page-content
+          [page]="page"
+          [safeHtml]="safeHtml$ | push"
+          [navigation]="navigation$ | push"
+          [articleId]="page.articleId"
+          [toc]="toc$ | push"
+          [pageId]="pageId()"
+          [activeTocId]="activeTocId$ | push"
+          (tocClick)="onTocClick($event)"
+        />
 
-      <!-- Right sidebar: Table of Contents -->
-      <app-article-page-right-sidebar
-        [toc]="toc$ | push"
-        [articleId]="articleId()"
-        [pageId]="pageId()"
-        [activeTocId]="activeTocId$ | push"
-        (tocClick)="onTocClick($event)"
-      />
-    </div>
+        <!-- Table of Contents (right, sticky) -->
+        <app-article-page-right-sidebar
+          [toc]="toc$ | push"
+          [articleId]="articleId()"
+          [pageId]="pageId()"
+          [activeTocId]="activeTocId$ | push"
+          (tocClick)="onTocClick($event)"
+        />
+      </div>
+    </main>
   </ng-container>
 </div>
