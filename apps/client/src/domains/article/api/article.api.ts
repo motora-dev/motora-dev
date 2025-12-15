@@ -3,14 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_URL } from '$shared/lib';
-import { ArticlePageResponse } from './article-page.response';
+import { GetFirstPageIdResponse } from './article.response';
 
 @Injectable({ providedIn: 'root' })
-export class ArticlePageApi {
+export class ArticleApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = inject(API_URL);
 
-  getPage(articleId: string, pageId: string): Observable<ArticlePageResponse> {
-    return this.http.get<ArticlePageResponse>(`${this.baseUrl}/article/${articleId}/page/${pageId}`);
+  getFirstPageId(articleId: string): Observable<GetFirstPageIdResponse> {
+    return this.http.get<GetFirstPageIdResponse>(`${this.baseUrl}/article/${articleId}/first-page-id`);
   }
 }

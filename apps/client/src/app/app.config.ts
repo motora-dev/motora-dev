@@ -7,7 +7,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { provideStore } from '@ngxs/store';
@@ -50,7 +50,10 @@ export const appConfig: ApplicationConfig = {
       ]),
       withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'x-xsrf-token' }),
     ),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules), // 全ルートを自動プリロード。チャンク合計が2MB超の場合はカスタムプリロード戦略を検討
+    ),
     provideStore([AuthState, ErrorState, SnackbarState, SpinnerState], withNgxsFormPlugin()),
     provideZonelessChangeDetection(),
   ],

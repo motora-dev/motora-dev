@@ -49,21 +49,6 @@ export class ArticlePageFacade {
     return this.store.selectSnapshot(ArticlePageState.getClickedTocId);
   }
 
-  loadPages(articleId: string): void {
-    this.api
-      .getPages(articleId)
-      .pipe(this.spinnerFacade.withSpinner())
-      .subscribe((response) => {
-        const pages: ArticlePageItem[] = response.pages.map((r) => ({
-          id: r.id,
-          title: r.title,
-          level: r.level,
-          order: r.order,
-        }));
-        this.store.dispatch(new SetArticlePageItems(pages));
-      });
-  }
-
   loadPage(articleId: string, pageId: string): void {
     const contentKey = makePageContentKey(articleId, pageId);
     const tocKey = makeTocKey(articleId, pageId);
@@ -118,7 +103,13 @@ export class ArticlePageFacade {
 
   private dispatchPage(response: ArticlePageResponse, content: string, toc: TocItem[]): Observable<void> {
     const page = this.toArticlePage(response, content);
-    return this.store.dispatch([new SetArticlePage(page), new SetToc(toc)]);
+    const pages: ArticlePageItem[] = response.pages.map((p) => ({
+      id: p.id,
+      title: p.title,
+      level: p.level,
+      order: p.order,
+    }));
+    return this.store.dispatch([new SetArticlePageItems(pages), new SetArticlePage(page), new SetToc(toc)]);
   }
 
   /**
@@ -155,6 +146,7 @@ export class ArticlePageFacade {
       updatedAt: new Date(response.updatedAt),
       title: response.title,
       description: response.description,
+      articleId: response.articleId,
       content,
       level: response.level,
       order: response.order,

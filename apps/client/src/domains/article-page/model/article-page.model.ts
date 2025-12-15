@@ -11,6 +11,7 @@ export interface ArticlePage {
   updatedAt: Date;
   title: string;
   description: string;
+  articleId: string;
   content: string;
   level: number;
   order: number;

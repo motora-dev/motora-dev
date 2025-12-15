@@ -13,6 +13,11 @@
     "cookieSettings": "Cookie設定",
     "copyright": "© 2025 もとら's dev"
   },
+  "article": {
+    "errors": {
+      "articleIdRequired": "記事IDが指定されていません"
+    }
+  },
   "articleEdit": {
     "title": "記事設定",
     "saveSuccess": "保存しました",
