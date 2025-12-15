@@ -13,4 +13,22 @@ export class ArticleRepository {
       where: { publicId: articleId },
     });
   }
+
+  async getFirstPageId(articleId: string): Promise<string | null> {
+    const article = await this.prisma.article.findUnique({
+      where: { publicId: articleId },
+      include: {
+        pages: {
+          orderBy: { order: 'asc' },
+          take: 1,
+        },
+      },
+    });
+
+    if (!article || article.pages.length === 0) {
+      return null;
+    }
+
+    return article.pages[0].publicId;
+  }
 }

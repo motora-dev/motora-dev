@@ -8,9 +8,12 @@ import type { Article, Page } from '@monorepo/database/client';
 export class ArticlePageRepository {
   constructor(private readonly prisma: PrismaAdapter) {}
 
-  async getArticleByPublicId(articleId: string): Promise<Article | null> {
-    return await this.prisma.article.findUnique({
-      where: { publicId: articleId },
+  async getPage(pageId: string): Promise<(Page & { article: Article }) | null> {
+    return await this.prisma.page.findUnique({
+      where: { publicId: pageId },
+      include: {
+        article: true,
+      },
     });
   }
 
@@ -18,15 +21,6 @@ export class ArticlePageRepository {
     return await this.prisma.page.findMany({
       where: { articleId: articleInternalId },
       orderBy: { order: 'asc' },
-    });
-  }
-
-  async getPage(articleInternalId: number, pageId: string): Promise<Page | null> {
-    return await this.prisma.page.findFirst({
-      where: {
-        publicId: pageId,
-        articleId: articleInternalId,
-      },
     });
   }
 }

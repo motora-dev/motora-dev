@@ -19,4 +19,14 @@ export class ArticleService {
 
     return article;
   }
+
+  async getFirstPageId(articleId: string): Promise<string> {
+    const firstPageId = await this.articleRepository.getFirstPageId(articleId);
+
+    if (!firstPageId) {
+      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND_FOR_PAGE);
+    }
+
+    return firstPageId;
+  }
 }

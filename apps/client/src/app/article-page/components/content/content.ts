@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   input,
+  output,
   PLATFORM_ID,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -39,9 +40,13 @@ export class ArticlePageContentComponent {
 
   readonly page = input.required<ArticlePage | null>();
   readonly safeHtml = input.required<SafeHtml | null>();
-  readonly navigation = input.required<ArticlePageNavigation | null>();
+  readonly navigation = input.required<ArticlePageNavigation>();
   readonly articleId = input.required<string>();
   readonly toc = input.required<TocItem[]>();
+  readonly pageId = input.required<string>();
+  readonly activeTocId = input<string | null>(null);
+
+  readonly tocClick = output<string>();
 
   constructor() {
     // スクロールイベントをブラウザでのみ監視
@@ -150,5 +155,10 @@ export class ArticlePageContentComponent {
       // クリックされた見出しをアクティブに設定
       this.facade.setClickedTocId(headingId);
     }
+  }
+
+  onTocClick(id: string): void {
+    this.facade.setClickedTocId(id);
+    this.tocClick.emit(id);
   }
 }

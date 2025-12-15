@@ -19,7 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'article/:articleId',
-    loadChildren: () => import('./article-page/article-page.routes').then((m) => m.ARTICLE_PAGE_ROUTES),
+    loadChildren: () => import('./article/article.routes').then((m) => m.ARTICLE_ROUTES),
   },
   {
     path: 'privacy-policy',
