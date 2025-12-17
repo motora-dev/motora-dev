@@ -31,6 +31,7 @@ export interface ArticlePageNavigation {
   standalone: true,
   imports: [RouterLink, TranslatePipe, RxUnpatch],
   templateUrl: './content.html',
+  styleUrl: './content.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePageContentComponent {
