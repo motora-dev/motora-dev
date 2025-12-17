@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, switchMap, tap } from 'rxjs';
 
+import { IsrService } from '$modules/isr';
 import { SpinnerFacade } from '$modules/spinner';
 import { ArticlePageEditApi } from './api';
 import { UpdatePageRequest, UpdatePageResponse } from './api/article-page-edit.response';
@@ -13,6 +14,7 @@ export class ArticlePageEditFacade {
   private readonly store = inject(Store);
   private readonly api = inject(ArticlePageEditApi);
   private readonly spinnerFacade = inject(SpinnerFacade);
+  private readonly isrService = inject(IsrService);
 
   readonly isFormInvalid$ = this.store.select(ArticlePageEditState.isFormInvalid);
   readonly isFormDirty$ = this.store.select(ArticlePageEditState.isFormDirty);
@@ -67,6 +69,8 @@ export class ArticlePageEditFacade {
         };
         this.store.dispatch(new SetPage(page));
       }),
+      // Invalidate ISR cache for the updated page
+      switchMap((response) => this.isrService.invalidateArticlePage(articleId, pageId).pipe(map(() => response))),
     );
   }
 

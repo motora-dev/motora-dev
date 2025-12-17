@@ -165,7 +165,7 @@ ${allUrls
 });
 
 /**
- * ISR cache invalidation endpoint
+ * ISR cache invalidation endpoint (internal use only)
  * POST /api/invalidate with { "token": "MY_SECRET_TOKEN", "urlsToInvalidate": ["/home"] }
  */
 app.post('/api/invalidate', async (req, res) => {
@@ -174,6 +174,50 @@ app.post('/api/invalidate', async (req, res) => {
   } else {
     res.status(503).json({ error: 'ISR not available' });
   }
+});
+
+/**
+ * ISR cache invalidation proxy endpoint (requires session auth)
+ * POST /api/invalidate-cache with { "urlsToInvalidate": ["/article/xxx/yyy"] }
+ *
+ * This endpoint verifies the user's session with NestJS API before invalidating cache.
+ * The ISR_SECRET token is added server-side, so clients don't need to know it.
+ */
+app.post('/api/invalidate-cache', async (req, res) => {
+  if (!isr) {
+    res.status(503).json({ error: 'ISR not available' });
+    return;
+  }
+
+  // Forward cookies to NestJS API to verify session
+  const cookie = req.headers.cookie;
+  const checkSessionResponse = await fetch(`${apiUrl}/auth/check-session`, {
+    headers: cookie ? { cookie } : {},
+    credentials: 'include',
+  });
+
+  if (!checkSessionResponse.ok) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+
+  const sessionData = await checkSessionResponse.json();
+  if (!sessionData.authenticated) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+
+  // Add ISR secret token to the request body and call invalidate
+  const urlsToInvalidate = req.body.urlsToInvalidate;
+  if (!Array.isArray(urlsToInvalidate) || urlsToInvalidate.length === 0) {
+    res.status(400).json({ error: 'urlsToInvalidate must be a non-empty array' });
+    return;
+  }
+
+  // Create a modified request with the token
+  req.body.token = process.env['ISR_SECRET'] || 'MY_SECRET_TOKEN';
+
+  await isr.invalidate(req, res);
 });
 
 /**
