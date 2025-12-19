@@ -101,6 +101,10 @@ locals {
       secret_name = "allowed-emails"
       version     = "latest"
     }
+    ISR_SECRET = {
+      secret_name = "isr-secret"
+      version     = "latest"
+    }
   }
 }
 

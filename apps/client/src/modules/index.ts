@@ -1,6 +1,7 @@
 export * from './auth';
 export * from './cookie-consent';
 export * from './error';
+export * from './isr';
 export * from './seo';
 export * from './snackbar';
 export * from './spinner';

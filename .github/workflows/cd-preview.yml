@@ -76,6 +76,7 @@ jobs:
           secrets: |
             BASIC_AUTH_USER=basic-auth-user:latest
             BASIC_AUTH_PASSWORD=basic-auth-password:latest
+            ISR_SECRET=isr-secret:latest
 
   deploy-server:
     name: Deploy Server

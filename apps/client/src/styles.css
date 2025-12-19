@@ -8,19 +8,33 @@
 
 /* グローバルフォント設定 */
 :root {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
   line-height: 1.6;
 }
 
 /* グローバルスタイル */
 body {
-  background-color: #F7F7F8; /* オフホワイト背景 */
-  color: #6B7280; /* 本文色 */
+  background-color: #f7f7f8; /* オフホワイト背景 */
+  color: #6b7280; /* 本文色 */
 }
 
 /* 見出しのデフォルトスタイル */
-h1, h2, h3, h4, h5, h6 {
-  color: #1A1A1E; /* 見出し色 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #1a1a1e; /* 見出し色 */
 }
 
 /*
@@ -49,14 +63,14 @@ h1, h2, h3, h4, h5, h6 {
   --color-accent-foreground: oklch(20.5% 0 0);
 
   /* Background & Foreground */
-  --color-background: #F7F7F8; /* ページ背景: オフホワイト */
-  --color-card: #FFFFFF; /* カード背景: 真っ白 */
-  --color-foreground: #1A1A1E; /* 見出し色 */
-  --color-body: #6B7280; /* 本文色 */
+  --color-background: #f7f7f8; /* ページ背景: オフホワイト */
+  --color-card: #ffffff; /* カード背景: 真っ白 */
+  --color-foreground: #1a1a1e; /* 見出し色 */
+  --color-body: #6b7280; /* 本文色 */
 
   /* Border & Input & Ring */
-  --color-border: #E5E7EB; /* 薄い境界線 */
-  --color-input: #E5E7EB;
+  --color-border: #e5e7eb; /* 薄い境界線 */
+  --color-input: #e5e7eb;
   --color-ring: oklch(70.7% 0 0);
 
   /* Radius */
