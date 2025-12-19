@@ -11,7 +11,8 @@ locals {
     "cookie-domain",
     "basic-auth-user",
     "basic-auth-password",
-    "allowed-emails"
+    "allowed-emails",
+    "isr-secret"
   ]
 }
 
