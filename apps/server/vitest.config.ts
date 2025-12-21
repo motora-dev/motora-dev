@@ -32,7 +32,7 @@ const resolveAlias = {
     $adapters: path.resolve(dirname, 'src/shared/adapters'),
     $decorators: path.resolve(dirname, 'src/shared/decorators'),
     $domains: path.resolve(dirname, 'src/domains'),
-    $exceptions: path.resolve(dirname, 'src/shared/exceptions'),
+    $errors: path.resolve(dirname, 'src/shared/errors'),
     $filters: path.resolve(dirname, 'src/shared/filters'),
     $guards: path.resolve(dirname, 'src/shared/guards'),
     $interceptors: path.resolve(dirname, 'src/shared/interceptors'),

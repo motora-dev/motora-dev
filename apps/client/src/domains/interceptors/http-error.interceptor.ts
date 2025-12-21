@@ -48,8 +48,8 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
         } else {
           const apiError: ApiError = {
             type: 'api',
-            errorCode: e.error?.errorCode ?? ERROR_CODE.INTERNAL_SERVER_ERROR.code,
-            message: e.error?.message ?? ERROR_CODE.INTERNAL_SERVER_ERROR.message,
+            errorCode: e.error?.errorCode ?? ERROR_CODE.INTERNAL_SERVER_ERROR,
+            message: e.error?.message ?? ERROR_CODE.INTERNAL_SERVER_ERROR,
           };
           errorFacade.showError(apiError);
         }

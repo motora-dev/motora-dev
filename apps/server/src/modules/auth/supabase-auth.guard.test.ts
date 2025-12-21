@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { vi, type MockInstance } from 'vitest';
 
-import { BusinessLogicError } from '$exceptions';
+import { UnauthorizedError } from '$shared/errors';
 import { AuthRepository } from './repositories/auth.repository';
 
 // ESMモードでのモック設定
@@ -95,21 +95,21 @@ describe('SupabaseAuthGuard', () => {
     expect(guard).toBeDefined();
   });
 
-  it('should throw BusinessLogicError when access token is missing', async () => {
+  it('should throw UnauthorizedError when access token is missing', async () => {
     mockRequest.cookies = {}; // アクセストークンなし
 
-    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(BusinessLogicError);
+    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedError);
     expect(mockSupabase.auth.getUser).not.toHaveBeenCalled();
   });
 
-  it('should throw BusinessLogicError when JWT validation fails', async () => {
+  it('should throw UnauthorizedError when JWT validation fails', async () => {
     mockRequest.cookies = { 'sb-access-token': 'invalid-token' };
     mockSupabase.auth.getUser.mockResolvedValue({
       data: null,
       error: { message: 'Invalid JWT' },
     });
 
-    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(BusinessLogicError);
+    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedError);
     expect(mockSupabase.auth.getUser).toHaveBeenCalledWith('invalid-token');
   });
 
@@ -316,7 +316,7 @@ describe('SupabaseAuthGuard', () => {
     );
   });
 
-  it('should throw BusinessLogicError when refresh token fails', async () => {
+  it('should throw UnauthorizedError when refresh token fails', async () => {
     const mockUser = {
       id: '123',
       email: 'test@example.com',
@@ -344,7 +344,7 @@ describe('SupabaseAuthGuard', () => {
       error: { message: 'Invalid refresh token' },
     });
 
-    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(BusinessLogicError);
+    await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedError);
     expect(mockSupabase.auth.refreshSession).toHaveBeenCalledWith({
       refresh_token: 'refresh-token',
     });

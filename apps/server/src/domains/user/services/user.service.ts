@@ -2,7 +2,7 @@ import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '$domains/user/repositories';
-import { BusinessLogicError } from '$exceptions';
+import { NotFoundError } from '$shared/errors/app-error';
 
 import type { User } from '@monorepo/database/client';
 
@@ -13,7 +13,7 @@ export class UserService {
   async getUserByProvider(provider: string, sub: string): Promise<User> {
     const user = await this.userRepository.getUserByProvider(provider, sub);
     if (!user) {
-      throw new BusinessLogicError(ERROR_CODE.USER_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.USER_NOT_FOUND);
     }
     return user;
   }

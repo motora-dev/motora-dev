@@ -1,24 +1,23 @@
 import { ERROR_CODE } from '@monorepo/error-code';
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 
-import { BusinessLogicError } from '$exceptions';
+import { AppError, BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '$errors';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
 
     let status: number;
     let errorCode: string = '';
     let message: string;
 
-    if (exception instanceof BusinessLogicError) {
+    if (exception instanceof AppError) {
       // AppErrorの場合
-      status = exception.statusCode;
-      errorCode = exception.errorCode;
+      status = getStatusCode(exception);
+      errorCode = exception.code;
       message = exception.message;
     } else if (exception instanceof HttpException) {
       // NestJS標準のHttpExceptionの場合
@@ -28,8 +27,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     } else {
       // その他の予期せぬエラーの場合
       status = HttpStatus.INTERNAL_SERVER_ERROR;
-      errorCode = ERROR_CODE.INTERNAL_SERVER_ERROR.code;
-      message = ERROR_CODE.INTERNAL_SERVER_ERROR.message;
+      errorCode = ERROR_CODE.INTERNAL_SERVER_ERROR;
+      message = 'An unexpected error occurred';
     }
 
     // 5xxエラーかつ本番環境の場合はerrorCodeを統一（セキュリティ対策）
@@ -37,14 +36,28 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const isProd = process.env.NODE_ENV === 'production';
 
     if (is5xxError && isProd) {
-      errorCode = ERROR_CODE.INTERNAL_SERVER_ERROR.code;
-      message = ERROR_CODE.INTERNAL_SERVER_ERROR.message;
+      errorCode = ERROR_CODE.INTERNAL_SERVER_ERROR;
     }
 
     response.status(status).json({
-      path: request.url,
       errorCode,
       message,
     });
   }
 }
+
+const getStatusCode = (exception: AppError): number => {
+  if (exception instanceof BadRequestError) {
+    return HttpStatus.BAD_REQUEST;
+  }
+  if (exception instanceof UnauthorizedError) {
+    return HttpStatus.UNAUTHORIZED;
+  }
+  if (exception instanceof ForbiddenError) {
+    return HttpStatus.FORBIDDEN;
+  }
+  if (exception instanceof NotFoundError) {
+    return HttpStatus.NOT_FOUND;
+  }
+  return HttpStatus.INTERNAL_SERVER_ERROR;
+};

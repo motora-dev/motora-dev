@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
-import { BusinessLogicError } from '$exceptions';
+import { InternalServerError } from '$errors';
 
 @Injectable()
 export class SupabaseStorageAdapter {
@@ -14,7 +14,7 @@ export class SupabaseStorageAdapter {
     const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new BusinessLogicError(ERROR_CODE.INTERNAL_SERVER_ERROR, 'Supabase URL and ROLE_KEY must be provided');
+      throw new InternalServerError(ERROR_CODE.INTERNAL_SERVER_ERROR);
     }
 
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -38,7 +38,7 @@ export class SupabaseStorageAdapter {
     });
 
     if (error) {
-      throw new BusinessLogicError(ERROR_CODE.SIGNED_DOWNLOAD_URL_CREATION_FAILED, error.message);
+      throw new InternalServerError(ERROR_CODE.SIGNED_DOWNLOAD_URL_CREATION_FAILED);
     }
 
     return data.signedUrl;
@@ -59,7 +59,7 @@ export class SupabaseStorageAdapter {
     const { data, error } = await this.supabase.storage.from(bucketName).createSignedUploadUrl(filePath, options);
 
     if (error) {
-      throw new BusinessLogicError(ERROR_CODE.SIGNED_UPLOAD_URL_CREATION_FAILED, error.message);
+      throw new InternalServerError(ERROR_CODE.SIGNED_UPLOAD_URL_CREATION_FAILED);
     }
 
     return {

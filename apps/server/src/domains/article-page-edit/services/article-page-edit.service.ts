@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
 import { ArticlePageEditRepository } from '$domains/article-page-edit/repositories';
-import { BusinessLogicError } from '$exceptions';
+import { ForbiddenError, NotFoundError } from '$shared/errors';
 
 import type { Page } from '@monorepo/database/client';
 
@@ -18,11 +18,11 @@ export class ArticlePageEditService {
     const article = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.ARTICLE_NOT_FOUND);
     }
 
     if (article.userId !== userId) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
+      throw new ForbiddenError(ERROR_CODE.ARTICLE_ACCESS_DENIED);
     }
 
     return await this.articlePageEditRepository.getPages(article.id);
@@ -32,17 +32,17 @@ export class ArticlePageEditService {
     const article = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.ARTICLE_NOT_FOUND);
     }
 
     if (article.userId !== userId) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
+      throw new ForbiddenError(ERROR_CODE.ARTICLE_ACCESS_DENIED);
     }
 
     const page = await this.articlePageEditRepository.getPage(article.id, pageId);
 
     if (!page) {
-      throw new BusinessLogicError(ERROR_CODE.PAGE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.PAGE_NOT_FOUND);
     }
 
     return page;
@@ -59,17 +59,17 @@ export class ArticlePageEditService {
     const article = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.ARTICLE_NOT_FOUND);
     }
 
     if (article.userId !== userId) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
+      throw new ForbiddenError(ERROR_CODE.ARTICLE_ACCESS_DENIED);
     }
 
     const page = await this.articlePageEditRepository.getPage(article.id, pageId);
 
     if (!page) {
-      throw new BusinessLogicError(ERROR_CODE.PAGE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.PAGE_NOT_FOUND);
     }
 
     return await this.articlePageEditRepository.updatePage(pageId, title, description, content);
