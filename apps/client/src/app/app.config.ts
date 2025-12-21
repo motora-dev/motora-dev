@@ -24,7 +24,7 @@ import { AuthState } from '$modules/auth/store';
 import { ErrorState } from '$modules/error/store';
 import { SnackbarState } from '$modules/snackbar/store';
 import { SpinnerState } from '$modules/spinner/store';
-import { StaticTranslateLoader } from '$shared/i18n';
+import { MultiTranslateLoader } from '$shared/i18n';
 import { API_URL } from '$shared/lib';
 import { routes } from './app.routes';
 
@@ -35,7 +35,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       TranslateModule.forRoot({
         fallbackLang: 'ja',
-        loader: { provide: TranslateLoader, useClass: StaticTranslateLoader },
+        loader: { provide: TranslateLoader, useClass: MultiTranslateLoader },
       }),
     ),
     provideBrowserGlobalErrorListeners(),

@@ -5,7 +5,7 @@ import { CommandBus } from '@nestjs/cqrs';
 
 import { createServerSupabase } from '$adapters';
 import { CreateUserCommand } from '$domains/user/commands';
-import { BusinessLogicError } from '$exceptions';
+import { ForbiddenError, InternalServerError, UnauthorizedError } from '$shared/errors';
 import { BasicAuthGuard } from './guards/basic-auth.guard';
 
 @Controller('auth')
@@ -43,7 +43,7 @@ export class AuthController {
     const supabase = createServerSupabase(req, res);
     const { error } = await supabase.auth.signOut();
     if (error) {
-      throw new BusinessLogicError(ERROR_CODE.INTERNAL_SERVER_ERROR, error.message);
+      throw new InternalServerError(ERROR_CODE.INTERNAL_SERVER_ERROR);
     }
 
     // callbackGoogleで設定したオプションと完全に同じオプションでCookieをクリア
@@ -82,7 +82,7 @@ export class AuthController {
       },
     });
     if (error) {
-      throw new BusinessLogicError(ERROR_CODE.INTERNAL_SERVER_ERROR, error.message);
+      throw new InternalServerError(ERROR_CODE.INTERNAL_SERVER_ERROR);
     }
 
     // data.url は Google 認証画面への 302 URL
@@ -102,7 +102,7 @@ export class AuthController {
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED, error.message);
+      throw new UnauthorizedError(ERROR_CODE.UNAUTHORIZED);
     }
 
     // メールアドレスの検証
@@ -111,7 +111,7 @@ export class AuthController {
     const userEmail = data.user.email || '';
 
     if (!allowedEmailList.includes(userEmail)) {
-      throw new BusinessLogicError(ERROR_CODE.FORBIDDEN_EMAIL_ACCESS);
+      throw new ForbiddenError(ERROR_CODE.EMAIL_ACCESS_DENIED);
     }
 
     const { access_token, refresh_token, expires_in } = data.session;

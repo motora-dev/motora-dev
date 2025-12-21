@@ -2,7 +2,7 @@ import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable } from '@nestjs/common';
 
 import { ArticleEditRepository } from '$domains/article-edit/repositories';
-import { BusinessLogicError } from '$exceptions';
+import { NotFoundError, ForbiddenError } from '$errors';
 
 import type { Article, Page } from '@monorepo/database/client';
 
@@ -14,11 +14,11 @@ export class ArticleEditService {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.ARTICLE_NOT_FOUND);
     }
 
     if (article.userId !== userId) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
+      throw new ForbiddenError(ERROR_CODE.ARTICLE_ACCESS_DENIED);
     }
 
     const pages = await this.articleEditRepository.getPages(article.id);
@@ -36,11 +36,11 @@ export class ArticleEditService {
     const article: Article | null = await this.articleEditRepository.getArticle(articleId);
 
     if (!article) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.ARTICLE_NOT_FOUND);
     }
 
     if (article.userId !== userId) {
-      throw new BusinessLogicError(ERROR_CODE.ARTICLE_EDIT_FORBIDDEN);
+      throw new ForbiddenError(ERROR_CODE.ARTICLE_ACCESS_DENIED);
     }
 
     return await this.articleEditRepository.updateArticle(articleId, title, tags, content);

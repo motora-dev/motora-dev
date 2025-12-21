@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 
 import { createServerSupabase } from '$adapters';
-import { BusinessLogicError } from '$exceptions';
+import { UnauthorizedError } from '$shared/errors';
 import { AuthRepository } from './repositories/auth.repository';
 
 @Injectable()
@@ -26,13 +26,13 @@ export class SupabaseAuthGuard implements CanActivate {
     const accessToken = req.cookies['sb-access-token'];
     const refreshToken = req.cookies['sb-refresh-token'];
     if (!accessToken) {
-      throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED);
+      throw new UnauthorizedError(ERROR_CODE.UNAUTHORIZED);
     }
 
     /** ② JWT を検証 */
     const { data: userData, error } = await supabase.auth.getUser(accessToken);
     if (error) {
-      throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED, error.message);
+      throw new UnauthorizedError(ERROR_CODE.UNAUTHORIZED);
     }
 
     /** ③ 期限が 5 分以内なら自動更新 */
@@ -44,7 +44,7 @@ export class SupabaseAuthGuard implements CanActivate {
         refresh_token: refreshToken,
       });
       if (re) {
-        throw new BusinessLogicError(ERROR_CODE.UNAUTHORIZED, re.message);
+        throw new UnauthorizedError(ERROR_CODE.UNAUTHORIZED);
       }
 
       // 新しいトークンを Cookie に上書き

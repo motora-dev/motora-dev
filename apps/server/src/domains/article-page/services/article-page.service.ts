@@ -1,7 +1,7 @@
 import { ERROR_CODE } from '@monorepo/error-code';
 import { Injectable } from '@nestjs/common';
 
-import { BusinessLogicError } from '$exceptions';
+import { NotFoundError } from '$errors';
 import { ArticlePageRepository } from '../repositories';
 
 import type { Article, Page } from '@monorepo/database/client';
@@ -14,7 +14,7 @@ export class ArticlePageService {
     const page = await this.repository.getPage(pageId);
 
     if (!page) {
-      throw new BusinessLogicError(ERROR_CODE.PAGE_NOT_FOUND);
+      throw new NotFoundError(ERROR_CODE.PAGE_NOT_FOUND);
     }
 
     const pages = await this.repository.getPagesByArticleId(page.articleId);

@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ErrorFacade } from '$modules/error';
-import { getErrorCodeKey, SupportedLanguage } from '$shared/i18n';
+import { DEFAULT_ERROR_KEY, getErrorCodeKey, SupportedLanguage } from '$shared/i18n';
 
 @Component({
   selector: 'app-error-dialog',
@@ -24,7 +24,7 @@ export class ErrorDialogComponent {
       const lang = (this.translate.getCurrentLang() ?? this.translate.getFallbackLang()) as SupportedLanguage;
       return getErrorCodeKey(err.errorCode, lang);
     }
-    return 'error.unexpectedError';
+    return DEFAULT_ERROR_KEY;
   });
 
   close(): void {
